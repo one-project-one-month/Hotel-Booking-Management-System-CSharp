@@ -1,4 +1,6 @@
 using HotelManagementSystem;
+using HotelManagementSystem.Service.Reposities.Implementation;
+using HotelManagementSystem.Service.Repositories.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 ServiceInjectionFactory.ServiceInject(builder);
 
 builder.Services.AddControllers();
+
+builder.Services.AddTransient<IUserRepository, UserRepository>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
