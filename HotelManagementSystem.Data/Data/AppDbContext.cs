@@ -10,4 +10,5 @@ public class AppDbContext : DbContext // THIS IS ESSENTIAL
     }
 
     public DbSet<UserEntity> Users { get; set; }
+    public DbSet<BookingEntity> Bookings { get; set; }
 }
