@@ -12,6 +12,6 @@ public class BasedRequestModel
 
 public class BasedResponseModel
 {
-    public string RespCode { get; set; }
-    public string RespDescription { get; set; }
+    public string RespCode { get; set; } = null!;
+    public string RespDescription { get; set; } = null!;
 }

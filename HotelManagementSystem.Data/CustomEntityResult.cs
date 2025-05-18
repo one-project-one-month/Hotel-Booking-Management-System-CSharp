@@ -7,7 +7,7 @@ public class CustomEntityResult<TResult> where TResult : BasedResponseModel, new
 {
     // public string RespCode { get; set; }
     // public string RespDescription { get; set; }
-    public TResult Result { get; set; }
+    public TResult Result { get; set; } = null!;
     public bool IsError { get; set; }
 
     public static CustomEntityResult<TResult> GenerateFailEntityResult(string errorCode, string errorDesc)

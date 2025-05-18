@@ -15,31 +15,53 @@ public class UserService : IUserService
         _userRepo = userRepo;
     }
 
-    public async Task<CustomEntityResult<CreateUserResponseModel>> CreateUser(CreateUserRequestModel model)
+    public async Task<CustomEntityResult<RegisterUserResponseModel>> RegisterUser(RegisterUserRequestModel model)
     {
         try
         {
-            #region call repo
-
-            var createUserRequest = new CreateUserRequestDto
+            var registerUserRequest = new RegisterUserrequestDto
             {
-                Name = model.Name,
-                Email = model.Email
+                UserName = model.UserName,
+                Email = model.Email,
+                Password = model.Password
             };
-            var createUser = await _userRepo.CreateUser(createUserRequest);
-            if (createUser.IsError)
+
+            var registerUser = await _userRepo.RegisterUser(registerUserRequest);
+            if(registerUser.IsError)
             {
-                return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(createUser.Result.RespCode, createUser.Result.RespDescription);
+                return CustomEntityResult<RegisterUserResponseModel>.GenerateFailEntityResult(registerUser.Result.RespCode, registerUser.Result.RespDescription);
             }
 
-            #endregion
-            
-            var createUserResponse = new CreateUserResponseModel();
-            return CustomEntityResult<CreateUserResponseModel>.GenerateSuccessEntityResult(createUserResponse);
+            var registerUserResponse = new RegisterUserResponseModel();
+            return CustomEntityResult<RegisterUserResponseModel>.GenerateSuccessEntityResult(registerUserResponse);
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
-            return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<RegisterUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+        }
+    }
+
+    public async Task<CustomEntityResult<SeedRoleResponseModel>> SeedRole(SeedRoleModel model)
+    {
+        try
+        {
+            var seedRoleRequest = new SeedRoleDto
+            {
+                RoleName = model.RoleName,
+            };
+
+            var seedRole = await _userRepo.SeedRoleAsync(seedRoleRequest);
+            if (seedRole.IsError)
+            {
+                return CustomEntityResult<SeedRoleResponseModel>.GenerateFailEntityResult(seedRole.Result.RespCode, seedRole.Result.RespDescription);
+            }
+
+            var seedRoleResponse = new SeedRoleResponseModel();
+            return CustomEntityResult<SeedRoleResponseModel>.GenerateSuccessEntityResult(seedRoleResponse);
+        }
+        catch(Exception ex)
+        {
+            return CustomEntityResult<SeedRoleResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 }

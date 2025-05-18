@@ -1,4 +1,5 @@
 using System.Text.Json;
+using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Helpers;
@@ -19,15 +20,32 @@ public class UserController : ControllerBase
     {
         _service = service;
     }
+
+    [HttpPost]
+    [Route("SeedRole")]
+    public async Task<ActionResult<BasedResponseModel>> SeedRoleAsync(SeedRoleModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _service.SeedRole(model);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
     
     [HttpPost]
     [Route("CreateUser")]
-    public async Task<ActionResult<BasedResponseModel>> CreateUser([FromBody]CreateUserRequestModel model)
+    public async Task<ActionResult<BasedResponseModel>> RegisterUserAsync(RegisterUserRequestModel model)
     {
         #region UserGetClaimsValue
-
-        //var useremail = _httpContextAccessor.HttpContext?.User.FindFirstValue(JwtRegisteredClaimNames.Email);
-        //var displayname = _httpContextAccessor.HttpContext?.User.FindFirstValue(JwtRegisteredClaimNames.Name);
 
         #endregion
 
@@ -39,10 +57,10 @@ public class UserController : ControllerBase
         try
         {
             #region CheckRequiredField
-            // if (String.IsNullOrEmpty(model.UserId))
-            // {
-            //     return APIHelper.GenerateResponseForRequiredField(nameof(model.UserId), _sharedLocalizer);
-            // }
+            //if (String.IsNullOrEmpty(model.UserName))
+            //{
+             //return APIHelper.GenerateResponseForRequiredField(nameof(model.UserName), _sharedLocalizer);
+            //}
             #endregion
 
             #region Check Format
@@ -52,7 +70,7 @@ public class UserController : ControllerBase
             // }
             #endregion
             
-            var result = await _service.CreateUser(model);
+            var result = await _service.RegisterUser(model);
 
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
@@ -62,4 +80,8 @@ public class UserController : ControllerBase
             return BadRequest(500);
         }
     }
+
+    //[HttpPost]
+    //[Route("Login")]
+    //public async Task<ActionResult<>>
 }

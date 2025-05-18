@@ -5,5 +5,6 @@ namespace HotelManagementSystem.Service.Repositories.Interface;
 
 public interface IUserRepository
 {
-    public Task<CustomEntityResult<CreateUserResponseDto>> CreateUser(CreateUserRequestDto model);
+    public Task<CustomEntityResult<RegisterUserResponseDto>> RegisterUser(RegisterUserrequestDto model);
+    public Task<CustomEntityResult<SeedRoleResponseDto>> SeedRoleAsync(SeedRoleDto roleName);
 }

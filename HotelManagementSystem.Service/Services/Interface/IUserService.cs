@@ -5,5 +5,6 @@ namespace HotelManagementSystem.Service.Services.Interface;
 
 public interface IUserService
 {
-    public Task<CustomEntityResult<CreateUserResponseModel>> CreateUser(CreateUserRequestModel model);
+    public Task<CustomEntityResult<RegisterUserResponseModel>> RegisterUser(RegisterUserRequestModel model);
+    public Task<CustomEntityResult<SeedRoleResponseModel>> SeedRole(SeedRoleModel model);
 }
