@@ -35,7 +35,7 @@ namespace HotelManagementSystem.Data.Dtos.Booking
     }
     public class CreateBookingResponseDto : BasedResponseModel
     {
-        public Guid BookingId { get; set; }
+        public string? BookingId { get; set; }
         public string? UserId { get; set; }
         public string? GuestId { get; set; }
         public DateTime CheckInDate { get; set; }
