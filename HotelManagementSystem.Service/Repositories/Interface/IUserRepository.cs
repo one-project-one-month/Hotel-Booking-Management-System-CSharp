@@ -7,4 +7,5 @@ public interface IUserRepository
 {
     public Task<CustomEntityResult<RegisterUserResponseDto>> RegisterUser(RegisterUserrequestDto model);
     public Task<CustomEntityResult<SeedRoleResponseDto>> SeedRoleAsync(SeedRoleDto roleName);
+    public Task<bool> RoleExitAsync(string roleName);
 }

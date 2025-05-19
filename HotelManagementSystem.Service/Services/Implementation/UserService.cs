@@ -1,5 +1,6 @@
 using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Dtos.User;
+using HotelManagementSystem.Data.Models.Constants;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
@@ -23,9 +24,8 @@ public class UserService : IUserService
             {
                 UserName = model.UserName,
                 Email = model.Email,
-                Password = model.Password
+                Password = model.Password,
             };
-
             var registerUser = await _userRepo.RegisterUser(registerUserRequest);
             if(registerUser.IsError)
             {
@@ -41,21 +41,26 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<CustomEntityResult<SeedRoleResponseModel>> SeedRole(SeedRoleModel model)
+    public async Task<CustomEntityResult<SeedRoleResponseModel>> SeedRole()
     {
         try
         {
-            var seedRoleRequest = new SeedRoleDto
+            var roles = new[]
             {
-                RoleName = model.RoleName,
+                RoleConstants.Admin,
+                RoleConstants.User
             };
-
-            var seedRole = await _userRepo.SeedRoleAsync(seedRoleRequest);
-            if (seedRole.IsError)
+            foreach (var role in roles)
             {
-                return CustomEntityResult<SeedRoleResponseModel>.GenerateFailEntityResult(seedRole.Result.RespCode, seedRole.Result.RespDescription);
+                if(!await _userRepo.RoleExitAsync(role))
+                {
+                    var seedRoleRequest = new SeedRoleDto
+                    {
+                        RoleName = role,
+                    };
+                    await _userRepo.SeedRoleAsync(seedRoleRequest);
+                }
             }
-
             var seedRoleResponse = new SeedRoleResponseModel();
             return CustomEntityResult<SeedRoleResponseModel>.GenerateSuccessEntityResult(seedRoleResponse);
         }

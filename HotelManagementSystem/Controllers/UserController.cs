@@ -23,7 +23,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("SeedRole")]
-    public async Task<ActionResult<BasedResponseModel>> SeedRoleAsync(SeedRoleModel model)
+    public async Task<ActionResult<BasedResponseModel>> SeedRoleAsync()
     {
         if (!ModelState.IsValid)
         {
@@ -31,7 +31,7 @@ public class UserController : ControllerBase
         }
         try
         {
-            var result = await _service.SeedRole(model);
+            var result = await _service.SeedRole();
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
@@ -42,7 +42,7 @@ public class UserController : ControllerBase
     }
     
     [HttpPost]
-    [Route("CreateUser")]
+    [Route("Register")]
     public async Task<ActionResult<BasedResponseModel>> RegisterUserAsync(RegisterUserRequestModel model)
     {
         #region UserGetClaimsValue
