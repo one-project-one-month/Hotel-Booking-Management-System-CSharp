@@ -23,6 +23,5 @@ public class ServiceInjectionFactory
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        //builder.Services.AddTransient<IAuthorizationHelper, AuthorizationHelper>();
     }
 }

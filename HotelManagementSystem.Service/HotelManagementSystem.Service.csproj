@@ -16,7 +16,7 @@
 
     <ItemGroup>
       <Folder Include="Extensions\" />
-      <Folder Include="Helpers\" />
+      <Folder Include="Helpers\Auth\Token\" />
     </ItemGroup>
 
 </Project>

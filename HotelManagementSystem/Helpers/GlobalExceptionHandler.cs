@@ -25,6 +25,9 @@ namespace HotelManagementSystem.Helpers
             return exception switch
             {
                 UserNotFoundException => (HttpStatusCode.Unauthorized, exception.Message),
+                RoleDoesNotExistException => (HttpStatusCode.BadRequest, exception.Message),
+                OTPNotFoudException => (HttpStatusCode.Unauthorized, exception.Message),
+                UserDoesNotExitException => (HttpStatusCode.Unauthorized, exception.Message),
 
                 _ => (HttpStatusCode.InternalServerError, $"An unexpected error occurred: {exception.Message}")
             };
