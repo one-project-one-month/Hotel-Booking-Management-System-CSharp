@@ -18,20 +18,16 @@ namespace HotelManagementSystem.Data.Dtos.Booking
     }
     public class CreateBookingRequestDto
     {
-        [Required]
-        public string? UserId { get; set; }
-        [Required]
-        public string? GuestId { get; set; }
-        [Required]
         public int Guest_Count { get; set; }
-        [Required]
+        
         public string? Booking_Status { get; set; }
-        [Required]
+        
         public DateTime CheckInDate { get; set; }
-        [Required]
+        
         public DateTime CheckOutDate { get; set; }
-        [Required]
+        
         public string? PaymentType { get; set; }
+        public decimal? Deposit_Amount { get; set; }
     }
     public class CreateBookingResponseDto : BasedResponseModel
     {

@@ -1,13 +1,9 @@
 ﻿using HotelManagementSystem.Data;
+using HotelManagementSystem.Data.Dtos.Booking;
 using HotelManagementSystem.Data.Models.Booking;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Service.Services.Implementation
 {
@@ -22,6 +18,22 @@ namespace HotelManagementSystem.Service.Services.Implementation
         {
             try
             {
+                #region call repo
+                var createBookingRequest = new CreateBookingRequestDto
+                {
+                    Guest_Count = model.Guest_Count,
+                    Booking_Status = model.Booking_Status,
+                    Deposit_Amount = model.Deposit_Amount,
+                    CheckInDate = model.CheckInDate,
+                    CheckOutDate = model.CheckOutDate,
+                    PaymentType = model.PaymentType
+                };
+                var createBooking = await _bookingRepo.CreateBooking(createBookingRequest);
+                if (createBooking.IsError)
+                {
+                    return CustomEntityResult<CreateBookingResponseModel>.GenerateFailEntityResult(createBooking.Result.RespCode,createBooking.Result.RespDescription);
+                };
+                #endregion
                 var createBookingResponse = new CreateBookingResponseModel();
                 return CustomEntityResult<CreateBookingResponseModel>.GenerateSuccessEntityResult(createBookingResponse);
             }
