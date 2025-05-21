@@ -5,24 +5,22 @@ namespace HotelManagementSystem.Helpers;
 
 public class APIHelper
 {
-    public static BasedResponseModel GenerateSuccessResponse(BasedResponseModel model)
+    public static T GenerateSuccessResponse<T>(T model) where T : BasedResponseModel, new()
     {
         if (model == null)
-            model = new BasedResponseModel();
+            model = new T();
         model.RespCode = ResponseMessageConstants.RESPONSE_CODE_SUCCESS;
         model.RespDescription = ResponseMessageConstants.RESPONSE_MESSAGE_SUCCESS;
-
         return model;
     }
 
-    public static BasedResponseModel GenerateFailResponse(BasedResponseModel model)
+    public static T GenerateFailResponse<T>(T model) where T : BasedResponseModel, new()
     {
-        BasedResponseModel bmodel = new BasedResponseModel()
+        var bmodel = new T
         {
             RespCode = model.RespCode,
             RespDescription = model.RespDescription
         };
-
         return bmodel;
     }
 }
