@@ -13,7 +13,7 @@ namespace HotelManagementSystem.Data.Entities
     {
         [Key]
         [Column("BookingId")]
-        public string BookingId { get; set; } = Guid.NewGuid().ToString();
+        public string? BookingId { get; set; }
         [Column("UserId")]
         public string? UserId { get; set; }
         [Column("GuestId")]
@@ -27,7 +27,7 @@ namespace HotelManagementSystem.Data.Entities
         [Column("Deposit_Amount")]
         public decimal? Deposit_Amount { get; set; }
         [Column("Total_Amount")]
-        public decimal Total_Amount { get; set; }
+        public decimal? Total_Amount { get; set; }
         public DateTime CheckOutDate { get; set; }
         [Column("PaymentType")]
         public string? PaymentType { get; set; }

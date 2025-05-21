@@ -26,9 +26,13 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
             {
                 var createBookingRequest = new BookingEntity
                 {
+                    BookingId = Guid.NewGuid().ToString(),
+                    UserId = model.UserId,
+                    GuestId = model.GuestId,
                     Guest_Count = model.Guest_Count,
                     Booking_Status = model.Booking_Status,
                     Deposit_Amount = model.Deposit_Amount,
+                    Total_Amount = model.Total_Amount,
                     CheckInDate = model.CheckInDate,
                     CheckOutDate = model.CheckOutDate,
                     PaymentType = model.PaymentType

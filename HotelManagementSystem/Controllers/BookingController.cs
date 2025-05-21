@@ -1,4 +1,6 @@
-﻿using HotelManagementSystem.Data.Models.Booking;
+﻿using HotelManagementSystem.Data.Models;
+using HotelManagementSystem.Data.Models.Booking;
+using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +20,7 @@ namespace HotelManagementSystem.Controllers
         }
         [HttpPost]
         [Route("CreateBooking")]
-        public async Task<IActionResult> CreateBooking(CreateBookingRequestModel bookingModel)
+        public async Task<ActionResult<BasedResponseModel>> CreateBooking([FromBody] CreateBookingRequestModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -26,13 +28,13 @@ namespace HotelManagementSystem.Controllers
             }
             try
             {
-                var result = await _bookingService.CreaeBooking(bookingModel);
-                return !result.IsError ? Ok(result.Result) : BadRequest(result.Result);
+                var result = await _bookingService.CreaeBooking(model);
+                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)
             {
                 var message = ex.Message;
-                return StatusCode(500, message);
+                return BadRequest(message);
             }
         }
     }

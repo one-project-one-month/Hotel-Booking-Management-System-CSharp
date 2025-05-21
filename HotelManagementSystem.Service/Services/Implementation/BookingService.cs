@@ -1,7 +1,6 @@
 ﻿using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Dtos.Booking;
 using HotelManagementSystem.Data.Models.Booking;
-using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
 
@@ -21,9 +20,13 @@ namespace HotelManagementSystem.Service.Services.Implementation
                 #region call repo
                 var createBookingRequest = new CreateBookingRequestDto
                 {
+                    BookingId = Guid.NewGuid().ToString(),
+                    UserId = model.UserId,
+                    GuestId = model.GuestId,
                     Guest_Count = model.Guest_Count,
                     Booking_Status = model.Booking_Status,
                     Deposit_Amount = model.Deposit_Amount,
+                    Total_Amount = model.Total_Amount,
                     CheckInDate = model.CheckInDate,
                     CheckOutDate = model.CheckOutDate,
                     PaymentType = model.PaymentType
