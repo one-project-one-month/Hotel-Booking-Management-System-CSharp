@@ -7,16 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="MailKit" Version="4.12.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.16" />
       <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.16" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\HotelManagementSystem.Data\HotelManagementSystem.Data.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Extensions\" />
-      <Folder Include="Helpers\Auth\Token\" />
     </ItemGroup>
 
 </Project>

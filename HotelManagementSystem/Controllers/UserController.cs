@@ -1,5 +1,4 @@
-using System.Text.Json;
-using HotelManagementSystem.Data.Dtos.User;
+using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Helpers;
@@ -72,6 +71,7 @@ public class UserController : ControllerBase
             
             var result = await _service.RegisterUser(model);
 
+            //return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
@@ -81,7 +81,24 @@ public class UserController : ControllerBase
         }
     }
 
-    //[HttpPost]
-    //[Route("Login")]
-    //public async Task<ActionResult<>>
+    [HttpPost]
+    [Route("Login")]
+    public async Task<ActionResult<LoginResponseModel>> LoginAsync(LoginRequestModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _service.LoginAsync(model);
+            
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);            
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
 }

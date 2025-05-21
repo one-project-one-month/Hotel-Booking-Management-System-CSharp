@@ -3,6 +3,7 @@ using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Data.Models;
+using HotelManagementSystem.Data.Models.Constants;
 using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ public class UserRepository : IUserRepository
         _context = context;
 
     }
+
     public async Task<CustomEntityResult<RegisterUserResponseDto>> RegisterUser(RegisterUserrequestDto model)
     {
         try
@@ -37,6 +39,16 @@ public class UserRepository : IUserRepository
         {
             return CustomEntityResult<RegisterUserResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
+    }
+
+    public async Task<TblUser> GetUserByEmail(string email)
+    {
+        var user = await _context.TblUsers.FirstOrDefaultAsync(x => x.Email == email);
+        if (user == null)
+        {
+            throw new UserNotFoundException(email);
+        }
+        return user;
     }
 
     public async Task<CustomEntityResult<SeedRoleResponseDto>> SeedRoleAsync(SeedRoleDto roleName)
@@ -60,6 +72,21 @@ public class UserRepository : IUserRepository
         }
     }
 
+    public async Task<string> GetUserRolebyIdAsync(Guid id)
+    {
+        var user = await _context.TblUsers.FirstOrDefaultAsync(x => x.UserId == id);
+        if (user == null)
+        {
+            throw new UserDoesNotExitException(id);
+        }
+        var role = await _context.TblRoles.FirstOrDefaultAsync(x => x.RoleId == user.RoleId);
+        if (role == null)
+        {
+            throw new RoleDoesNotExistException("Role does not exit!");
+        }
+        return role.RoleName;
+    }
+
     public async Task<bool> RoleExitAsync(string roleName)
     {
         return await _context.TblRoles.AnyAsync(r => r.RoleName == roleName);
@@ -67,13 +94,32 @@ public class UserRepository : IUserRepository
 
     public async Task<Guid> SeedRoleToUser()
     {
-        var Role = await _context.TblRoles.FirstOrDefaultAsync(r => r.RoleName == "User");
+        var Role = await _context.TblRoles.FirstOrDefaultAsync(r => r.RoleName == RoleConstants.User);
         if (Role == null)
         {
             throw new RoleDoesNotExistException("User Role does not exit!");
         }
         var RoleId = Role.RoleId;
         return RoleId;
+    }
+
+    public async Task UpdateUserAsync(TblUser user)
+    {
+        try
+        {
+            var existingUser = await _context.TblUsers
+                .FirstOrDefaultAsync(u => u.UserId == user.UserId);
+            if (existingUser == null)
+            {
+                throw new UserNotFoundException(user.Email);
+            }
+            _context.TblUsers.Update(existingUser);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"{ex.Message}", ex);
+        }
     }
 
     public async Task<CustomEntityResult<BasedResponseModel>> DeletePasswordOTPAsync(TblUser user)

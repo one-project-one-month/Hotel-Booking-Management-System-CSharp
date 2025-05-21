@@ -15,6 +15,7 @@ namespace HotelManagementSystem.Data.Dtos.User
 
     public class LoginResponseDto : BasedResponseModel
     {
-
+        public string AccessToken { get; set; } = null!;
+        public DateTime ExpireAt { get; set; }
     }
 }

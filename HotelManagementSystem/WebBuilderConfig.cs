@@ -1,5 +1,8 @@
 using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Helpers;
+using HotelManagementSystem.Service.Extensions;
+using HotelManagementSystem.Service.Helpers.Auth.Token;
+using HotelManagementSystem.Service.Helpers.SMTP;
 using HotelManagementSystem.Service.Reposities.Implementation;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Implementation;
@@ -15,6 +18,20 @@ public class ServiceInjectionFactory
         builder.Services.AddDbContext<HotelDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+        var env = builder.Environment.EnvironmentName.ToLower();
+        var envFile = $".env.{env}";
+        if (File.Exists(envFile))
+        {
+            DotNetEnv.Env.Load(envFile);
+        }
+        else
+        {
+            DotNetEnv.Env.Load(); 
+        }
+
+        builder.Services.AddJwtServices();
+        builder.Services.AddAuthorization();
+
         //service
         builder.Services.AddTransient<IUserService, UserService>();
 
@@ -23,5 +40,8 @@ public class ServiceInjectionFactory
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddTransient<ITokenProcessors,TokenProcessor>();
+        builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+        builder.Services.AddTransient<ISmtpService, SmtpService>();
     }
 }
