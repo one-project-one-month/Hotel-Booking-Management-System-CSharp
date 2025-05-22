@@ -5,8 +5,10 @@ namespace HotelManagementSystem.Service.Services.Interface
 {
     public interface IUserService
     {
-        Task<CustomEntityResult<LoginResponseModel>> LoginAsync(LoginRequestModel model);
-        Task<CustomEntityResult<RegisterUserResponseModel>> RegisterUser(RegisterUserRequestModel model);
-        Task<CustomEntityResult<SeedRoleResponseModel>> SeedRole();
+        public Task<CustomEntityResult<LoginResponseModel>> LoginAsync(LoginRequestModel model);
+        public Task<CustomEntityResult<RegisterUserResponseModel>> RegisterUser(RegisterUserRequestModel model);
+        public Task<CustomEntityResult<SeedRoleResponseModel>> SeedRole();
+        public Task<CustomEntityResult<ForgotPasswordResponseModel>> ForgotPasswordAsync(ForgetPasswordRequestModel model);
+        public Task<CustomEntityResult<ResetPasswordResponseModel>> ResetPasswordAsync(ResetPasswordRequestModel model);
     }
 }

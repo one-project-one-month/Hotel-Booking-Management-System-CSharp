@@ -16,4 +16,8 @@
       <ProjectReference Include="..\HotelManagementSystem.Data\HotelManagementSystem.Data.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Helpers\Media\" />
+    </ItemGroup>
+
 </Project>

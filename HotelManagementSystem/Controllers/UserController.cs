@@ -22,7 +22,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("SeedRole")]
-    public async Task<ActionResult<BasedResponseModel>> SeedRoleAsync()
+    public async Task<ActionResult<SeedRoleResponseModel>> SeedRoleAsync()
     {
         if (!ModelState.IsValid)
         {
@@ -42,7 +42,7 @@ public class UserController : ControllerBase
     
     [HttpPost]
     [Route("Register")]
-    public async Task<ActionResult<BasedResponseModel>> RegisterUserAsync(RegisterUserRequestModel model)
+    public async Task<ActionResult<RegisterUserResponseModel>> RegisterUserAsync(RegisterUserRequestModel model)
     {
         #region UserGetClaimsValue
 
@@ -94,6 +94,46 @@ public class UserController : ControllerBase
             var result = await _service.LoginAsync(model);
             
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);            
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
+
+    [HttpPost]
+    [Route("ForgotPassword")]
+    public async Task<ActionResult<ForgotPasswordResponseModel>> ForgotPasswordAsync(ForgetPasswordRequestModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _service.ForgotPasswordAsync(model);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
+
+    [HttpPost]
+    [Route("ResetPassword")]
+    public async Task<ActionResult<ResetPasswordResponseModel>> ResetPasswordAsync(ResetPasswordRequestModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _service.ResetPasswordAsync(model);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {

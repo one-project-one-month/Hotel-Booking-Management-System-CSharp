@@ -1,8 +1,9 @@
 using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Extensions;
+using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
+using HotelManagementSystem.Service.Helpers.Auth.SMTP;
 using HotelManagementSystem.Service.Helpers.Auth.Token;
-using HotelManagementSystem.Service.Helpers.SMTP;
 using HotelManagementSystem.Service.Reposities.Implementation;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Implementation;
@@ -43,5 +44,6 @@ public class ServiceInjectionFactory
         builder.Services.AddTransient<ITokenProcessors,TokenProcessor>();
         builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
         builder.Services.AddTransient<ISmtpService, SmtpService>();
+        builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
     }
 }

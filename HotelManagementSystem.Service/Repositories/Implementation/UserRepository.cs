@@ -5,17 +5,21 @@ using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.Constants;
 using HotelManagementSystem.Service.Exceptions;
+using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace HotelManagementSystem.Service.Reposities.Implementation;
 
 public class UserRepository : IUserRepository
 {
     private readonly HotelDbContext _context;
-    public UserRepository(HotelDbContext context)
+    private readonly IPasswordHasher _passwordHasher;
+    public UserRepository(HotelDbContext context, IPasswordHasher passwordHasher)
     {
         _context = context;
+        _passwordHasher = passwordHasher;
 
     }
 
@@ -26,11 +30,12 @@ public class UserRepository : IUserRepository
             var registerUserRequest = new TblUser
             {
                 UserName = model.UserName,
-                Email = model.Email,
-                Password = model.Password
+                Email = model.Email
             };
+            var hashedPassword = _passwordHasher.HashPassword(model.NewPassword);
+            registerUserRequest.Password = hashedPassword;
             registerUserRequest.RoleId = await SeedRoleToUser();
-            var registerUser = await _context.AddAsync(registerUserRequest);
+            await _context.AddAsync(registerUserRequest);
             await _context.SaveChangesAsync();
             var registerUserResponse = new RegisterUserResponseDto();
             return CustomEntityResult<RegisterUserResponseDto>.GenerateSuccessEntityResult(registerUserResponse);
@@ -172,27 +177,27 @@ public class UserRepository : IUserRepository
         }
     }
 
-    public async Task<CustomEntityResult<BasedResponseModel>> UpdateTokenAsync(string email, string resetPasswordOTP)
+    public async Task<CustomEntityResult<ForgotPasswordResponseDto>> UpdateTokenAsync(ForgotPasswordRequestDto dto)
     {
         try
         {
             var user = await _context.TblUsers
-                .FirstOrDefaultAsync(u => u.Email == email);
+                .FirstOrDefaultAsync(u => u.Email == dto.Email);
             if (user == null)
             {
-                throw new UserNotFoundException(user.Email);
+                throw new UserNotFoundException(dto.Email);
             }
-            var token = user.ForgetPasswordOtp;
+            user.ForgetPasswordOtp = dto.Otp;
             user.OtpExpireAt = DateTime.UtcNow.AddMinutes(15);
 
             _context.TblUsers.Update(user);
             await _context.SaveChangesAsync();
-            var returnModel = new BasedResponseModel();
-            return CustomEntityResult<BasedResponseModel>.GenerateSuccessEntityResult(returnModel);
+            var returnModel = new ForgotPasswordResponseDto();
+            return CustomEntityResult<ForgotPasswordResponseDto>.GenerateSuccessEntityResult(returnModel);
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<BasedResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<ForgotPasswordResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 

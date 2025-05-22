@@ -11,8 +11,6 @@ public partial class TblUser
 
     public string Email { get; set; } = null!;
 
-    public string Password { get; set; } = null!;
-
     public Guid RoleId { get; set; }
 
     public byte[]? ProfileImg { get; set; }
@@ -28,6 +26,8 @@ public partial class TblUser
     public string? ForgetPasswordOtp { get; set; }
 
     public DateTime? OtpExpireAt { get; set; }
+
+    public string? Password { get; set; }
 
     public virtual TblRole Role { get; set; } = null!;
 

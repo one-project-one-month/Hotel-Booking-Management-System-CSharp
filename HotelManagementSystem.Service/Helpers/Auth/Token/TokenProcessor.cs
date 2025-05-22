@@ -2,7 +2,6 @@
 using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Data.Data.FeatureModels;
 using HotelManagementSystem.Data.Dtos.User;
-using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
@@ -17,13 +16,11 @@ namespace HotelManagementSystem.Service.Helpers.Auth.Token
     {
         private readonly Jwt _jwt;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HotelDbContext _context;
         private readonly IUserRepository _userRepository;
-        public TokenProcessor(Jwt jwt, IHttpContextAccessor httpContextAccessor, HotelDbContext context, IUserRepository userRepository)
+        public TokenProcessor(Jwt jwt, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
         {
             _jwt = jwt;
             _httpContextAccessor = httpContextAccessor;
-            _context = context;
             _userRepository = userRepository;
         }
 
