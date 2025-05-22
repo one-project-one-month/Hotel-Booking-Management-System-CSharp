@@ -42,7 +42,7 @@ public class UserController : ControllerBase
     
     [HttpPost]
     [Route("Register")]
-    public async Task<ActionResult<RegisterUserResponseModel>> RegisterUserAsync(RegisterUserRequestModel model)
+    public async Task<ActionResult<BasedResponseModel>> RegisterUserAsync(RegisterUserRequestModel model)
     {
         #region UserGetClaimsValue
 
@@ -104,7 +104,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("ForgotPassword")]
-    public async Task<ActionResult<ForgotPasswordResponseModel>> ForgotPasswordAsync(ForgetPasswordRequestModel model)
+    public async Task<ActionResult<BasedResponseModel>> ForgotPasswordAsync(ForgetPasswordRequestModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -124,7 +124,7 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [Route("ResetPassword")]
-    public async Task<ActionResult<ResetPasswordResponseModel>> ResetPasswordAsync(ResetPasswordRequestModel model)
+    public async Task<ActionResult<BasedResponseModel>> ResetPasswordAsync(ResetPasswordRequestModel model)
     {
         if (!ModelState.IsValid)
         {

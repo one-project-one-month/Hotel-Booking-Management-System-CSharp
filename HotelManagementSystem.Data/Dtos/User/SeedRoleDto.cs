@@ -23,9 +23,9 @@ namespace HotelManagementSystem.Data.Dtos.User
         public string Email { get; set; } = null!;
     }
 
-    public class SeedRoleToUserDto
-    {
-        public string Email { get; set; } = null!;
-    }
+    // public class SeedRoleToUserDto
+    // {
+    //     public string Email { get; set; } = null!;
+    // }
     public class SeedRoleResponseDto : BasedResponseModel { }
 }
