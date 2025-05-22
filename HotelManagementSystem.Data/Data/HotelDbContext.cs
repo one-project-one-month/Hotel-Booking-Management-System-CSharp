@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using HotelManagementSystem.Data.Entities;
+﻿using HotelManagementSystem.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagementSystem.Data.Data;
@@ -38,7 +36,7 @@ public partial class HotelDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-NFU692OK\\LOCALDB;Initial Catalog=HBMS_Dbo;Integrated Security=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-NFU692OK\\LOCALDB;Initial Catalog=HBMS_Dbo;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -74,7 +72,7 @@ public partial class HotelDbContext : DbContext
             entity.ToTable("Tbl_Booking");
 
             entity.Property(e => e.BookingId)
-                .HasDefaultValueSql("NEWID()")
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("Booking_Id");
             entity.Property(e => e.BookingStatus)
                 .HasMaxLength(50)
@@ -107,7 +105,7 @@ public partial class HotelDbContext : DbContext
 
             entity.ToTable("Tbl_Coupons");
 
-            entity.Property(e => e.CouponId).HasDefaultValueSql("NEWID()");
+            entity.Property(e => e.CouponId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.BookingId).HasColumnName("Booking_Id");
             entity.Property(e => e.CouponCode)
                 .HasMaxLength(50)
@@ -142,7 +140,7 @@ public partial class HotelDbContext : DbContext
             entity.ToTable("Tbl_Guest");
 
             entity.Property(e => e.GuestId)
-                .HasDefaultValueSql("NEWID()")
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("Guest_Id");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
             entity.Property(e => e.Nrc)
@@ -164,7 +162,7 @@ public partial class HotelDbContext : DbContext
             entity.ToTable("Tbl_Invoice");
 
             entity.Property(e => e.InvoiceId)
-                .HasDefaultValueSql("NEWID()")
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("Invoice_Id");
             entity.Property(e => e.CheckInTime)
                 .HasColumnType("datetime")
@@ -196,7 +194,7 @@ public partial class HotelDbContext : DbContext
 
             entity.ToTable("Tbl_Roles");
 
-            entity.Property(e => e.RoleId).HasDefaultValueSql("NEWID()");
+            entity.Property(e => e.RoleId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.RoleName).HasMaxLength(50);
         });
 
@@ -209,7 +207,7 @@ public partial class HotelDbContext : DbContext
             entity.HasIndex(e => e.RoomNo, "UQ__Tbl_Room__19EF81FDB28A5247").IsUnique();
 
             entity.Property(e => e.RoomId)
-                .HasDefaultValueSql("NEWID()")
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("Room_Id");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
             entity.Property(e => e.GuestLimit).HasColumnName("Guest_Limit");
@@ -235,7 +233,6 @@ public partial class HotelDbContext : DbContext
 
             entity.ToTable("Tbl_Room_Booking");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.BookingId).HasColumnName("Booking_Id");
             entity.Property(e => e.RoomId).HasColumnName("Room_Id");
 
@@ -257,7 +254,8 @@ public partial class HotelDbContext : DbContext
             entity.ToTable("Tbl_RoomType");
 
             entity.Property(e => e.RoomTypeId)
-                .HasDefaultValueSql("NEWID()");
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("RoomType_Id");
             entity.Property(e => e.Price).HasColumnType("decimal(8, 2)");
             entity.Property(e => e.RoomTypeName)
                 .HasMaxLength(50)
@@ -272,7 +270,7 @@ public partial class HotelDbContext : DbContext
 
             entity.HasIndex(e => e.Email, "UQ__Tbl_User__A9D105343C68F124").IsUnique();
 
-            entity.Property(e => e.UserId).HasDefaultValueSql("NEWID()");
+            entity.Property(e => e.UserId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.ForgetPasswordOtp)
@@ -282,7 +280,6 @@ public partial class HotelDbContext : DbContext
             entity.Property(e => e.OtpExpireAt)
                 .HasColumnType("datetime")
                 .HasColumnName("OTP_ExpireAt");
-            entity.Property(e => e.Password).HasMaxLength(50);
             entity.Property(e => e.TokenExpireAt).HasColumnType("datetime");
             entity.Property(e => e.UserName).HasMaxLength(50);
 

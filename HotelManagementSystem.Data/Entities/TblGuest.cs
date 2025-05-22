@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace HotelManagementSystem.Data.Entities;
+﻿namespace HotelManagementSystem.Data.Entities;
 
 public partial class TblGuest
 {
