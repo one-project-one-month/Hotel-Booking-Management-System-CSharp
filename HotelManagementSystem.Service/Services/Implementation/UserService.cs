@@ -36,7 +36,7 @@ public class UserService : IUserService
             {
                 UserName = model.UserName,
                 Email = model.Email,
-                Password = model.Password,
+                NewPassword = model.Password,
             };
             var registerUser = await _userRepo.RegisterUser(registerUserRequest);
             if (registerUser.IsError)

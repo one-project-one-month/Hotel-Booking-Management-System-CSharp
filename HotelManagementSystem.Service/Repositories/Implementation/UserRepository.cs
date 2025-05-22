@@ -32,7 +32,7 @@ public class UserRepository : IUserRepository
                 UserName = model.UserName,
                 Email = model.Email
             };
-            var hashedPassword = _passwordHasher.HashPassword(model.Password);
+            var hashedPassword = _passwordHasher.HashPassword(model.NewPassword);
             registerUserRequest.Password = hashedPassword;
             registerUserRequest.RoleId = await SeedRoleToUser();
             await _context.AddAsync(registerUserRequest);
