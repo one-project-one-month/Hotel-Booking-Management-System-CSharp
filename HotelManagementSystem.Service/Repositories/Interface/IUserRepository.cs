@@ -1,6 +1,7 @@
 using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Data.Entities;
+using HotelManagementSystem.Data.Models;
 
 namespace HotelManagementSystem.Service.Repositories.Interface;
 
@@ -12,4 +13,8 @@ public interface IUserRepository
     public Task<string> GetUserRolebyIdAsync(Guid id);
     public Task UpdateUserAsync(TblUser user);
     public Task<bool> RoleExitAsync(string roleName);
+    public Task<CustomEntityResult<ForgotPasswordResponseDto>> UpdateTokenAsync(ForgotPasswordRequestDto dto);
+    public Task<string> GetValidPasswordOtpByEmailAsync(string email);
+    public Task<CustomEntityResult<BasedResponseModel>> UpdatePasswordAsync(Guid userId, string newPassword);
+    public Task<CustomEntityResult<BasedResponseModel>> DeletePasswordOTPAsync(TblUser user);
 }
