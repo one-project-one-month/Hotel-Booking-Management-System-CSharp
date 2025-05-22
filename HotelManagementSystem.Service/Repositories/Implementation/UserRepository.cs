@@ -187,7 +187,7 @@ public class UserRepository : IUserRepository
             {
                 throw new UserNotFoundException(dto.Email);
             }
-            var token = user.ForgetPasswordOtp;
+            user.ForgetPasswordOtp = dto.Otp;
             user.OtpExpireAt = DateTime.UtcNow.AddMinutes(15);
 
             _context.TblUsers.Update(user);
