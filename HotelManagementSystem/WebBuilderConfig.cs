@@ -1,4 +1,7 @@
 using HotelManagementSystem.Data.Data;
+using HotelManagementSystem.Service.Reposities.Implementation;
+using HotelManagementSystem.Service.Repositories.Implementation;
+using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Implementation;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +17,14 @@ public class ServiceInjectionFactory
 
         //service
         builder.Services.AddTransient<IUserService, UserService>();
-        
+        builder.Services.AddTransient<ISearchRoomService, SearchRoomService>();
+
+        builder.Services.AddTransient<IUserRepository, UserRepository>();
+        builder.Services.AddTransient<ISearchRoomRepository, SearchRoomRepository>();
+
         //repository
-        
-        
+
+
         //helpers
         //builder.Services.AddTransient<IAuthorizationHelper, AuthorizationHelper>();
     }
