@@ -12,11 +12,11 @@ namespace HotelManagementSystem.Data.Entities
     public class BookingEntity
     {
         [Key]
-        [Column("BookingId")]
+        [Column("Booking_Id")]
         public string? BookingId { get; set; }
         [Column("UserId")]
         public string? UserId { get; set; }
-        [Column("GuestId")]
+        [Column("Guest_Id")]
         public string? GuestId { get; set; }
         [Column("Guest_Count")]
         public int Guest_Count { get; set; }
@@ -28,10 +28,18 @@ namespace HotelManagementSystem.Data.Entities
         public decimal? Deposit_Amount { get; set; }
         [Column("Total_Amount")]
         public decimal? Total_Amount { get; set; }
+        [Column("CheckOut_Time")]
         public DateTime CheckOutDate { get; set; }
         [Column("PaymentType")]
         public string? PaymentType { get; set; }
         [Column("CreatedAt")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public virtual GuestEntity? Guest { get; set; }
+
+        public virtual ICollection<CouponEntity> CouponEntities { get; set; } = new List<CouponEntity>();
+
+        public virtual ICollection<RoomBookingEntity> RoomBookingEntities { get; set; } = new List<RoomBookingEntity>();
+
+        public virtual UserEntity? User { get; set; }
     }
 }

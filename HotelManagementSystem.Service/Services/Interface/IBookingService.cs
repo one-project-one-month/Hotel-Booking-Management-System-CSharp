@@ -5,6 +5,8 @@ namespace HotelManagementSystem.Service.Services.Interface
 {
     public interface IBookingService
     {
-        public Task<CustomEntityResult<CreateBookingResponseModel>> CreaeBooking(CreateBookingRequestModel model);
+        public Task<CustomEntityResult<CreateBookingResponseModel>> CreateBooking(CreateBookingRequestModel model);
+        public Task<CustomEntityResult<GetBookingByIdResponseModel>> GetBookingById(GetBookingByIdRequestModel bookingId);
+        public Task<CustomEntityResult<ListBookingResponseModel>> BookingList();
     }
 }

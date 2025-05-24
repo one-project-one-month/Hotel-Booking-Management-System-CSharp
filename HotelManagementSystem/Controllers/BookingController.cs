@@ -1,4 +1,5 @@
-﻿using HotelManagementSystem.Data.Models;
+﻿using HotelManagementSystem.Data;
+using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.Booking;
 using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
@@ -20,7 +21,7 @@ namespace HotelManagementSystem.Controllers
         }
         [HttpPost]
         [Route("CreateBooking")]
-        public async Task<ActionResult<BasedResponseModel>> CreateBooking([FromBody] CreateBookingRequestModel model)
+        public async Task<ActionResult<BasedResponseModel>> CreateBooking(CreateBookingRequestModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -28,7 +29,51 @@ namespace HotelManagementSystem.Controllers
             }
             try
             {
-                var result = await _bookingService.CreaeBooking(model);
+                var result = await _bookingService.CreateBooking(model);
+                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return BadRequest(message);
+            }
+        }
+        [HttpGet]
+        [Route("GetBookingById/{bookingId}")]
+        public async Task<ActionResult<BasedResponseModel>> GetBookingById(GetBookingByIdRequestModel bookingId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            #region check required
+            if (string.IsNullOrEmpty(bookingId.BookingId))
+            {
+                return BadRequest(nameof(bookingId.BookingId) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
+            }
+            #endregion
+            try
+            {
+                var result = await _bookingService.GetBookingById(bookingId);
+                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return BadRequest(message);
+            }
+        }
+        [HttpGet]
+        [Route("BookingList")]
+        public async Task<ActionResult<BasedResponseModel>> BookingList()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var result = await _bookingService.BookingList();
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)
