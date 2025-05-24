@@ -11,9 +11,11 @@ public class CreateRoomRequestModel
 
     public string? RoomStatus { get; set; }
 
-    public byte[]? ImgUrl { get; set; }
-
     public int? GuestLimit { get; set; }
+
+    public Guid RoomTypeId { get; set; }
+
+    public bool IsFeatured { get; set; }
 }
 
 public class CreateRoomResponseModel : BasedResponseModel
