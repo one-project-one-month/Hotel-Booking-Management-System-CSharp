@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HotelManagementSystem.Data.Dtos.RoomType;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,23 +9,38 @@ namespace HotelManagementSystem.Data.Models.Room
 {
     public class RoomModel
     {
-    }
-
-    public class RoomResponseModel : BasedResponseModel
-    {
         public string RoomNo { get; set; }
 
         public string? RoomStatus { get; set; }
 
         public int? GuestLimit { get; set; }
 
-        public Guid RoomTypeId { get; set; }
+        //public Guid RoomTypeId { get; set; }
 
         public bool IsFeatured { get; set; }
+
+        public RoomTypeDto? RoomType { get; set; }
+    }
+
+    public class RoomResponseModel : BasedResponseModel
+    {
+        //public string RoomNo { get; set; }
+
+        //public string? RoomStatus { get; set; }
+
+        //public int? GuestLimit { get; set; }
+
+        ////public Guid RoomTypeId { get; set; }
+
+        //public bool IsFeatured { get; set; }
+
+        //public RoomTypeDto? RoomType { get; set; }
+
+        public RoomModel Room { get; set; }
     }
 
     public class RoomListResponseModel : BasedResponseModel
     {
-        public List<RoomResponseModel> RoomList { get; set; }
+        public List<RoomModel> RoomList { get; set; }
     }
 }

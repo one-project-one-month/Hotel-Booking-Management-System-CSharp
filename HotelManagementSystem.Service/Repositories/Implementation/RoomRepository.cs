@@ -1,6 +1,7 @@
 using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Data.Dtos.Room;
+using HotelManagementSystem.Data.Dtos.RoomType;
 using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Service.Repositories.Interface;
@@ -19,30 +20,79 @@ public class RoomRepository : IRoomRepository
     
     public async Task<CustomEntityResult<RoomListResponseDto>>GetRooms()
     {
-        var lst = await _hotelDbContext.TblRooms.Select(x=> new RoomResponseDto()
-        {
-            RoomNo = x.RoomNo,
-            RoomTypeId = x.RoomTypeId,
-            RoomStatus = x.RoomStatus,
-            GuestLimit = x.GuestLimit,
-        }).ToListAsync();
-        RoomListResponseDto roomList = new RoomListResponseDto()
+        //var lst = await _hotelDbContext.TblRooms.Select(x=> new RoomResponseDto()
+        //{
+        //    RoomNo = x.RoomNo,
+        //    RoomTypeId = x.RoomTypeId,
+        //    RoomStatus = x.RoomStatus,
+        //    GuestLimit = x.GuestLimit,
+        //}).ToListAsync();
+        //RoomListResponseDto roomList = new RoomListResponseDto()
+        //{
+        //    RoomList = lst
+        //};
+        //return CustomEntityResult<RoomListResponseDto>.GenerateSuccessEntityResult(roomList);
+
+        var lst = await _hotelDbContext.TblRooms
+            .Include(x=>x.RoomType)
+            .Select(x=>new RoomDto()
+            {
+                RoomNo = x.RoomNo,
+                GuestLimit = x.GuestLimit,
+                RoomStatus = x.RoomStatus,
+                IsFeatured = x.IsFeatured,
+                RoomType = new RoomTypeDto()
+                {
+                    RoomTypeName = x.RoomType.RoomTypeName,
+                    Description = x.RoomType.Description,
+                    ImgUrl = x.RoomType.ImgUrl,
+                    Price = x.RoomType.Price
+                }
+            }).ToListAsync();
+
+        var responseDto = new RoomListResponseDto()
         {
             RoomList = lst
         };
-        return CustomEntityResult<RoomListResponseDto>.GenerateSuccessEntityResult(roomList);
+
+        return CustomEntityResult<RoomListResponseDto>.GenerateSuccessEntityResult(responseDto);
     }
 
     public async Task<CustomEntityResult<RoomResponseDto>>GetRoomById(Guid id)
     {
-        var model = await _hotelDbContext.TblRooms.FirstOrDefaultAsync(x => x.RoomId == id);
+        var model = await _hotelDbContext.TblRooms
+            .Include(x=>x.RoomType)
+            .FirstOrDefaultAsync(x => x.RoomId == id);
         if (model is null) return CustomEntityResult<RoomResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Room Not Found");
         RoomResponseDto roomResponseDto = new RoomResponseDto()
         {
-            RoomNo = model.RoomNo,
-            GuestLimit = model.GuestLimit,
-            RoomStatus= model.RoomStatus,
-            RoomTypeId = model.RoomTypeId,
+            //RoomNo = model.RoomNo,
+            //GuestLimit = model.GuestLimit,
+            //RoomStatus= model.RoomStatus,
+            //IsFeatured = model.IsFeatured,
+            ////RoomTypeId = model.RoomTypeId,
+            //RoomType = new RoomTypeDto()
+            //{
+            //    RoomTypeName = model.RoomType.RoomTypeName,
+            //    Description = model.RoomType.Description,
+            //    ImgUrl = model.RoomType.ImgUrl,
+            //    Price = model.RoomType.Price
+            //},
+            Room = new RoomDto()
+            {
+                RoomNo = model.RoomNo,
+                GuestLimit = model.GuestLimit,
+                RoomStatus = model.RoomStatus,
+                IsFeatured = model.IsFeatured,
+                //RoomTypeId = model.RoomTypeId,
+                RoomType = new RoomTypeDto()
+                {
+                    RoomTypeName = model.RoomType.RoomTypeName,
+                    Description = model.RoomType.Description,
+                    ImgUrl = model.RoomType.ImgUrl,
+                    Price = model.RoomType.Price
+                },
+            }
         };
         return CustomEntityResult<RoomResponseDto>.GenerateSuccessEntityResult(roomResponseDto);
 

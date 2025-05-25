@@ -22,12 +22,13 @@ public class RoomService : IRoomService
     {
         var rooms = await _roomRepository.GetRooms();
         
-        var roomlists =  rooms.Result.RoomList.Select(x=> new RoomResponseModel()
+        var roomlists =  rooms.Result.RoomList.Select(x=> new RoomModel()
         {
             RoomNo = x.RoomNo,
             GuestLimit = x.GuestLimit,
             RoomStatus = x.RoomStatus,
-            RoomTypeId = x.RoomTypeId,
+            IsFeatured = x.IsFeatured,
+            RoomType = x.RoomType 
         }).ToList();
 
         RoomListResponseModel roomList = new RoomListResponseModel()
@@ -46,10 +47,21 @@ public class RoomService : IRoomService
         }
         RoomResponseModel roomResponse = new RoomResponseModel()
         {
-            RoomNo = room.Result.RoomNo,
-            RoomTypeId=room.Result.RoomTypeId,
-            RoomStatus = room.Result.RoomStatus,
-            GuestLimit=room.Result.GuestLimit,
+            //RoomNo = room.Result.RoomNo,
+            ////RoomTypeId=room.Result.RoomTypeId,
+            //GuestLimit = room.Result.GuestLimit,
+            //RoomStatus = room.Result.RoomStatus,
+            //IsFeatured=room.Result.IsFeatured,
+            //RoomType= room.Result.RoomType
+            Room = new RoomModel
+            {
+                RoomNo = room.Result.Room.RoomNo,
+                //RoomTypeId=room.Result.RoomTypeId,
+                GuestLimit = room.Result.Room.GuestLimit,
+                RoomStatus = room.Result.Room.RoomNo,
+                IsFeatured = room.Result.Room.IsFeatured,
+                RoomType = room.Result.Room.RoomType
+            }
         };
         return CustomEntityResult<RoomResponseModel>.GenerateSuccessEntityResult(roomResponse);
     }
