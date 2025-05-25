@@ -35,9 +35,11 @@ public class ServiceInjectionFactory
 
         //service
         builder.Services.AddTransient<IUserService, UserService>();
+        builder.Services.AddTransient<IRoomService, RoomService>();
 
         //repository
         builder.Services.AddTransient<IUserRepository, UserRepository>();
+        builder.Services.AddTransient<IRoomRepository, RoomRepository>();
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
