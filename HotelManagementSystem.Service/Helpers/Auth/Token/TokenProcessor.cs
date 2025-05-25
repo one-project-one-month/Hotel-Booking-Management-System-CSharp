@@ -1,5 +1,4 @@
 ﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Data.Data.FeatureModels;
 using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Service.Repositories.Interface;
@@ -55,18 +54,14 @@ namespace HotelManagementSystem.Service.Helpers.Auth.Token
                     signingCredentials: credential
                 );
                 var tokenHandler = new JwtSecurityTokenHandler().WriteToken(token);
-                var result = new LoginResponseDto
-                {
-                    AccessToken = tokenHandler,
-                    ExpireAt = expires
-                };
+                WriteTokenInHttpOnlyCookie("access_token", tokenHandler, expires);
+                var result = new LoginResponseDto();
                 return CustomEntityResult<LoginResponseDto>.GenerateSuccessEntityResult(result);
             }
             catch(Exception ex)
             {
                 return CustomEntityResult<LoginResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
             }
-            
         }
 
         public void WriteTokenInHttpOnlyCookie(string cookieName, string token, DateTime expireTime)

@@ -5,7 +5,7 @@
     }
     public class ResetPasswordRequestModel
     {
-        public required string Email { get; set; } = null!;
+        public required string Email { get; set; }
         public required string OTP { get; set; }
         public required string Password { get; set; }
     }

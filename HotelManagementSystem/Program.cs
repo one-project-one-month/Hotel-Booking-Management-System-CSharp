@@ -1,4 +1,5 @@
 using HotelManagementSystem;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthentication();
-app.UseAuthentication();
+app.UseAuthorization();
 
 //app.UseHttpsRedirection();
 app.MapControllers();

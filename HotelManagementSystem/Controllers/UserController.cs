@@ -5,19 +5,23 @@ using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
+using System.Security.Claims;
 
 namespace HotelManagementSystem.Controllers;
 
 [ApiController]
-[AllowAnonymous]
 [Route("api/[Controller]")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _service;
-    
-    public UserController(IUserService service)
+    private readonly IHttpContextAccessor _httpContext;
+
+    public UserController(IUserService service, IHttpContextAccessor httpContext)
     {
         _service = service;
+        _httpContext = httpContext;
     }
 
     [HttpPost]
@@ -39,7 +43,7 @@ public class UserController : ControllerBase
             return BadRequest(500);
         }
     }
-    
+
     [HttpPost]
     [Route("Register")]
     public async Task<ActionResult<RegisterUserResponseModel>> RegisterUserAsync(RegisterUserRequestModel model)
@@ -58,7 +62,7 @@ public class UserController : ControllerBase
             #region CheckRequiredField
             //if (String.IsNullOrEmpty(model.UserName))
             //{
-             //return APIHelper.GenerateResponseForRequiredField(nameof(model.UserName), _sharedLocalizer);
+            //return APIHelper.GenerateResponseForRequiredField(nameof(model.UserName), _sharedLocalizer);
             //}
             #endregion
 
@@ -68,7 +72,7 @@ public class UserController : ControllerBase
             //     return BadRequest(ErrorMessageConstant.EM_UserTypeNotAcceptable); ///Not Acceptable
             // }
             #endregion
-            
+
             var result = await _service.RegisterUser(model);
 
             //return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
@@ -92,8 +96,8 @@ public class UserController : ControllerBase
         try
         {
             var result = await _service.LoginAsync(model);
-            
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);            
+
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -133,6 +137,32 @@ public class UserController : ControllerBase
         try
         {
             var result = await _service.ResetPasswordAsync(model);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
+
+    [Authorize]
+    [HttpPost]
+    [Route("CreateUserProfile")]
+    public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileAsync([FromForm] CreateUserProfileRequestModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User not found. Please login again.");
+            }
+            var result = await _service.CreateUserProfileAsync(userId, model);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
