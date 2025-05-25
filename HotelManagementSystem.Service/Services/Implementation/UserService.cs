@@ -9,6 +9,7 @@ using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
 using Org.BouncyCastle.OpenSsl;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace HotelManagementSystem.Service.Services.Implementation;
 
@@ -88,12 +89,17 @@ public class UserService : IUserService
         {
             var email = model.Email;
             var user = await _userRepo.GetUserByEmail(email);
+            var existingPassword = user.Password;
+            if(existingPassword == null)
+            {
+                throw new PasswordCorruptedException("Password is corrupted or not set for this user. Please reset your password.");
+            }
             var LoginResponse = new LoginRequestDto
             {
                 Email = model.Email,
                 Password = model.Password
             };
-            bool isValid = _passwordHasher.VerifyPassword(user.Password, model.Password);
+            bool isValid = _passwordHasher.VerifyPassword(existingPassword, model.Password);
             if (!isValid)
             {
                 throw new IncorrectPasswordException("Password is incorrect");
@@ -108,13 +114,9 @@ public class UserService : IUserService
             var refreshTokenExpireAt = DateTime.UtcNow.AddDays(7);
             user.RefreshToken = refreshToken;
             user.TokenExpireAt = refreshTokenExpireAt;
-            await _userRepo.UpdateUserAsync(user);
+            await _userRepo.UpdateTokenAsync(user);
             _tokenProcessor.WriteTokenInHttpOnlyCookie("refresh_token", refreshToken, refreshTokenExpireAt);
-            var loginResponse = new LoginResponseModel
-            {
-                AccessToken = result.Result.AccessToken,
-                ExpireAt = result.Result.ExpireAt
-            };
+            var loginResponse = new LoginResponseModel();
             return CustomEntityResult<LoginResponseModel>.GenerateSuccessEntityResult(loginResponse);
         }
         catch (Exception ex)
@@ -172,6 +174,36 @@ public class UserService : IUserService
         catch(Exception ex)
         {
             return CustomEntityResult<ResetPasswordResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+        }
+    }
+    public async Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileAsync(string userId, CreateUserProfileRequestModel model)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UserNotFoundException("User not found. Please login again.");
+            }
+            using var ms = new MemoryStream();
+            await model.ProfileImg.CopyToAsync(ms);
+            var imageByte = ms.ToArray();
+            var createProfile = new CreateUserProfileRequestDto
+            {
+                UserId = Guid.Parse(userId),
+                UserName = model.UserName,
+                ProfileImg = imageByte
+            };
+            var result = await _userRepo.CreateUserProfileAsync(createProfile);
+            if (result.IsError)
+            {
+                return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+            }
+            var response = new CreateUserResponseModel();
+            return CustomEntityResult<CreateUserResponseModel>.GenerateSuccessEntityResult(response);
+        }
+        catch(Exception ex)
+        {
+            return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 }

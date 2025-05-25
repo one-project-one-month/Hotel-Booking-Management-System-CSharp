@@ -9,6 +9,7 @@ using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 
 namespace HotelManagementSystem.Service.Reposities.Implementation;
 
@@ -108,22 +109,28 @@ public class UserRepository : IUserRepository
         return RoleId;
     }
 
-    public async Task UpdateUserAsync(TblUser user)
+    public async Task UpdateTokenAsync(TblUser user)
     {
         try
         {
             var existingUser = await _context.TblUsers
                 .FirstOrDefaultAsync(u => u.UserId == user.UserId);
+
             if (existingUser == null)
             {
                 throw new UserNotFoundException(user.Email);
             }
-            _context.TblUsers.Update(existingUser);
+            if (user.RefreshToken != null)
+                existingUser.RefreshToken = user.RefreshToken;
+
+            if (user.TokenExpireAt != default)
+                existingUser.TokenExpireAt = user.TokenExpireAt;
+
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            throw new Exception($"{ex.Message}", ex);
+            throw new Exception($"Failed to update user: {ex.Message}", ex);
         }
     }
 
@@ -140,8 +147,6 @@ public class UserRepository : IUserRepository
             }
             existingUser.ForgetPasswordOtp = null;
             existingUser.OtpExpireAt = default;
-
-            _context.TblUsers.Update(existingUser);
             await _context.SaveChangesAsync();
 
             var returnModel = new BasedResponseModel();
@@ -161,7 +166,7 @@ public class UserRepository : IUserRepository
                 .FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
-                throw new UserNotFoundException(user.Email);
+                throw new UserNotFoundException(email);
             }
 
             var token = user.ForgetPasswordOtp;
@@ -189,8 +194,6 @@ public class UserRepository : IUserRepository
             }
             user.ForgetPasswordOtp = dto.Otp;
             user.OtpExpireAt = DateTime.UtcNow.AddMinutes(15);
-
-            _context.TblUsers.Update(user);
             await _context.SaveChangesAsync();
             var returnModel = new ForgotPasswordResponseDto();
             return CustomEntityResult<ForgotPasswordResponseDto>.GenerateSuccessEntityResult(returnModel);
@@ -218,6 +221,39 @@ public class UserRepository : IUserRepository
         catch (Exception ex)
         {
             return CustomEntityResult<BasedResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+        }
+    }
+
+    public async Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileAsync(CreateUserProfileRequestDto dto)
+    {
+        try
+        {
+            var existingUser = await _context.TblUsers
+             .FirstOrDefaultAsync(u => u.UserId == dto.UserId);
+
+            if (existingUser == null)
+            {
+                throw new UserNotFoundException(dto.UserId.ToString());
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.UserName))
+            {
+                existingUser.UserName = dto.UserName;
+            }
+
+            if (dto.ProfileImg != null && dto.ProfileImg.Length > 0)
+            {
+                existingUser.ProfileImg = dto.ProfileImg;
+            }
+
+            await _context.SaveChangesAsync();
+
+            var response = new CreateUserProfileResponseDto(); 
+            return CustomEntityResult<CreateUserProfileResponseDto>.GenerateSuccessEntityResult(response);
+        }
+        catch(Exception ex)
+        {
+            return CustomEntityResult<CreateUserProfileResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 }

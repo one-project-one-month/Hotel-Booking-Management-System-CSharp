@@ -11,10 +11,11 @@ public interface IUserRepository
     public Task<CustomEntityResult<SeedRoleResponseDto>> SeedRoleAsync(SeedRoleDto roleName);
     public Task<TblUser> GetUserByEmail(string email);
     public Task<string> GetUserRolebyIdAsync(Guid id);
-    public Task UpdateUserAsync(TblUser user);
+    public Task UpdateTokenAsync(TblUser user);
     public Task<bool> RoleExitAsync(string roleName);
     public Task<CustomEntityResult<ForgotPasswordResponseDto>> UpdateTokenAsync(ForgotPasswordRequestDto dto);
     public Task<string> GetValidPasswordOtpByEmailAsync(string email);
     public Task<CustomEntityResult<BasedResponseModel>> UpdatePasswordAsync(Guid userId, string newPassword);
     public Task<CustomEntityResult<BasedResponseModel>> DeletePasswordOTPAsync(TblUser user);
+    public Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileAsync(CreateUserProfileRequestDto dto);
 }
