@@ -176,22 +176,37 @@ public class UserService : IUserService
             return CustomEntityResult<ResetPasswordResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
-    public async Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileAsync(string userId, CreateUserProfileRequestModel model)
+    public async Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileAsync(string Id, CreateUserProfileRequestModel model)
     {
         try
         {
-            if (string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(Id))
             {
                 throw new UserNotFoundException("User not found. Please login again.");
             }
-            using var ms = new MemoryStream();
-            await model.ProfileImg.CopyToAsync(ms);
-            var imageByte = ms.ToArray();
+
+            if (!Guid.TryParse(Id, out var userId))
+            {
+                throw new InvalidUserIdException("Invalid user ID format.");
+            }
+
+            byte[]? imageByte = null;
+            if (model.ProfileImg != null && model.ProfileImg.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await model.ProfileImg.CopyToAsync(ms);
+                imageByte = ms.ToArray();
+            }
+
             var createProfile = new CreateUserProfileRequestDto
             {
-                UserId = Guid.Parse(userId),
+                UserId = userId,
+                Address = model.Address,
+                DateOfBirth = model.DateOfBirth,
+                Gender = model.Gender,
                 UserName = model.UserName,
-                ProfileImg = imageByte
+                ProfileImg = imageByte,
+                ProfileImgMimeType = model.ProfileImg?.ContentType
             };
             var result = await _userRepo.CreateUserProfileAsync(createProfile);
             if (result.IsError)
@@ -204,6 +219,85 @@ public class UserService : IUserService
         catch(Exception ex)
         {
             return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+        }
+    }
+    public async Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string Id, CreateUserProfileRequestModel model)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(Id))
+            {
+                throw new UserNotFoundException("User not found. Please login again.");
+            }
+
+            if (!Guid.TryParse(Id, out var userId))
+            {
+                throw new InvalidUserIdException("Invalid user ID format.");
+            }
+
+            byte[]? imageByte = null;
+            if (model.ProfileImg != null && model.ProfileImg.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await model.ProfileImg.CopyToAsync(ms);
+                imageByte = ms.ToArray();
+            }
+
+            var createProfile = new CreateUserProfileRequestDto
+            {
+                UserId = userId,
+                Address = model.Address,
+                DateOfBirth = model.DateOfBirth,
+                Gender = model.Gender,
+                UserName = model.UserName,
+                ProfileImg = imageByte,
+                ProfileImgMimeType = model.ProfileImg?.ContentType
+            };
+            var result = await _userRepo.CreateUserProfileAsync(createProfile);
+            if (result.IsError)
+            {
+                return CustomEntityResult<UpdateUserProfileByIdResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+            }
+            var response = new UpdateUserProfileByIdResponseModel();
+            return CustomEntityResult<UpdateUserProfileByIdResponseModel>.GenerateSuccessEntityResult(response);
+        }
+        catch (Exception ex)
+        {
+            return CustomEntityResult<UpdateUserProfileByIdResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+        }
+    }
+
+    public async Task<CustomEntityResult<GetUserProfileByIdResponseModel>> GetUserProfileByIdAsync(string Id)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(Id))
+            {
+                throw new UserNotFoundException("User not found. Please login again.");
+            }
+            if (!Guid.TryParse(Id, out var userId))
+            {
+                throw new InvalidUserIdException("Invalid user ID format.");
+            }
+            var id = new GetUserProfileByIdRequestDto
+            {
+                UserId = userId
+            };
+            var result = await _userRepo.GetUserProfileByIdAsync(id);
+            var response = new GetUserProfileByIdResponseModel
+            {
+                UserName = result.Result.UserName,
+                Address = result.Result.Address,
+                DateOfBirth = result.Result.DateOfBirth,
+                Gender = result.Result.Gender,
+                ProfileImg = result.Result.ProfileImg,
+                ProfileImgMimeType = result.Result.ProfileImgMimeType
+            };
+            return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateSuccessEntityResult(response);
+        }
+        catch(Exception ex)
+        {
+            return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 }

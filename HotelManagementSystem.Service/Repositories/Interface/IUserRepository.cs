@@ -19,4 +19,5 @@ public interface IUserRepository
     public Task<CustomEntityResult<BasedResponseModel>> UpdatePasswordAsync(Guid userId, string newPassword);
     public Task<CustomEntityResult<BasedResponseModel>> DeletePasswordOTPAsync(TblUser user);
     public Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileAsync(CreateUserProfileRequestDto dto);
+    public Task<CustomEntityResult<GetUserProfileByIdResponseDto>> GetUserProfileByIdAsync(GetUserProfileByIdRequestDto dto);
 }

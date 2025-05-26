@@ -239,21 +239,41 @@ public class UserRepository : IUserRepository
         try
         {
             var existingUser = await _context.TblUsers
-             .FirstOrDefaultAsync(u => u.UserId == dto.UserId);
+                .Include(u => u.TblUserProfileImage)
+                .FirstOrDefaultAsync(u => u.UserId == dto.UserId);
 
             if (existingUser == null)
-            {
                 throw new UserNotFoundException(dto.UserId.ToString());
-            }
 
             if (!string.IsNullOrWhiteSpace(dto.UserName))
-            {
                 existingUser.UserName = dto.UserName;
-            }
+
+            if (!string.IsNullOrWhiteSpace(dto.Address))
+                existingUser.Address = dto.Address;
+
+            if (!string.IsNullOrWhiteSpace(dto.Gender))
+                existingUser.Gender = dto.Gender;
+
+            if (dto.DateOfBirth.HasValue)
+                existingUser.DateOfBirth = dto.DateOfBirth;
 
             if (dto.ProfileImg != null && dto.ProfileImg.Length > 0)
             {
-                existingUser.ProfileImg = dto.ProfileImg;
+                if (existingUser.TblUserProfileImage == null)
+                {
+                    var newImage = new TblUserProfileImage
+                    {
+                        UserId = existingUser.UserId,
+                        ProfileImg = dto.ProfileImg,
+                        ProfileImgMimeType = dto.ProfileImgMimeType
+                    };
+                    await _context.TblUserProfileImages.AddAsync(newImage);
+                }
+                else
+                {
+                    existingUser.TblUserProfileImage.ProfileImg = dto.ProfileImg;
+                    existingUser.TblUserProfileImage.ProfileImgMimeType = dto.ProfileImgMimeType;
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -264,6 +284,35 @@ public class UserRepository : IUserRepository
         catch(Exception ex)
         {
             return CustomEntityResult<CreateUserProfileResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+        }
+    }
+
+    public async Task<CustomEntityResult<GetUserProfileByIdResponseDto>> GetUserProfileByIdAsync(GetUserProfileByIdRequestDto dto)
+    {
+        try
+        {
+            var user = await _context.TblUsers
+                .Include(u => u.TblUserProfileImage)
+                .FirstOrDefaultAsync(u => u.UserId == dto.UserId);
+            if (user == null)
+            {
+                throw new UserNotFoundException(dto.UserId.ToString());
+            }
+            var result = new GetUserProfileByIdResponseDto
+            {
+                UserName = user.UserName,
+                Address = user.Address,
+                DateOfBirth = user.DateOfBirth,
+                Gender = user.Gender,
+                ProfileImg = user.TblUserProfileImage?.ProfileImg,
+                ProfileImgMimeType = user.TblUserProfileImage?.ProfileImgMimeType
+            };
+
+            return CustomEntityResult<GetUserProfileByIdResponseDto>.GenerateSuccessEntityResult(result);
+        }
+        catch (Exception ex)
+        {
+            return CustomEntityResult<GetUserProfileByIdResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 }
