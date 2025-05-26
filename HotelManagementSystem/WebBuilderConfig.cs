@@ -5,6 +5,7 @@ using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using HotelManagementSystem.Service.Helpers.Auth.SMTP;
 using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Reposities.Implementation;
+using HotelManagementSystem.Service.Repositories.Implementation;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Implementation;
 using HotelManagementSystem.Service.Services.Interface;
@@ -17,7 +18,7 @@ public class ServiceInjectionFactory
     public static void ServiceInject(WebApplicationBuilder builder)
     {
         builder.Services.AddDbContext<HotelDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnect")));
 
         var env = builder.Environment.EnvironmentName.ToLower();
         var envFile = $".env.{env}";
@@ -36,10 +37,12 @@ public class ServiceInjectionFactory
         //service
         builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<IRoomService, RoomService>();
+        builder.Services.AddTransient<IFeatureRoomService, FeatureRoomService>();
 
         //repository
         builder.Services.AddTransient<IUserRepository, UserRepository>();
         builder.Services.AddTransient<IRoomRepository, RoomRepository>();
+        builder.Services.AddTransient<IFeatureRoomRepository, FeatureRoomRepository>();
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
