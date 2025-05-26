@@ -1,5 +1,6 @@
 ﻿using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Dtos.BookingControl;
+using HotelManagementSystem.Data.Models.BookingControl;
 using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public class BookingsControlController : ControllerBase
         _bookingControlService = bookingControlService;
     }
     [HttpGet]
-    public async Task<ActionResult<GetBookingsResponseDto>> IndexAsync()
+    public async Task<ActionResult<GetBookingsResponseModel>> IndexAsync()
     {
         try
         {

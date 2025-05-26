@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HotelManagementSystem.Data.Models.BookingControl;
 
 namespace HotelManagementSystem.Service.Services.Interface;
 
 public interface IBookingControlService
 {
-    public Task<CustomEntityResult<GetBookingsResponseDto>> GetBookingControl();
+    public Task<CustomEntityResult<GetBookingsResponseModel>> GetBookingControl();
 }

@@ -1,23 +1,22 @@
-﻿using HotelManagementSystem.Data.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HotelManagementSystem.Data.Dtos.BookingControl;
+namespace HotelManagementSystem.Data.Models.BookingControl;
 
-public class GetBookingsDto
+public class GetBookingControlModel
 {
 
 }
 
-public class GetBookingsRequestDto
+public class GetBookingsRequestModel
 {
 
 }
 
-public class GetBookingResponseDto : BasedResponseModel
+public class GetBookingResponseModel : BasedResponseModel
 {
 
     public Guid BookingId { get; set; }
@@ -42,7 +41,7 @@ public class GetBookingResponseDto : BasedResponseModel
 
     public string? PaymentType { get; set; }
 }
-public class GetBookingsResponseDto : BasedResponseModel
+public class GetBookingsResponseModel : BasedResponseModel
 {
-    public List<GetBookingResponseDto> Bookings { get; set; } = new();
+    public List<GetBookingResponseModel>? Bookings { get; set; } = new();
 }

@@ -29,7 +29,16 @@ public class BookingControlRepository : IBookingControlRepository
         var getBookingResponse = bookings.Select(b => new GetBookingResponseDto
         {
             BookingId = b.BookingId,
-            UserId = b.UserId
+            UserId = b.UserId,
+            GuestId = b.GuestId,
+            GuestCount = b.GuestCount,
+            CheckIn_Time = b.CheckInTime,
+            CheckOut_Time = b.CheckOutTime,
+            Deposit_Amount = b.DepositAmount,
+            BookingStatus = b.BookingStatus,
+            TotalAmount = b.TotalAmount,
+            CreatedAt = b.CreatedAt,
+            PaymentType = b.PaymentType
         }).ToList();
 
         var getBookingsResponse = new GetBookingsResponseDto
