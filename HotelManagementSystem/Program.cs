@@ -1,9 +1,19 @@
 using HotelManagementSystem;
 using HotelManagementSystem.Service.Helpers.Auth.MiddleWare;
 using Microsoft.OpenApi.Models;
-
+var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy  =>
+        {
+            policy.WithOrigins("https://localhost:7144",
+                "http://localhost:5053").AllowAnyMethod().AllowAnyHeader();
+        });
+});
 // Add services to the container.
 ServiceInjectionFactory.ServiceInject(builder);
 
@@ -25,6 +35,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseMiddleware<JwtAutoRefreshMiddleware>();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthorization();
 
 //app.UseHttpsRedirection();
