@@ -1,4 +1,7 @@
-﻿namespace HotelManagementSystem.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace HotelManagementSystem.Data.Entities;
 
 public partial class TblBooking
 {

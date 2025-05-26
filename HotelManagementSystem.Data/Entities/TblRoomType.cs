@@ -1,4 +1,7 @@
-﻿namespace HotelManagementSystem.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace HotelManagementSystem.Data.Entities;
 
 public partial class TblRoomType
 {
@@ -9,6 +12,8 @@ public partial class TblRoomType
     public string? Description { get; set; }
 
     public decimal Price { get; set; }
+
+    public virtual TblRoomTypeImage? TblRoomTypeImage { get; set; }
 
     public virtual ICollection<TblRoom> TblRooms { get; set; } = new List<TblRoom>();
 }
