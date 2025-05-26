@@ -57,6 +57,16 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public async Task<TblUser> GetUserById(Guid userId)
+    {
+        var user = await _context.TblUsers.FirstOrDefaultAsync(x => x.UserId == userId);
+        if (user == null)
+        {
+            throw new UserDoesNotExitException(userId);
+        }
+        return user;
+    }
+
     public async Task<CustomEntityResult<SeedRoleResponseDto>> SeedRoleAsync(SeedRoleDto roleName)
     {
         try
