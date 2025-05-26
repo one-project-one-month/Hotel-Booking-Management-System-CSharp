@@ -1,12 +1,8 @@
-using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
 namespace HotelManagementSystem.Controllers;
@@ -163,6 +159,58 @@ public class UserController : ControllerBase
                 return BadRequest("User not found. Please login again.");
             }
             var result = await _service.CreateUserProfileAsync(userId, model);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
+
+    [Authorize]
+    [HttpPatch]
+    [Route("UpdateUserProfile")]
+    public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync([FromForm] CreateUserProfileRequestModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User not found. Please login again.");
+            }
+            var result = await _service.UpdateUserProfileByIdAsync(userId, model);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
+
+    [Authorize]
+    [HttpGet]
+    [Route("GetUserProfile")]
+    public async Task<ActionResult<GetUserProfileByIdResponseModel>> GetUserById()
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User not found. Please login again.");
+            }
+            var result = await _service.GetUserProfileByIdAsync(userId);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)

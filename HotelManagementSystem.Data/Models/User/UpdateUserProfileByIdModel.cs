@@ -1,11 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Data.Models.User
 {
-    public class CreateUserProfileModel
+    internal class UpdateUserProfileByIdModel
     {
     }
-    public class CreateUserProfileRequestModel
+    public class UpdateUserProfileByIdRequestModel
     {
         public string? UserName { get; set; }
         public string? Address { get; set; }
@@ -14,8 +19,7 @@ namespace HotelManagementSystem.Data.Models.User
         public IFormFile? ProfileImg { get; set; }
         public string? ProfileImgMimeType { get; set; }
     }
-    public class  CreateUserResponseModel : BasedResponseModel
+    public class UpdateUserProfileByIdResponseModel : BasedResponseModel
     {
-        
     }
 }
