@@ -1,4 +1,5 @@
 using HotelManagementSystem;
+using HotelManagementSystem.Service.Helpers.Auth.MiddleWare;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthentication();
+app.UseMiddleware<JwtAutoRefreshMiddleware>();
 app.UseAuthorization();
 
 //app.UseHttpsRedirection();

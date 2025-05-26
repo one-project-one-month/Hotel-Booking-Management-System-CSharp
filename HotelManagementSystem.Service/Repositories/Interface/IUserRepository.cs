@@ -9,6 +9,7 @@ public interface IUserRepository
 {
     public Task<CustomEntityResult<RegisterUserResponseDto>> RegisterUser(RegisterUserrequestDto model);
     public Task<CustomEntityResult<SeedRoleResponseDto>> SeedRoleAsync(SeedRoleDto roleName);
+    public Task<TblUser> GetUserById(Guid userId);
     public Task<TblUser> GetUserByEmail(string email);
     public Task<string> GetUserRolebyIdAsync(Guid id);
     public Task UpdateTokenAsync(TblUser user);
