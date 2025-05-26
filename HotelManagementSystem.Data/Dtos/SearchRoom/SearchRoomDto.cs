@@ -12,12 +12,30 @@ namespace HotelManagementSystem.Data.Dtos.SearchRoom
     }
     public class SearchRoomRequestDto
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
+        public string? RoomType { get; set; }
+
+        public decimal? Price { get; set; }
+        public int? GuestLimit { get; set; }
+
+        public DateOnly? CheckInDate { get; set; }
+
+        public DateOnly? CheckOutDate { get; set; }
     }
 
     public class SearchRoomResponseDto : BasedResponseModel
     {
+        public List<RoomDto> Rooms { get; set; } = new List<RoomDto>();
+    }
 
+
+    public class RoomDto: BasedResponseModel
+    {
+        public Guid RoomId { get; set; }
+        public string? RoomType { get; set; }
+        public decimal? Price { get; set; }
+        public int? GuestLimit { get; set; }
+        public string? RoomNumber { get; set; }
+        public string? Description { get; set; }
+        public byte[]? ImgUrl { get; set; }
     }
 }

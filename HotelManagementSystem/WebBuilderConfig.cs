@@ -12,15 +12,19 @@ public class ServiceInjectionFactory
 {
     public static void ServiceInject(WebApplicationBuilder builder)
     {
-        builder.Services.AddDbContext<AppDbContext>(options =>
+        //builder.Services.AddDbContext<AppDbContext>(options =>
+        //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        builder.Services.AddDbContext<HotelDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         //service
         builder.Services.AddTransient<IUserService, UserService>();
-        builder.Services.AddTransient<ISearchRoomService, SearchRoomService>();
-
         builder.Services.AddTransient<IUserRepository, UserRepository>();
+
+        builder.Services.AddTransient<ISearchRoomService, SearchRoomService>();
         builder.Services.AddTransient<ISearchRoomRepository, SearchRoomRepository>();
+     
 
         //repository
 

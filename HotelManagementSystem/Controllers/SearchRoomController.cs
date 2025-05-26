@@ -2,8 +2,10 @@
 using HotelManagementSystem.Data.Models.SearchRoom;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Helpers;
+using HotelManagementSystem.Service;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Implementation;
+using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +32,12 @@ namespace HotelManagementSystem.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            if (model.RoomType!.isNullOrEmptyCustom() && model.GuestLimit <=0 && model.Price <= 0)
+            {
+                return BadRequest();
+            }
+
 
             try
             {

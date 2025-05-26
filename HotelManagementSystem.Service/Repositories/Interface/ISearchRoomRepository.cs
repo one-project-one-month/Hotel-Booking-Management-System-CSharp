@@ -5,6 +5,6 @@ namespace HotelManagementSystem.Service.Repositories.Interface
 {
     public interface ISearchRoomRepository
     {
-        Task<CustomEntityResult<SearchRoomResponseDto>> CreateUser(SearchRoomRequestDto model);
+        Task<CustomEntityResult<SearchRoomResponseDto>> SearchRoom(SearchRoomRequestDto model);
     }
 }
