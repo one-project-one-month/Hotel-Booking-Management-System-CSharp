@@ -91,30 +91,31 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                 //            r.Is_Featured AS IsFeatured
                 //        FROM Tbl_Rooms r
                 //        JOIN Tbl_RoomType rt ON r.RoomType_Id = rt.RoomType_Id").ToListAsync();
+
                 var availableRooms = await _context.TblRooms
                       .Include(r => r.RoomType)
-    .Where(r =>
-        !_context.TblRoomBookings
-            .Where(rb => rb.Booking.CheckInTime < model.CheckOutDate &&
-                         rb.Booking.CheckOutTime > model.CheckInDate)
-            .Select(rb => rb.RoomId)
-            .Contains(r.RoomId)
-        &&
-        (string.IsNullOrEmpty(model.RoomType) || r.RoomType.RoomTypeName.Contains(model.RoomType))
-        &&
-        (!model.GuestLimit.HasValue || r.GuestLimit >= model.GuestLimit.Value)
-    )
-    .Select(r => new RoomDto
-    {
-        RoomId = r.RoomId,
-        RoomNumber = r.RoomNo,
-        RoomType = r.RoomType.RoomTypeName,
-        Price = r.RoomType.Price,
-        GuestLimit = r.GuestLimit,
-        Description = r.RoomType.Description,
-        ImgUrl = r.RoomType.ImgUrl
-    })
-    .ToListAsync();
+                      .Where(r =>
+                                !_context.TblRoomBookings
+                                    .Where( rb => rb.Booking.CheckInTime < model.CheckOutDate &&
+                                            rb.Booking.CheckOutTime > model.CheckInDate)
+                                    .Select(rb => rb.RoomId)
+                                    .Contains(r.RoomId)
+                                        &&
+                                    (string.IsNullOrEmpty(model.RoomType) || r.RoomType.RoomTypeName.Contains(model.RoomType))
+                                        &&
+                                    (!model.GuestLimit.HasValue || r.GuestLimit >= model.GuestLimit.Value)
+                            )
+                    .Select(r => new RoomDto
+                    {
+                        RoomId = r.RoomId,
+                        RoomNumber = r.RoomNo,
+                        RoomType = r.RoomType.RoomTypeName,
+                        Price = r.RoomType.Price,
+                        GuestLimit = r.GuestLimit,
+                        Description = r.RoomType.Description,
+                        ImgUrl = r.RoomType.ImgUrl
+                    })
+                    .ToListAsync();
 
 
                 var searchRoomList = availableRooms.Select(x => new RoomDto()

@@ -13,8 +13,6 @@ public partial class TblUser
 
     public Guid RoleId { get; set; }
 
-    public byte[]? ProfileImg { get; set; }
-
     public int? Points { get; set; }
 
     public DateTime? CreatedAt { get; set; }
@@ -29,9 +27,17 @@ public partial class TblUser
 
     public string? Password { get; set; }
 
+    public string? Gender { get; set; }
+
+    public string? Address { get; set; }
+
+    public DateOnly? DateOfBirth { get; set; }
+
     public virtual TblRole Role { get; set; } = null!;
 
     public virtual ICollection<TblBooking> TblBookings { get; set; } = new List<TblBooking>();
 
     public virtual ICollection<TblGuest> TblGuests { get; set; } = new List<TblGuest>();
+
+    public virtual TblUserProfileImage? TblUserProfileImage { get; set; }
 }

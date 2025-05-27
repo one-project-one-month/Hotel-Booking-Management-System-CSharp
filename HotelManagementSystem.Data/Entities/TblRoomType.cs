@@ -13,7 +13,7 @@ public partial class TblRoomType
 
     public decimal Price { get; set; }
 
-    public byte[]? ImgUrl { get; set; }
+    public virtual TblRoomTypeImage? TblRoomTypeImage { get; set; }
 
     public virtual ICollection<TblRoom> TblRooms { get; set; } = new List<TblRoom>();
 }
