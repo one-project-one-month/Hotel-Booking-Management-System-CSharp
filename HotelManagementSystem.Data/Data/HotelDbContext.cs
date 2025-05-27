@@ -39,6 +39,9 @@ public partial class HotelDbContext : DbContext
     public virtual DbSet<TblUser> TblUsers { get; set; }
 
     public virtual DbSet<TblUserProfileImage> TblUserProfileImages { get; set; }
+
+   
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CheckInOut>(entity =>
