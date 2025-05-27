@@ -1,3 +1,4 @@
+using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
@@ -71,7 +72,6 @@ public class UserController : ControllerBase
 
             var result = await _service.RegisterUser(model);
 
-            //return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)

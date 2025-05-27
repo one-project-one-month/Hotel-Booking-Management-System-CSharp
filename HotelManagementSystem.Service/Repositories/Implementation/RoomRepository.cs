@@ -21,13 +21,6 @@ public class RoomRepository : IRoomRepository
         {
             var createRoom = new TblRoom()
             {
-                RoomId = Guid.NewGuid(),
-                RoomNo = model.RoomNo,
-                RoomStatus = model.RoomStatus,
-                RoomTypeId = Guid.NewGuid(),
-                ImgUrl = model.ImgUrl,
-                GuestLimit = model.GuestLimit,
-                CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime()
             };
 
             // await _hotelDbContext.TblRooms.AddAsync(createRoom);

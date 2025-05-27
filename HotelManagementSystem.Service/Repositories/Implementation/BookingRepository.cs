@@ -15,9 +15,9 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
 {
     public class BookingRepository : IBookingRepository
     {
-        private readonly AppDbContext _context;
+        private readonly HotelDbContext _context;
 
-        public BookingRepository(AppDbContext context)
+        public BookingRepository(HotelDbContext context)
         {
             _context = context;
         }
@@ -25,24 +25,14 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             try
             {
-                var createBookingRequest = new BookingEntity
+                var createBookingRequest = new TblBooking
                 {
-                    BookingId = Guid.NewGuid().ToString(),
-                    UserId = model.UserId,
-                    GuestId = model.GuestId,
-                    Guest_Count = model.Guest_Count,
-                    Booking_Status = model.Booking_Status,
-                    Deposit_Amount = model.Deposit_Amount,
-                    Total_Amount = model.Total_Amount,
-                    CheckInDate = model.CheckInDate,
-                    CheckOutDate = model.CheckOutDate,
-                    PaymentType = model.PaymentType
                 };
                 //var createBooking = await _context.Bookings.AddAsync(createBookingRequest);
                 //await _context.SaveChangesAsync();
                 var creteBookingResponse = new CreateBookingResponseDto()
                 {
-                    BookingId = createBookingRequest.BookingId
+                   
                 };
                 return CustomEntityResult<CreateBookingResponseDto>.GenerateSuccessEntityResult(creteBookingResponse);
             }
@@ -55,23 +45,13 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             try
             {
-                var booking = await _context.Bookings.FindAsync(bookingId);
+                var booking = await _context.TblBookings.FindAsync(bookingId);
                 if (booking is null)
                 {
                     return CustomEntityResult<GetBookingByIdResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Booking not found");
                 }
                 var getBookingResponse = new GetBookingByIdResponseDto
                 {
-                    BookingId = booking.BookingId,
-                    UserId = booking.UserId,
-                    GuestId = booking.GuestId,
-                    Guest_Count = booking.Guest_Count,
-                    Booking_Status = booking.Booking_Status,
-                    Deposit_Amount = booking.Deposit_Amount,
-                    Total_Amount = booking.Total_Amount,
-                    CheckInDate = booking.CheckInDate,
-                    CheckOutDate = booking.CheckOutDate,
-                    PaymentType = booking.PaymentType
                 };
                 return CustomEntityResult<GetBookingByIdResponseDto>.GenerateSuccessEntityResult(getBookingResponse);
             }
@@ -84,7 +64,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             try
             {
-                var bookings = await _context.Bookings.ToListAsync();
+                var bookings = await _context.TblBookings.ToListAsync();
 
                 if (bookings == null || !bookings.Any())
                 {
@@ -97,16 +77,6 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                 {
                     Bookings = bookings.Select(b => new ListBookingDto
                     {
-                        BookingId = b.BookingId,
-                        UserId = b.UserId,
-                        GuestId = b.GuestId,
-                        Guest_Count = b.Guest_Count,
-                        Booking_Status = b.Booking_Status,
-                        Deposit_Amount = b.Deposit_Amount,
-                        Total_Amount = b.Total_Amount,
-                        CheckInDate = b.CheckInDate,
-                        CheckOutDate = b.CheckOutDate,
-                        PaymentType = b.PaymentType
                     }).ToList()
                 };
 

@@ -9,7 +9,7 @@ public class CreateRoomDto
 
 public class CreateRoomRequestDto
 {
-    public string RoomNo { get; set; }
+    public string? RoomNo { get; set; }
 
     public string? RoomStatus { get; set; }
 

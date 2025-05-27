@@ -7,7 +7,7 @@ public class CreateRoomModel
 
 public class CreateRoomRequestModel
 {
-    public string RoomNo { get; set; }
+    public string? RoomNo { get; set; }
 
     public string? RoomStatus { get; set; }
 

@@ -39,11 +39,6 @@ public partial class HotelDbContext : DbContext
     public virtual DbSet<TblUser> TblUsers { get; set; }
 
     public virtual DbSet<TblUserProfileImage> TblUserProfileImages { get; set; }
-
-        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-NFU692OK\\LOCALDB;Initial Catalog=HBMS_Dbo;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
-
-        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-NFU692OK\\LOCALDB;Initial Catalog=HBMS_Dbo;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CheckInOut>(entity =>
