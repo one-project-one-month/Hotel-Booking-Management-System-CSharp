@@ -37,8 +37,6 @@ namespace HotelManagementSystem.Controllers
             {
                 return BadRequest();
             }
-
-
             try
             {
                 #region CheckRequiredField

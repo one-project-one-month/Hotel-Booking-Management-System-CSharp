@@ -27,8 +27,6 @@ namespace HotelManagementSystem.Service.Services.Implementation
         {
             try
             {
-
-
                 var result = await _searchRoomRepo.SearchRoom(new SearchRoomRequestDto
                 {
                     RoomType = model.RoomType,
