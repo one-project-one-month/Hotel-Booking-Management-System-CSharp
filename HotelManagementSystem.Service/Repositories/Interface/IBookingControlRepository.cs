@@ -10,5 +10,6 @@ namespace HotelManagementSystem.Service.Repositories.Interface;
 
 public interface IBookingControlRepository
 {
-    public Task<CustomEntityResult<GetBookingsResponseDto>> GetBookingControl();
+    public Task<CustomEntityResult<GetBookingsResponseDto>> GetBookings();
+    public Task<CustomEntityResult<GetBookingsResponseDto>> DeleteBooking(string BookingId);
 }

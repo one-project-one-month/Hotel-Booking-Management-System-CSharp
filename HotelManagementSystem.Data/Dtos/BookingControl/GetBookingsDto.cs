@@ -1,4 +1,5 @@
-﻿using HotelManagementSystem.Data.Models;
+﻿using HotelManagementSystem.Data.Entities;
+using HotelManagementSystem.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,15 +20,13 @@ public class GetBookingsRequestDto
 
 public class GetBookingResponseDto : BasedResponseModel
 {
+    public string UserName { get; set; } = null!;
+    public string GuestNrc { get; set; } = null!;
 
-    public Guid BookingId { get; set; }
+    public string GuestPhoneNo { get; set; } = null!;
 
-    public Guid? UserId { get; set; }
-
-    public Guid? GuestId { get; set; }
-
+    public List<string> RoomNo { get; set; } = new();
     public int? GuestCount { get; set; }
-
     public DateOnly? CheckIn_Time { get; set; }
 
     public DateOnly? CheckOut_Time { get; set; }
@@ -37,10 +36,15 @@ public class GetBookingResponseDto : BasedResponseModel
     public string? BookingStatus { get; set; }
 
     public decimal? TotalAmount { get; set; }
+    public string? PaymentType { get; set; }
+
+    public Guid BookingId { get; set; }
+
+    public Guid? UserId { get; set; }
+
+    public Guid? GuestId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
-
-    public string? PaymentType { get; set; }
 }
 public class GetBookingsResponseDto : BasedResponseModel
 {

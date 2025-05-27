@@ -11,6 +11,7 @@ using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Service.Services.Interface;
 using HotelManagementSystem.Data.Models.BookingControl;
+using HotelManagementSystem.Data.Entities;
 
 namespace HotelManagementSystem.Service.Services.Implementation;
 
@@ -23,9 +24,9 @@ public class BookingControlService : IBookingControlService
         _bookingControlRepository = bookingControlRepository;
     }
 
-    public async Task<CustomEntityResult<GetBookingsResponseModel>> GetBookingControl()
+    public async Task<CustomEntityResult<GetBookingsResponseModel>> GetBookings()
     {
-        var result = await _bookingControlRepository.GetBookingControl();
+        var result = await _bookingControlRepository.GetBookings();
         if (result.IsError)
         {
             return CustomEntityResult<GetBookingsResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
@@ -45,11 +46,25 @@ public class BookingControlService : IBookingControlService
                 BookingStatus = b.BookingStatus,
                 TotalAmount = b.TotalAmount,
                 CreatedAt = b.CreatedAt,
-                PaymentType = b.PaymentType
+                PaymentType = b.PaymentType,
+                GuestNrc = b.GuestNrc,
+                GuestPhoneNo = b.GuestPhoneNo,
+                UserName = b.UserName,
+                RoomNo = b.RoomNo
             }).ToList()
         };
 
-        return CustomEntityResult<GetBookingsResponseModel>.GenerateSuccessEntityResult(getBookingResponse); ;
+        return CustomEntityResult<GetBookingsResponseModel>.GenerateSuccessEntityResult(getBookingResponse);
+    }
 
+    public async Task<CustomEntityResult<GetBookingsResponseModel>> DeleteBooking(string BookingId)
+    {
+        var result = await _bookingControlRepository.DeleteBooking(BookingId);
+        if (result.IsError)
+        {
+            return CustomEntityResult<GetBookingsResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+        }
+        var returnModel = new GetBookingsResponseModel();
+        return CustomEntityResult<GetBookingsResponseModel>.GenerateSuccessEntityResult(returnModel);
     }
 }

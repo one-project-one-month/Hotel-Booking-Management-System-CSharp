@@ -18,11 +18,26 @@ public class BookingsControlController : ControllerBase
         _bookingControlService = bookingControlService;
     }
     [HttpGet]
-    public async Task<ActionResult<GetBookingsResponseModel>> IndexAsync()
+    public async Task<ActionResult<GetBookingsResponseModel>> GetBookings()
     {
         try
         {
-            var result = await _bookingControlService.GetBookingControl();
+            var result = await _bookingControlService.GetBookings();
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
+        }
+    }
+
+    [HttpDelete("{BookingId}")]
+    public async Task<ActionResult<GetBookingsResponseModel>> DeleteBooking(string BookingId)
+    {
+        try
+        {
+            var result = await _bookingControlService.DeleteBooking(BookingId);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
