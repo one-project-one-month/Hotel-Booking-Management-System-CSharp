@@ -5,6 +5,7 @@ using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HotelManagementSystem.Controllers
 {
@@ -19,9 +20,11 @@ namespace HotelManagementSystem.Controllers
         {
             _bookingService = bookingService;
         }
+
+        [Authorize]
         [HttpPost]
-        [Route("CreateBooking")]
-        public async Task<ActionResult<BasedResponseModel>> CreateBooking(CreateBookingRequestModel model)
+        [Route("CreateBookingByUser")]
+        public async Task<ActionResult<BasedResponseModel>> CreateBookingByUser(CreateBookingRequestModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -29,7 +32,8 @@ namespace HotelManagementSystem.Controllers
             }
             try
             {
-                var result = await _bookingService.CreateBooking(model);
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var result = await _bookingService.CreateBookingByUser(userId, model);
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)
@@ -38,6 +42,7 @@ namespace HotelManagementSystem.Controllers
                 return BadRequest(message);
             }
         }
+
         [HttpGet]
         [Route("GetBookingById/{bookingId}")]
         public async Task<ActionResult<BasedResponseModel>> GetBookingById(GetBookingByIdRequestModel bookingId)
@@ -63,9 +68,32 @@ namespace HotelManagementSystem.Controllers
                 return BadRequest(message);
             }
         }
+
+        [Authorize]
         [HttpGet]
-        [Route("BookingList")]
-        public async Task<ActionResult<BasedResponseModel>> BookingList()
+        [Route("GetAllBookingByUserId/{userId}")]
+        public async Task<ActionResult<BasedResponseModel>> GetAllBookingByUserId()
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var result = await _bookingService.GetAllBookingByUserId(userId);
+                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return BadRequest(message);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetAllBookingList")]
+        public async Task<ActionResult<BasedResponseModel>> GetAllBookingList()
         {
             if (!ModelState.IsValid)
             {
@@ -73,7 +101,7 @@ namespace HotelManagementSystem.Controllers
             }
             try
             {
-                var result = await _bookingService.BookingList();
+                var result = await _bookingService.GetAllBookingList();
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)

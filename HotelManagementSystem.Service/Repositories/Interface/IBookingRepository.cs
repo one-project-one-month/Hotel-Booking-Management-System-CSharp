@@ -11,8 +11,9 @@ namespace HotelManagementSystem.Service.Repositories.Interface
 {
     public interface IBookingRepository
     {
-        Task<CustomEntityResult<CreateBookingResponseDto>> CreateBooking(CreateBookingRequestDto model);
+        Task<CustomEntityResult<CreateBookingResponseDto>> CreateBookingByUser(CreateBookingRequestDto model);
         Task<CustomEntityResult<GetBookingByIdResponseDto>> GetBookingById(GetBookingByIdRequestDto bookingId);
-        Task<CustomEntityResult<ListBookingResponseDto>> BookingList();
+        Task<CustomEntityResult<ListBookingResponseDto>> GetAllBookingByUserId(ListBookingRequestByUserDto dto);
+        Task<CustomEntityResult<ListBookingResponseDto>> GetAllBookingList();
     }
 }

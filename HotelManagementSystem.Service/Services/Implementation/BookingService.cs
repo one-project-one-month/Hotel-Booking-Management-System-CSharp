@@ -1,8 +1,10 @@
 ﻿using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Dtos.Booking;
 using HotelManagementSystem.Data.Models.Booking;
+using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
+using System.Runtime.CompilerServices;
 
 namespace HotelManagementSystem.Service.Services.Implementation
 {
@@ -13,15 +15,23 @@ namespace HotelManagementSystem.Service.Services.Implementation
         {
             _bookingRepo = bookingRepo;
         }
-        public async Task<CustomEntityResult<CreateBookingResponseModel>> CreateBooking(CreateBookingRequestModel model)
+        public async Task<CustomEntityResult<CreateBookingResponseModel>> CreateBookingByUser(string userId,CreateBookingRequestModel model)
         {
             try
             {
                 #region call repo
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new UserNotFoundException("User not found. Please login again.");
+                }
+
+                if (!Guid.TryParse(userId, out var Id))
+                {
+                    throw new InvalidUserIdException("Invalid user ID format.");
+                }
                 var createBookingRequest = new CreateBookingRequestDto
                 {
-                    UserId = model.UserId,
-                    GuestId = model.GuestId,
+                    UserId = Id,
                     Guest_Count = model.Guest_Count,
                     Booking_Status = model.Booking_Status,
                     Deposit_Amount = model.Deposit_Amount,
@@ -30,7 +40,7 @@ namespace HotelManagementSystem.Service.Services.Implementation
                     CheckOutDate = model.CheckOutDate,
                     PaymentType = model.PaymentType
                 };
-                var createBooking = await _bookingRepo.CreateBooking(createBookingRequest);
+                var createBooking = await _bookingRepo.CreateBookingByUser(createBookingRequest);
                 if (createBooking.IsError)
                 {
                     return CustomEntityResult<CreateBookingResponseModel>.GenerateFailEntityResult(createBooking.Result.RespCode,createBooking.Result.RespDescription);
@@ -80,11 +90,65 @@ namespace HotelManagementSystem.Service.Services.Implementation
                 return CustomEntityResult<GetBookingByIdResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
             }
         }
-        public async Task<CustomEntityResult<ListBookingResponseModel>> BookingList()
+
+        public async Task<CustomEntityResult<ListBookingResponseModel>> GetAllBookingByUserId(string Id)
         {
             try
             {
-                var bookingListResult = await _bookingRepo.BookingList();
+                if (string.IsNullOrEmpty(Id))
+                {
+                    throw new UserNotFoundException("User not found. Please login again.");
+                }
+                if (!Guid.TryParse(Id, out var userId))
+                {
+                    throw new InvalidUserIdException("Invalid user ID format.");
+                }
+                var UserID = new ListBookingRequestByUserDto
+                {
+                    UserId = userId
+                };
+                var bookingListResult = await _bookingRepo.GetAllBookingByUserId(UserID);
+                if (bookingListResult.IsError)
+                {
+                    return CustomEntityResult<ListBookingResponseModel>.GenerateFailEntityResult(bookingListResult.Result.RespCode, bookingListResult.Result.RespDescription);
+                }
+                var listBookingResponse = new ListBookingResponseModel
+                {
+                    Booking = bookingListResult.Result.Bookings!.Select(b => new ListBookingModel
+                    {
+                        BookingId = b.BookingId,
+                        UserId = b.UserId,
+                        GuestId = b.GuestId,
+                        Guest_Count = b.Guest_Count,
+                        Booking_Status = b.Booking_Status,
+                        Deposit_Amount = b.Deposit_Amount,
+                        Total_Amount = b.Total_Amount,
+                        CheckInDate = b.CheckInDate,
+                        CheckOutDate = b.CheckOutDate,
+                        PaymentType = b.PaymentType
+                    }).ToList()
+                };
+                if (listBookingResponse.Booking == null || !listBookingResponse.Booking.Any())
+                {
+                    return CustomEntityResult<ListBookingResponseModel>.GenerateFailEntityResult(
+                        ResponseMessageConstants.RESPONSE_CODE_NOTFOUND,
+                        "No bookings found for this user");
+                }
+                return CustomEntityResult<ListBookingResponseModel>.GenerateSuccessEntityResult(listBookingResponse);
+            }
+            catch (Exception ex)
+            {
+                return CustomEntityResult<ListBookingResponseModel>.GenerateFailEntityResult(
+                    ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                    ex.Message + (ex.InnerException?.Message ?? ""));
+            }
+        }
+
+        public async Task<CustomEntityResult<ListBookingResponseModel>> GetAllBookingList()
+        {
+            try
+            {
+                var bookingListResult = await _bookingRepo.GetAllBookingList();
 
                 if (bookingListResult.IsError)
                 {
@@ -107,6 +171,13 @@ namespace HotelManagementSystem.Service.Services.Implementation
                         PaymentType = b.PaymentType
                     }).ToList()
                 };
+
+                if (listBookingResponse.Booking == null || !listBookingResponse.Booking.Any())
+                {
+                    return CustomEntityResult<ListBookingResponseModel>.GenerateFailEntityResult(
+                        ResponseMessageConstants.RESPONSE_CODE_NOTFOUND,
+                        "No bookings found");
+                }
 
                 return CustomEntityResult<ListBookingResponseModel>.GenerateSuccessEntityResult(listBookingResponse);
             }

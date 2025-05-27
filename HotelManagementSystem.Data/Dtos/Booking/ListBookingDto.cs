@@ -20,9 +20,9 @@ namespace HotelManagementSystem.Data.Dtos.Booking
         public DateTime CheckOutDate { get; set; }
         public string? PaymentType { get; set; }
     }
-    public class ListBookingRequestDto
+    public class ListBookingRequestByUserDto
     {
-
+        public Guid UserId { get; set; }
     }
     public class ListBookingResponseDto : BasedResponseModel
     {
