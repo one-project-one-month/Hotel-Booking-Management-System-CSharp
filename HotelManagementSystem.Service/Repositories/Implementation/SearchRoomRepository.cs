@@ -112,8 +112,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                         RoomType = r.RoomType.RoomTypeName,
                         Price = r.RoomType.Price,
                         GuestLimit = r.GuestLimit,
-                        Description = r.RoomType.Description,
-                        ImgUrl = r.RoomType.ImgUrl
+                        Description = r.RoomType.Description
                     })
                     .ToListAsync();
 

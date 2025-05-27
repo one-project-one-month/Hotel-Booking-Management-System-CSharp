@@ -37,11 +37,13 @@ public class ServiceInjectionFactory
         //service
         builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<IRoomService, RoomService>();
+        builder.Services.AddTransient<ISearchRoomRepository, SearchRoomRepository>();
         builder.Services.AddTransient<IBookingService, BookingService>();
 
         //repository
         builder.Services.AddTransient<IUserRepository, UserRepository>();
         builder.Services.AddTransient<IRoomRepository, RoomRepository>();
+        builder.Services.AddTransient<ISearchRoomService, SearchRoomService>();
         builder.Services.AddTransient<IBookingRepository, BookingRepository>();
 
         //helpers
