@@ -20,21 +20,9 @@ public class RoomRepository : IRoomRepository
     
     public async Task<CustomEntityResult<RoomListResponseDto>>GetRooms()
     {
-        //var lst = await _hotelDbContext.TblRooms.Select(x=> new RoomResponseDto()
-        //{
-        //    RoomNo = x.RoomNo,
-        //    RoomTypeId = x.RoomTypeId,
-        //    RoomStatus = x.RoomStatus,
-        //    GuestLimit = x.GuestLimit,
-        //}).ToListAsync();
-        //RoomListResponseDto roomList = new RoomListResponseDto()
-        //{
-        //    RoomList = lst
-        //};
-        //return CustomEntityResult<RoomListResponseDto>.GenerateSuccessEntityResult(roomList);
-
         var lst = await _hotelDbContext.TblRooms
             .Include(x=>x.RoomType)
+            .ThenInclude(x=>x.TblRoomTypeImage)
             .Select(x=>new RoomDto()
             {
                 RoomNo = x.RoomNo,
@@ -45,7 +33,8 @@ public class RoomRepository : IRoomRepository
                 {
                     RoomTypeName = x.RoomType.RoomTypeName,
                     Description = x.RoomType.Description,
-                    ImgUrl = x.RoomType.ImgUrl,
+                    RoomImg = x.RoomType.TblRoomTypeImage!=null?  x.RoomType.TblRoomTypeImage.RoomImg: null,
+                    RoomImgMimeType = x.RoomType.TblRoomTypeImage!=null?  x.RoomType.TblRoomTypeImage.RoomImgMimeType : null,
                     Price = x.RoomType.Price
                 }
             }).ToListAsync();
@@ -60,37 +49,28 @@ public class RoomRepository : IRoomRepository
 
     public async Task<CustomEntityResult<RoomResponseDto>>GetRoomById(Guid id)
     {
-        var model = await _hotelDbContext.TblRooms
+        var room = await _hotelDbContext.TblRooms
             .Include(x=>x.RoomType)
+            .ThenInclude(x=>x.TblRoomTypeImage)
             .FirstOrDefaultAsync(x => x.RoomId == id);
-        if (model is null) return CustomEntityResult<RoomResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Room Not Found");
+
+        if (room is null) return CustomEntityResult<RoomResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Room Not Found");
+
         RoomResponseDto roomResponseDto = new RoomResponseDto()
         {
-            //RoomNo = model.RoomNo,
-            //GuestLimit = model.GuestLimit,
-            //RoomStatus= model.RoomStatus,
-            //IsFeatured = model.IsFeatured,
-            ////RoomTypeId = model.RoomTypeId,
-            //RoomType = new RoomTypeDto()
-            //{
-            //    RoomTypeName = model.RoomType.RoomTypeName,
-            //    Description = model.RoomType.Description,
-            //    ImgUrl = model.RoomType.ImgUrl,
-            //    Price = model.RoomType.Price
-            //},
             Room = new RoomDto()
             {
-                RoomNo = model.RoomNo,
-                GuestLimit = model.GuestLimit,
-                RoomStatus = model.RoomStatus,
-                IsFeatured = model.IsFeatured,
-                //RoomTypeId = model.RoomTypeId,
+                RoomNo = room.RoomNo,
+                GuestLimit = room.GuestLimit,
+                RoomStatus = room.RoomStatus,
+                IsFeatured = room.IsFeatured,
                 RoomType = new RoomTypeDto()
                 {
-                    RoomTypeName = model.RoomType.RoomTypeName,
-                    Description = model.RoomType.Description,
-                    ImgUrl = model.RoomType.ImgUrl,
-                    Price = model.RoomType.Price
+                    RoomTypeName = room.RoomType.RoomTypeName,
+                    Description = room.RoomType.Description,
+                    RoomImg = room.RoomType.TblRoomTypeImage!=null ? room.RoomType.TblRoomTypeImage.RoomImg : null,
+                    RoomImgMimeType = room.RoomType.TblRoomTypeImage != null ? room.RoomType.TblRoomTypeImage.RoomImgMimeType : null,
+                    Price = room.RoomType.Price
                 },
             }
         };
@@ -128,18 +108,23 @@ public class RoomRepository : IRoomRepository
         }
     }
 
-    public async Task<CustomEntityResult<UpdateRoomResponseDto>>UpdateRoom(Guid id, UpdateRoomRequestDto model)
+    public async Task<CustomEntityResult<UpdateRoomResponseDto>>UpdateRoom(Guid id, UpdateRoomRequestDto requestDto)
     {
         try
         {
             var room = await _hotelDbContext.TblRooms.FirstOrDefaultAsync(x => x.RoomId == id);
-            if (model is null) return CustomEntityResult<UpdateRoomResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Room Not Found");
+            if (requestDto is null) return CustomEntityResult<UpdateRoomResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Room Not Found");
 
-            if (!string.IsNullOrEmpty(model.RoomNo)) room!.RoomNo = model.RoomNo;
-            if (!string.IsNullOrEmpty(model.RoomStatus)) room!.RoomStatus = model.RoomStatus;
-            if (model.GuestLimit.HasValue) room!.GuestLimit = model.GuestLimit;
-            if (model.RoomTypeId.HasValue && model.RoomTypeId != Guid.Empty) room!.RoomTypeId = model.RoomTypeId.Value;
-            if (model.IsFeatured.HasValue) room!.IsFeatured = model.IsFeatured.Value;
+            if (!string.IsNullOrEmpty(requestDto.RoomNo)) room!.RoomNo = requestDto.RoomNo;
+
+            if (!string.IsNullOrEmpty(requestDto.RoomStatus)) room!.RoomStatus = requestDto.RoomStatus;
+
+            if (requestDto.GuestLimit.HasValue) room!.GuestLimit = requestDto.GuestLimit;
+
+            if (requestDto.RoomTypeId.HasValue && requestDto.RoomTypeId != Guid.Empty) room!.RoomTypeId = requestDto.RoomTypeId.Value;
+
+            if (requestDto.IsFeatured.HasValue) room!.IsFeatured = requestDto.IsFeatured.Value;
+
             room!.UpdatedAt = EntityConstantsHelper.GetMyanmarLocalTime();
 
             int result = await _hotelDbContext.SaveChangesAsync();

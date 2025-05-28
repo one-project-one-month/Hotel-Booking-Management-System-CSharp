@@ -19,6 +19,13 @@ namespace HotelManagementSystem.Data.Dtos.RoomType
 
         public decimal Price { get; set; }
 
-        public byte[]? ImgUrl { get; set; }
+        public byte[]? RoomImg { get; set; }
+
+        public string? RoomImgMimeType { get; set;}
+    }
+
+    public class CreateRoomTypeResponseDto : BasedResponseModel
+    {
+        public Guid RoomTypeId { get; set; }
     }
 }

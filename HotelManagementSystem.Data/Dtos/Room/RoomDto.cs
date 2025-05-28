@@ -22,6 +22,7 @@ namespace HotelManagementSystem.Data.Dtos.Room
         public bool IsFeatured { get; set; }
 
         public RoomTypeDto? RoomType { get; set; }
+     
     }
 
     public class RoomResponseDto : BasedResponseModel

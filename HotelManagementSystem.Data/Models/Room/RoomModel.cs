@@ -1,4 +1,5 @@
 ﻿using HotelManagementSystem.Data.Dtos.RoomType;
+using HotelManagementSystem.Data.Models.RoomType;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace HotelManagementSystem.Data.Models.Room
 {
     public class RoomModel
     {
-        public string RoomNo { get; set; }
+        public string? RoomNo { get; set; }
 
         public string? RoomStatus { get; set; }
 
@@ -19,7 +20,7 @@ namespace HotelManagementSystem.Data.Models.Room
 
         public bool IsFeatured { get; set; }
 
-        public RoomTypeDto? RoomType { get; set; }
+        public RoomTypeModel? RoomType { get; set; }
     }
 
     public class RoomResponseModel : BasedResponseModel

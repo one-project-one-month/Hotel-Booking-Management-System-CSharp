@@ -5,7 +5,7 @@ public class CreateRoomModel
     
 }
 
-public class CreateRoomRequestModel
+public class CreateRoomRequestModel: BasedRequestModel
 {
     public string RoomNo { get; set; }
 

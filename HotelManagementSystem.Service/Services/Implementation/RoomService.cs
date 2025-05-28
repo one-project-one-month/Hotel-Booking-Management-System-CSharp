@@ -3,6 +3,7 @@ using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Dtos.Room;
 using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.Room;
+using HotelManagementSystem.Data.Models.RoomType;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
 using System.Security.AccessControl;
@@ -22,13 +23,20 @@ public class RoomService : IRoomService
     {
         var rooms = await _roomRepository.GetRooms();
         
-        var roomlists =  rooms.Result.RoomList.Select(x=> new RoomModel()
+        var roomlists =  rooms.Result.RoomList.Select(x=> new RoomModel
         {
             RoomNo = x.RoomNo,
             GuestLimit = x.GuestLimit,
             RoomStatus = x.RoomStatus,
             IsFeatured = x.IsFeatured,
-            RoomType = x.RoomType 
+            RoomType = x.RoomType != null ? new RoomTypeModel
+            {
+                RoomTypeName = x.RoomType.RoomTypeName,
+                RoomImg = x.RoomType.RoomImg != null ? Convert.ToBase64String(x.RoomType.RoomImg) : null,
+                RoomImgMimeType = x.RoomType.RoomImgMimeType != null ? x.RoomType.RoomImgMimeType : null,
+                Description = x.RoomType.Description,
+                Price = x.RoomType.Price,
+            } : null, 
         }).ToList();
 
         RoomListResponseModel roomList = new RoomListResponseModel()
@@ -45,7 +53,7 @@ public class RoomService : IRoomService
         {
             return CustomEntityResult<RoomResponseModel>.GenerateFailEntityResult(room.Result.RespCode, room.Result.RespDescription);
         }
-        RoomResponseModel roomResponse = new RoomResponseModel()
+        RoomResponseModel roomResponse = new RoomResponseModel
         {
             //RoomNo = room.Result.RoomNo,
             ////RoomTypeId=room.Result.RoomTypeId,
@@ -60,7 +68,14 @@ public class RoomService : IRoomService
                 GuestLimit = room.Result.Room.GuestLimit,
                 RoomStatus = room.Result.Room.RoomNo,
                 IsFeatured = room.Result.Room.IsFeatured,
-                RoomType = room.Result.Room.RoomType
+                RoomType = room.Result.Room.RoomType != null ? new RoomTypeModel
+                {
+                    RoomTypeName = room.Result.Room.RoomType.RoomTypeName,
+                    RoomImg = room.Result.Room.RoomType.RoomImg != null ? Convert.ToBase64String(room.Result.Room.RoomType.RoomImg) : null,
+                    RoomImgMimeType = room.Result.Room.RoomType.RoomImgMimeType != null ? room.Result.Room.RoomType.RoomImgMimeType : null,
+                    Description = room.Result.Room.RoomType.Description,
+                    Price = room.Result.Room.RoomType.Price,
+                } : null,
             }
         };
         return CustomEntityResult<RoomResponseModel>.GenerateSuccessEntityResult(roomResponse);
@@ -110,21 +125,21 @@ public class RoomService : IRoomService
                 GuestLimit = model.GuestLimit,
                 IsFeatured = model.IsFeatured,
             };
-            var response = await _roomRepository.UpdateRoom(id, updateRequestDto);
-            if (response.IsError)
+            var result = await _roomRepository.UpdateRoom(id, updateRequestDto);
+            if (result.IsError)
             {
-                return CustomEntityResult<UpdateRoomResponseModel>.GenerateFailEntityResult(response.Result.RespCode, response.Result.RespDescription);
+                return CustomEntityResult<UpdateRoomResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
             }
 
-            var updateResonseModel = new UpdateRoomResponseModel()
+            var response = new UpdateRoomResponseModel()
             {
-                RoomNo = response.Result.RoomNo,
-                RoomStatus = response.Result.RoomStatus,
-                RoomTypeId = response.Result.RoomTypeId,
-                GuestLimit = response.Result.GuestLimit,
-                IsFeatured = response.Result.IsFeatured,
+                RoomNo = result.Result.RoomNo,
+                RoomStatus = result.Result.RoomStatus,
+                RoomTypeId = result.Result.RoomTypeId,
+                GuestLimit = result.Result.GuestLimit,
+                IsFeatured = result.Result.IsFeatured,
             };
-            return CustomEntityResult<UpdateRoomResponseModel>.GenerateSuccessEntityResult(updateResonseModel);
+            return CustomEntityResult<UpdateRoomResponseModel>.GenerateSuccessEntityResult(response);
         }
         catch (Exception ex)
         {

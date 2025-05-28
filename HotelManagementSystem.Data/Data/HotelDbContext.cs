@@ -34,7 +34,11 @@ public partial class HotelDbContext : DbContext
 
     public virtual DbSet<TblRoomType> TblRoomTypes { get; set; }
 
+    public virtual DbSet<TblRoomTypeImage> TblRoomTypeImages { get; set; }
+
     public virtual DbSet<TblUser> TblUsers { get; set; }
+
+    public virtual DbSet<TblUserProfileImage> TblUserProfileImages { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -44,7 +48,7 @@ public partial class HotelDbContext : DbContext
     {
         modelBuilder.Entity<CheckInOut>(entity =>
         {
-            entity.HasKey(e => e.CheckInOutId).HasName("PK__Check_In__C68602BF61E124B4");
+            entity.HasKey(e => e.CheckInOutId).HasName("PK__Check_In__C68602BF34CC08FC");
 
             entity.ToTable("Check_In_Out");
 
@@ -69,7 +73,7 @@ public partial class HotelDbContext : DbContext
 
         modelBuilder.Entity<TblBooking>(entity =>
         {
-            entity.HasKey(e => e.BookingId).HasName("PK__Tbl_Book__35ABFDC00B81EC59");
+            entity.HasKey(e => e.BookingId).HasName("PK__Tbl_Book__35ABFDC08F8B1A30");
 
             entity.ToTable("Tbl_Booking");
 
@@ -103,7 +107,7 @@ public partial class HotelDbContext : DbContext
 
         modelBuilder.Entity<TblCoupon>(entity =>
         {
-            entity.HasKey(e => e.CouponId).HasName("PK__Tbl_Coup__384AF1BA1D007C5D");
+            entity.HasKey(e => e.CouponId).HasName("PK__Tbl_Coup__384AF1BA4C687099");
 
             entity.ToTable("Tbl_Coupons");
 
@@ -137,7 +141,7 @@ public partial class HotelDbContext : DbContext
 
         modelBuilder.Entity<TblGuest>(entity =>
         {
-            entity.HasKey(e => e.GuestId).HasName("PK__Tbl_Gues__CB8B0D33F7CC3341");
+            entity.HasKey(e => e.GuestId).HasName("PK__Tbl_Gues__CB8B0D33DD976293");
 
             entity.ToTable("Tbl_Guest");
 
@@ -159,7 +163,7 @@ public partial class HotelDbContext : DbContext
 
         modelBuilder.Entity<TblInvoice>(entity =>
         {
-            entity.HasKey(e => e.InvoiceId).HasName("PK__Tbl_Invo__0DE605743ED9B486");
+            entity.HasKey(e => e.InvoiceId).HasName("PK__Tbl_Invo__0DE605747E186F14");
 
             entity.ToTable("Tbl_Invoice");
 
@@ -192,7 +196,7 @@ public partial class HotelDbContext : DbContext
 
         modelBuilder.Entity<TblRole>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Tbl_Role__8AFACE1A13EB3BBA");
+            entity.HasKey(e => e.RoleId).HasName("PK__Tbl_Role__8AFACE1A1C89C8E6");
 
             entity.ToTable("Tbl_Roles");
 
@@ -202,11 +206,11 @@ public partial class HotelDbContext : DbContext
 
         modelBuilder.Entity<TblRoom>(entity =>
         {
-            entity.HasKey(e => e.RoomId).HasName("PK__Tbl_Room__19EE6A13575CA7B8");
+            entity.HasKey(e => e.RoomId).HasName("PK__Tbl_Room__19EE6A131374EAE3");
 
             entity.ToTable("Tbl_Rooms");
 
-            entity.HasIndex(e => e.RoomNo, "UQ__Tbl_Room__19EF81FD57B7F8F1").IsUnique();
+            entity.HasIndex(e => e.RoomNo, "UQ__Tbl_Room__19EF81FDDC26E145").IsUnique();
 
             entity.Property(e => e.RoomId)
                 .HasDefaultValueSql("(newid())")
@@ -231,7 +235,7 @@ public partial class HotelDbContext : DbContext
 
         modelBuilder.Entity<TblRoomBooking>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Tbl_Room__3214EC072093B012");
+            entity.HasKey(e => e.Id).HasName("PK__Tbl_Room__3214EC075506DBC6");
 
             entity.ToTable("Tbl_Room_Booking");
 
@@ -251,35 +255,52 @@ public partial class HotelDbContext : DbContext
 
         modelBuilder.Entity<TblRoomType>(entity =>
         {
-            entity.HasKey(e => e.RoomTypeId).HasName("PK__Tbl_Room__ADB3BCFB0594E42B");
+            entity.HasKey(e => e.RoomTypeId).HasName("PK__Tbl_Room__ADB3BCFBEA74AE50");
 
             entity.ToTable("Tbl_RoomType");
 
             entity.Property(e => e.RoomTypeId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("RoomType_Id");
-            entity.Property(e => e.ImgUrl).HasColumnName("Img_URL");
             entity.Property(e => e.Price).HasColumnType("decimal(8, 2)");
             entity.Property(e => e.RoomTypeName)
                 .HasMaxLength(50)
                 .HasColumnName("RoomType_Name");
         });
 
+        modelBuilder.Entity<TblRoomTypeImage>(entity =>
+        {
+            entity.HasKey(e => e.RoomTypeId).HasName("PK__Tbl_Room__ADB3BCFBD8328A99");
+
+            entity.ToTable("Tbl_RoomTypeImages");
+
+            entity.Property(e => e.RoomTypeId)
+                .ValueGeneratedNever()
+                .HasColumnName("RoomType_Id");
+            entity.Property(e => e.RoomImgMimeType).HasMaxLength(100);
+
+            entity.HasOne(d => d.RoomType).WithOne(p => p.TblRoomTypeImage)
+                .HasForeignKey<TblRoomTypeImage>(d => d.RoomTypeId)
+                .HasConstraintName("FK_RoomTypeImage_RoomType");
+        });
+
         modelBuilder.Entity<TblUser>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Tbl_User__1788CC4C0788159E");
+            entity.HasKey(e => e.UserId).HasName("PK__Tbl_User__1788CC4C0692D6CF");
 
             entity.ToTable("Tbl_Users");
 
-            entity.HasIndex(e => e.Email, "UQ__Tbl_User__A9D105340379BB1D").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Tbl_User__A9D10534698122AC").IsUnique();
 
             entity.Property(e => e.UserId).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.Address).HasMaxLength(255);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getutcdate())");
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.ForgetPasswordOtp)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .HasColumnName("ForgetPasswordOTP");
+            entity.Property(e => e.Gender).HasMaxLength(10);
             entity.Property(e => e.OtpExpireAt)
                 .HasColumnType("datetime")
                 .HasColumnName("OTP_ExpireAt");
@@ -290,6 +311,20 @@ public partial class HotelDbContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Tbl_Users_Tbl_Roles");
+        });
+
+        modelBuilder.Entity<TblUserProfileImage>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("PK__Tbl_User__1788CC4CE46A86EE");
+
+            entity.ToTable("Tbl_UserProfileImages");
+
+            entity.Property(e => e.UserId).ValueGeneratedNever();
+            entity.Property(e => e.ProfileImgMimeType).HasMaxLength(100);
+
+            entity.HasOne(d => d.User).WithOne(p => p.TblUserProfileImage)
+                .HasForeignKey<TblUserProfileImage>(d => d.UserId)
+                .HasConstraintName("FK_UserProfileImage_User");
         });
 
         OnModelCreatingPartial(modelBuilder);

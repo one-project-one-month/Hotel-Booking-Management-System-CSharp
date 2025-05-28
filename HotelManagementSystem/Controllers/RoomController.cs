@@ -10,8 +10,9 @@ using Sprache;
 namespace HotelManagementSystem.Controllers;
 
 [ApiController]
-[AllowAnonymous]
-[Route("api/[Controller]")]
+//[AllowAnonymous]
+//[Route("api/[Controller]")]
+[Route("admin/rooms")]
 public class RoomController : ControllerBase
 {
     private readonly IRoomService _service;
@@ -37,7 +38,7 @@ public class RoomController : ControllerBase
     }
 
     [HttpPost]
-    [Route("CreateRoom")]
+    //[Route("CreateRoom")]
     public async Task<ActionResult<BasedResponseModel>> CreateRoom(CreateRoomRequestModel model)
     {
         if (!ModelState.IsValid)
