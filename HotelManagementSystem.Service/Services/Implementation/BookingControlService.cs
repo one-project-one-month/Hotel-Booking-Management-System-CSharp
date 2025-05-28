@@ -67,4 +67,33 @@ public class BookingControlService : IBookingControlService
         var returnModel = new GetBookingsResponseModel();
         return CustomEntityResult<GetBookingsResponseModel>.GenerateSuccessEntityResult(returnModel);
     }
+
+    public async Task<CustomEntityResult<UpdateBookingResponseModel>> UpdateBooking(string BookingId, UpdateBookingRequestModel requestModel)
+    {
+        var bookingRequestDto = new UpdateBookingRequestDto()
+        {
+            UserId = requestModel.UserId,
+            GuestId = requestModel.GuestId,
+            GuestCount = requestModel.GuestCount,
+            CheckInTime = requestModel.CheckInTime,
+            CheckOutTime = requestModel.CheckOutTime,
+            DepositAmount = requestModel.DepositAmount,
+            BookingStatus = requestModel.BookingStatus,
+            TotalAmount = requestModel.TotalAmount,
+            CreatedAt = requestModel.CreatedAt,
+            PaymentType = requestModel.PaymentType
+        };
+
+        bookingRequestDto.Rooms = requestModel.Rooms;
+        var roomBookingId = await _bookingControlRepository.UpdateBooking(BookingId, bookingRequestDto);
+
+        var result = await _bookingControlRepository.UpdateBooking(BookingId, bookingRequestDto);
+        if (result.IsError)
+        {
+            return CustomEntityResult<UpdateBookingResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+        }
+
+        var returnModel = new UpdateBookingResponseModel();
+        return CustomEntityResult<UpdateBookingResponseModel>.GenerateSuccessEntityResult(returnModel);
+    }
 }

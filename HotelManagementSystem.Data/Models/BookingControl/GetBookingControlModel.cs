@@ -12,7 +12,7 @@ public class GetBookingControlModel
 
 }
 
-public class GetBookingsRequestModel
+public class GetBookingRequestModel
 {
 
 }

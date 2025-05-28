@@ -32,6 +32,21 @@ public class BookingsControlController : ControllerBase
         }
     }
 
+    [HttpPut("{BookingId}")]
+    public async Task<ActionResult<UpdateBookingResponseModel>> UpdateBooking(string BookingId, UpdateBookingRequestModel requestModel)
+    {
+        try
+        {
+            var result = await _bookingControlService.UpdateBooking(BookingId, requestModel);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
+        }
+    }
+
     [HttpDelete("{BookingId}")]
     public async Task<ActionResult<GetBookingsResponseModel>> DeleteBooking(string BookingId)
     {

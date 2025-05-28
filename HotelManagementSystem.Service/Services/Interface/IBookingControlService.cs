@@ -12,5 +12,6 @@ namespace HotelManagementSystem.Service.Services.Interface;
 public interface IBookingControlService
 {
     public Task<CustomEntityResult<GetBookingsResponseModel>> GetBookings();
+    public Task<CustomEntityResult<UpdateBookingResponseModel>> UpdateBooking(string BookingId, UpdateBookingRequestModel requestModel);
     public Task<CustomEntityResult<GetBookingsResponseModel>> DeleteBooking(string BookingId);
 }

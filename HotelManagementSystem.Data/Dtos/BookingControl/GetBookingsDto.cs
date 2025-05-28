@@ -13,7 +13,7 @@ public class GetBookingsDto
 
 }
 
-public class GetBookingsRequestDto
+public class GetBookingRequestDto
 {
 
 }
