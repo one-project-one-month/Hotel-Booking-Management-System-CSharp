@@ -53,11 +53,28 @@ namespace HotelManagementSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<BasedResponseModel>> CreateRoomType(CreateRoomTypeRequestModel model)
+        public async Task<ActionResult<BasedResponseModel>> CreateRoomType(CreateRoomTypeRequestModel requestModel)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            #region check required
+
+            if (String.IsNullOrEmpty(requestModel.RoomTypeName))
+            {
+                return BadRequest(nameof(requestModel.RoomTypeName) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
+            }
+            if(!requestModel.Price.HasValue || requestModel.Price.Value <=0 )
+            {
+                return BadRequest(nameof(requestModel.Price) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
+            }
+            #endregion
+
             try
             {
-                var result = await _roomTypeService.CreateRoomType(model);
+                var result = await _roomTypeService.CreateRoomType(requestModel);
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             } catch (Exception ex)
             {
@@ -69,6 +86,10 @@ namespace HotelManagementSystem.Controllers
         [HttpPatch("{id}")]
         public async Task<ActionResult<BasedResponseModel>> UpdateRoomType (Guid id, UpdateRoomTypeRequestModel requestModel)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
                 var result = await _roomTypeService.UpdateRoomType(id, requestModel);
@@ -92,46 +113,5 @@ namespace HotelManagementSystem.Controllers
             }
         }
 
-
-        [HttpPost("Post")]
-        public async Task<IActionResult> UploadFile(IFormFile uploadedFile)
-        {
-            if (uploadedFile != null && uploadedFile.Length > 0)
-            {
-                // Check file size
-                if (uploadedFile.Length > 1024 * 1024 * 10) // 10 MB
-                {
-                    return BadRequest("File is too large");
-                }
-
-                // Define the path where you want to save the file
-                string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-                Directory.CreateDirectory(uploadPath); // Create the directory if it doesn't exist
-
-                // Generate a unique file name
-                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadedFile.FileName);
-                string filePath = Path.Combine(uploadPath, fileName);
-
-                // Save the file
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await uploadedFile.CopyToAsync(stream);
-                }
-
-                // Convert file to Base64 string
-                byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
-                string base64String = Convert.ToBase64String(fileBytes);
-
-                // Return the base64 string (or you could store it or send it somewhere)
-                return Ok(new { FileName = fileName, Base64 = base64String });
-            }
-            return BadRequest("No file uploaded");
-        }
-
-
-        public class TestRequest
-        {
-            public IFormFile file { get; set; } 
-        }
     }
 }

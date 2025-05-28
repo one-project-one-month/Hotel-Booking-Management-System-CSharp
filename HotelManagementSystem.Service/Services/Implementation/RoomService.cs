@@ -55,16 +55,9 @@ public class RoomService : IRoomService
         }
         RoomResponseModel roomResponse = new RoomResponseModel
         {
-            //RoomNo = room.Result.RoomNo,
-            ////RoomTypeId=room.Result.RoomTypeId,
-            //GuestLimit = room.Result.GuestLimit,
-            //RoomStatus = room.Result.RoomStatus,
-            //IsFeatured=room.Result.IsFeatured,
-            //RoomType= room.Result.RoomType
             Room = new RoomModel
             {
                 RoomNo = room.Result.Room.RoomNo,
-                //RoomTypeId=room.Result.RoomTypeId,
                 GuestLimit = room.Result.Room.GuestLimit,
                 RoomStatus = room.Result.Room.RoomNo,
                 IsFeatured = room.Result.Room.IsFeatured,
@@ -80,7 +73,7 @@ public class RoomService : IRoomService
         };
         return CustomEntityResult<RoomResponseModel>.GenerateSuccessEntityResult(roomResponse);
     }
-    public async Task<CustomEntityResult<CreateRoomResponseModel>> CreateRoom(CreateRoomRequestModel model)
+    public async Task<CustomEntityResult<CreateRoomResponseModel>> CreateRoom(CreateRoomRequestModel requestModel)
     {
         try
         {
@@ -88,15 +81,15 @@ public class RoomService : IRoomService
 
             var createRoomRequest = new CreateRoomRequestDto()
             {
-                RoomNo = model.RoomNo,
-                RoomStatus = model.RoomStatus,
-                GuestLimit = model.GuestLimit,
-                RoomTypeId = model.RoomTypeId,
+                RoomNo = requestModel.RoomNo,
+                RoomStatus = requestModel.RoomStatus,
+                GuestLimit = requestModel.GuestLimit,
+                RoomTypeId = requestModel.RoomTypeId,
             };
-            var createRoom = await _roomRepository.CreateRoom(createRoomRequest);
-            if (createRoom.IsError)
+            var result = await _roomRepository.CreateRoom(createRoomRequest);
+            if (result.IsError)
             {
-                return CustomEntityResult<CreateRoomResponseModel>.GenerateFailEntityResult(createRoom.Result.RespCode, createRoom.Result.RespDescription);
+                return CustomEntityResult<CreateRoomResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
             }
 
             #endregion
@@ -104,7 +97,7 @@ public class RoomService : IRoomService
             
             var createRoomResponse = new CreateRoomResponseModel()
             {
-                RoomId = createRoom.Result.RoomId
+                RoomId = result.Result.RoomId
             };
             return CustomEntityResult<CreateRoomResponseModel>.GenerateSuccessEntityResult(createRoomResponse);
         }
@@ -113,17 +106,17 @@ public class RoomService : IRoomService
             return CustomEntityResult<CreateRoomResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
-    public async Task<CustomEntityResult<UpdateRoomResponseModel>> UpdateRoom(Guid id,UpdateRoomRequestModel model)
+    public async Task<CustomEntityResult<UpdateRoomResponseModel>> UpdateRoom(Guid id,UpdateRoomRequestModel requestModel)
     {
         try
         {
             var updateRequestDto = new UpdateRoomRequestDto()
             {
-                RoomNo = model.RoomNo,
-                RoomStatus = model.RoomStatus,
-                RoomTypeId = model.RoomTypeId,
-                GuestLimit = model.GuestLimit,
-                IsFeatured = model.IsFeatured,
+                RoomNo = requestModel.RoomNo,
+                RoomStatus = requestModel.RoomStatus,
+                RoomTypeId = requestModel.RoomTypeId,
+                GuestLimit = requestModel.GuestLimit,
+                IsFeatured = requestModel.IsFeatured,
             };
             var result = await _roomRepository.UpdateRoom(id, updateRequestDto);
             if (result.IsError)

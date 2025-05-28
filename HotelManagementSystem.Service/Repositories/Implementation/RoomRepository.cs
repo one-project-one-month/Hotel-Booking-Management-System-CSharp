@@ -78,18 +78,18 @@ public class RoomRepository : IRoomRepository
 
     }
 
-    public async Task<CustomEntityResult<CreateRoomResponseDto>> CreateRoom(CreateRoomRequestDto model)
+    public async Task<CustomEntityResult<CreateRoomResponseDto>> CreateRoom(CreateRoomRequestDto requestDto)
     {
         try
         {
             var createRoom = new TblRoom()
             {
                 RoomId = Guid.NewGuid(),
-                RoomNo = model.RoomNo,
-                RoomStatus = model.RoomStatus,
-                RoomTypeId = model.RoomTypeId,
-                GuestLimit = model.GuestLimit,
-                IsFeatured = model.IsFeatured,
+                RoomNo = requestDto.RoomNo,
+                RoomStatus = requestDto.RoomStatus,
+                RoomTypeId = requestDto.RoomTypeId,
+                GuestLimit = requestDto.GuestLimit,
+                IsFeatured = requestDto.IsFeatured,
                 CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime()
             };
 
@@ -127,7 +127,7 @@ public class RoomRepository : IRoomRepository
 
             room!.UpdatedAt = EntityConstantsHelper.GetMyanmarLocalTime();
 
-            int result = await _hotelDbContext.SaveChangesAsync();
+            await _hotelDbContext.SaveChangesAsync();
             var responseDto = new UpdateRoomResponseDto()
             {
                 RoomNo = room.RoomNo,
@@ -151,7 +151,7 @@ public class RoomRepository : IRoomRepository
             var room = await _hotelDbContext.TblRooms.FirstOrDefaultAsync(x => x.RoomId == id);
             if (room is null) return CustomEntityResult<BasedResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Room Not Found");
             _hotelDbContext.TblRooms.Remove(room);
-            int result = await _hotelDbContext.SaveChangesAsync();
+            await _hotelDbContext.SaveChangesAsync();
             var responseModel = new BasedResponseModel()
             {
                 RespCode = "200",

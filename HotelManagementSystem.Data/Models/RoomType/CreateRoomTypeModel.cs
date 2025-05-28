@@ -16,7 +16,7 @@ namespace HotelManagementSystem.Data.Models.RoomType
 
         public string? Description { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
 
         public string? RoomImg { get; set; }
 

@@ -38,8 +38,7 @@ public class RoomController : ControllerBase
     }
 
     [HttpPost]
-    //[Route("CreateRoom")]
-    public async Task<ActionResult<BasedResponseModel>> CreateRoom(CreateRoomRequestModel model)
+    public async Task<ActionResult<BasedResponseModel>> CreateRoom(CreateRoomRequestModel requestModel)
     {
         if (!ModelState.IsValid)
         {
@@ -48,22 +47,27 @@ public class RoomController : ControllerBase
 
         #region check required
 
-        if (String.IsNullOrEmpty(model.RoomNo))
+        if (String.IsNullOrEmpty(requestModel.RoomNo))
         {
-            return BadRequest(nameof(model.RoomNo) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
+            return BadRequest(nameof(requestModel.RoomNo) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
+        }
+
+        if(requestModel.RoomTypeId == Guid.Empty)
+        {
+            return BadRequest(nameof(requestModel.RoomTypeId) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
         }
 
         #endregion
 
         #region check format
 
-        
+
 
         #endregion
 
         try
         {
-            var result = await _service.CreateRoom(model);
+            var result = await _service.CreateRoom(requestModel);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
@@ -74,7 +78,6 @@ public class RoomController : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    //[Route("UpdateRoom")]
     public async Task<ActionResult<BasedResponseModel>> UpdateRoom(Guid id, UpdateRoomRequestModel model)
     {
         if (!ModelState.IsValid)

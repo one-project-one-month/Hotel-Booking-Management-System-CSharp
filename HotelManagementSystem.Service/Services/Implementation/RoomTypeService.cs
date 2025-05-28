@@ -79,16 +79,15 @@ public class RoomTypeService : IRoomTypeService
         }
     }
 
-    public async Task<CustomEntityResult<CreateRoomTypeResponseModel>> CreateRoomType(CreateRoomTypeRequestModel model)
+    public async Task<CustomEntityResult<CreateRoomTypeResponseModel>> CreateRoomType(CreateRoomTypeRequestModel requestModel)
     {
         byte[]? imgBytes = null;
-        //Console.WriteLine("ImgUrl string: " + model.ImgUrl);
 
-        if (!string.IsNullOrWhiteSpace(model.RoomImg))
+        if (!string.IsNullOrWhiteSpace(requestModel.RoomImg))
         {
             try
             {
-                imgBytes = Convert.FromBase64String(model.RoomImg);
+                imgBytes = Convert.FromBase64String(requestModel.RoomImg);
             }
             catch (FormatException ex)
             {
@@ -103,11 +102,11 @@ public class RoomTypeService : IRoomTypeService
         {
             var dto = new CreateRoomTypeRequestDto()
             {
-                RoomTypeName = model.RoomTypeName,
-                Description = model.Description,
+                RoomTypeName = requestModel.RoomTypeName,
+                Description = requestModel.Description,
                 RoomImg = imgBytes,
-                Price = model.Price,
-                RoomImgMimeType = model.RoomImgMimeType,
+                Price = requestModel.Price!.Value,
+                RoomImgMimeType = requestModel.RoomImgMimeType,
             };
 
             var result = await _roomTypeRepository.CreateRoomType(dto);
