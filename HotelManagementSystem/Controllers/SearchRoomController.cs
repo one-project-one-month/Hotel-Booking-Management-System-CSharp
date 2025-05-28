@@ -22,10 +22,8 @@ namespace HotelManagementSystem.Controllers
             _service = service;
         }
 
-
-
         [HttpPost]
-
+        [Route("searchroom")]
         public async Task<ActionResult<BasedResponseModel>> SearchRoom([FromBody] SearchRoomRequestModel model)
         {
             if(!ModelState.IsValid)

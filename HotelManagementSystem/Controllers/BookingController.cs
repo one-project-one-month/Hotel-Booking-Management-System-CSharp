@@ -23,7 +23,7 @@ namespace HotelManagementSystem.Controllers
 
         [Authorize]
         [HttpPost]
-        [Route("CreateBookingByUser")]
+        [Route("createbookingbyuser")]
         public async Task<ActionResult<BasedResponseModel>> CreateBookingByUser(CreateBookingRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -44,7 +44,7 @@ namespace HotelManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("GetBookingById/{bookingId}")]
+        [Route("getbookingbyid/{bookingId}")]
         public async Task<ActionResult<BasedResponseModel>> GetBookingById(GetBookingByIdRequestModel bookingId)
         {
             if (!ModelState.IsValid)
@@ -71,7 +71,7 @@ namespace HotelManagementSystem.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("GetAllBookingByUserId/{userId}")]
+        [Route("getallbookingbyuserid/{userId}")]
         public async Task<ActionResult<BasedResponseModel>> GetAllBookingByUserId()
         {
             if(!ModelState.IsValid)
@@ -92,7 +92,7 @@ namespace HotelManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("GetAllBookingList")]
+        [Route("getallbookinglist")]
         public async Task<ActionResult<BasedResponseModel>> GetAllBookingList()
         {
             if (!ModelState.IsValid)

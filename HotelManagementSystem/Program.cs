@@ -1,5 +1,10 @@
 using HotelManagementSystem;
 using HotelManagementSystem.Service.Helpers.Auth.MiddleWare;
+using HotelManagementSystem.Service.Reposities.Implementation;
+using HotelManagementSystem.Service.Repositories.Implementation;
+using HotelManagementSystem.Service.Repositories.Interface;
+using HotelManagementSystem.Service.Services.Implementation;
+using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.OpenApi.Models;
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);

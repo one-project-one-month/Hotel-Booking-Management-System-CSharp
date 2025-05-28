@@ -21,7 +21,7 @@ public class RoomController : ControllerBase
     }
 
     [HttpPost]
-    [Route("CreateRoom")]
+    [Route("createroom")]
     public async Task<ActionResult<BasedResponseModel>> CreateRoom(CreateRoomRequestModel model)
     {
         if (!ModelState.IsValid)

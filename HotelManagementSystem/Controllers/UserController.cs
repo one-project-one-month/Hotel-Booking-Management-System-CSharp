@@ -42,7 +42,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("Register")]
+    [Route("register")]
     public async Task<ActionResult<BasedResponseModel>> RegisterUserAsync(RegisterUserRequestModel model)
     {
         #region UserGetClaimsValue
@@ -82,7 +82,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("Login")]
+    [Route("login")]
     public async Task<ActionResult<BasedResponseModel>> LoginAsync(LoginRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -103,7 +103,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("ForgotPassword")]
+    [Route("forgotpassword")]
     public async Task<ActionResult<BasedResponseModel>> ForgotPasswordAsync(ForgetPasswordRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -123,7 +123,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("ResetPassword")]
+    [Route("resetpassword")]
     public async Task<ActionResult<BasedResponseModel>> ResetPasswordAsync(ResetPasswordRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -144,7 +144,7 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [Route("CreateUserProfile")]
+    [Route("createuserprofile")]
     public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileAsync([FromForm] CreateUserProfileRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -170,7 +170,7 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpPatch]
-    [Route("UpdateUserProfile")]
+    [Route("updateuserprofile")]
     public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync([FromForm] CreateUserProfileRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -196,7 +196,7 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpGet]
-    [Route("GetUserProfile")]
+    [Route("getuserprofile")]
     public async Task<ActionResult<GetUserProfileByIdResponseModel>> GetUserById()
     {
         if (!ModelState.IsValid)
