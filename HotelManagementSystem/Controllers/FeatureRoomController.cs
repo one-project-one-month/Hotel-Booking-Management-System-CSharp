@@ -1,4 +1,6 @@
-﻿using HotelManagementSystem.Data.Models;
+﻿using HotelManagementSystem.Data;
+using HotelManagementSystem.Data.Models;
+using HotelManagementSystem.Data.Models.Room;
 using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +22,7 @@ namespace HotelManagementSystem.Controllers
 
         [HttpGet]
         [Route("FeatureRoom")]
-        public ActionResult<BasedResponseModel> GetFeatureRoom()
+        public ActionResult<GetFeatureRoomsResponseModel> GetFeatureRoom()
         {
             try
             {
@@ -30,7 +32,7 @@ namespace HotelManagementSystem.Controllers
             catch (Exception ex)
             {
                 var message = ex.Message;
-                return BadRequest(500);
+                return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
             }
 
         }

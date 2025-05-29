@@ -19,16 +19,28 @@ public class FeatureRoomService: IFeatureRoomService
         _featureRoomRepo = featureRoomReepo;
     }
 
-    public CustomEntityResult<GetFeatureRoomsResponseDto> GetFeatureRoom()
+    public CustomEntityResult<GetFeatureRoomsResponseModel> GetFeatureRoom()
     {
         try
         {
             var result = _featureRoomRepo.GetRoomByFeature();
             if (result.IsError)
             {
-                return CustomEntityResult<GetFeatureRoomsResponseDto>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+                return CustomEntityResult<GetFeatureRoomsResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
             }
-            return result;
+
+            var getFeatureRoomsResponse = new GetFeatureRoomsResponseModel
+            {
+                Rooms  = result.Result.Rooms.Select(b => new GetFeatureRoomResponseModel
+            {
+                RoomId = b.RoomId,
+                RoomNo = b.RoomNo,
+                RoomTypeId = b.RoomTypeId,
+                RoomStatus = b.RoomStatus,
+                GuestLimit = b.GuestLimit
+            }).ToList()
+        };
+            return CustomEntityResult<GetFeatureRoomsResponseModel>.GenerateSuccessEntityResult(getFeatureRoomsResponse);
 
         }
         catch (Exception)
