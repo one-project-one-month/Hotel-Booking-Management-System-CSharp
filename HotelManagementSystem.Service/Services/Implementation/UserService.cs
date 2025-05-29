@@ -8,7 +8,6 @@ using HotelManagementSystem.Service.Helpers.Auth.SMTP;
 using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
-using Org.BouncyCastle.OpenSsl;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace HotelManagementSystem.Service.Services.Implementation;

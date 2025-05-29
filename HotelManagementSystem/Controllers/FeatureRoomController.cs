@@ -1,10 +1,7 @@
 ﻿using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MimeKit.Cryptography;
-
 namespace HotelManagementSystem.Controllers
 {
     [Route("api/[controller]")]

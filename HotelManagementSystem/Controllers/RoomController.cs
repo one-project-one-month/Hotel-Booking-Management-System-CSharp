@@ -5,7 +5,6 @@ using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sprache;
 
 namespace HotelManagementSystem.Controllers;
 
@@ -20,7 +19,6 @@ public class RoomController : ControllerBase
         _service = service;
     }
 
-    [Authorize(Roles ="Admin")]
     [HttpGet]
     [Route("getrooms")]
     public async Task<ActionResult<BasedResponseModel>> GetRooms()
@@ -78,7 +76,7 @@ public class RoomController : ControllerBase
         }
     }
 
-    [HttpPatch("getroom/{id}")]
+    [HttpPatch("updateroom/{id}")]
     public async Task<ActionResult<BasedResponseModel>> UpdateRoom(Guid id, UpdateRoomRequestModel model)
     {
         if (!ModelState.IsValid)
