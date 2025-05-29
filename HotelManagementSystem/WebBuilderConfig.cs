@@ -18,7 +18,7 @@ public class ServiceInjectionFactory
     public static void ServiceInject(WebApplicationBuilder builder)
     {
         builder.Services.AddDbContext<HotelDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnect")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         var env = builder.Environment.EnvironmentName.ToLower();
         var envFile = $".env.{env}";
