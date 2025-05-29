@@ -1,5 +1,6 @@
 ﻿using HotelManagementSystem.Data.Models.Guest;
 using HotelManagementSystem.Service.Services.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,7 @@ namespace HotelManagementSystem.Controllers
         {
             _service = service;
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("CreateGuest")]
         public async Task<IActionResult> CreateGuest([FromBody] CreateGuestRequestModel model)
         {

@@ -1,19 +1,14 @@
 ﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.RoomType;
 using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Data.Models.Room;
 using HotelManagementSystem.Data.Models.RoomType;
 using HotelManagementSystem.Helpers;
-using HotelManagementSystem.Service.Services.Implementation;
 using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Crypto.Digests;
 
 namespace HotelManagementSystem.Controllers
 {
-    //[Route("api/[controller]")]
-    [Route("admin/roomtypes")]
+    [Route("api/[controller]")]
     [ApiController]
     public class RoomTypeController : ControllerBase
     {
@@ -24,8 +19,8 @@ namespace HotelManagementSystem.Controllers
             _roomTypeService = roomTypeService;
         }
 
-
         [HttpGet]
+        [Route("getroomtypes")]
         public async Task<ActionResult<BasedResponseModel>> GetRoomTypes()
         {
             try
@@ -52,7 +47,9 @@ namespace HotelManagementSystem.Controllers
             }
         }
 
+        [Authorize(Roles ="Admin")]
         [HttpPost]
+        [Route("createroomtype")]
         public async Task<ActionResult<BasedResponseModel>> CreateRoomType(CreateRoomTypeRequestModel requestModel)
         {
             if (!ModelState.IsValid)
@@ -82,7 +79,7 @@ namespace HotelManagementSystem.Controllers
             }          
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}")]
         public async Task<ActionResult<BasedResponseModel>> UpdateRoomType (Guid id, UpdateRoomTypeRequestModel requestModel)
         {
@@ -100,6 +97,7 @@ namespace HotelManagementSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<BasedResponseModel>> DeleteRoomType (Guid id)
         {

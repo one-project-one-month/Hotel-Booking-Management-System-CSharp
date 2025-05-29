@@ -40,6 +40,7 @@ public class ServiceInjectionFactory
         builder.Services.AddTransient<ISearchRoomRepository, SearchRoomRepository>();
         builder.Services.AddTransient<IBookingService, BookingService>();
         builder.Services.AddTransient<IRoomTypeService, RoomTypeService>();
+        builder.Services.AddTransient<IGuestService, GuestService>();
 
         //repository
         builder.Services.AddTransient<IUserRepository, UserRepository>();
@@ -47,6 +48,7 @@ public class ServiceInjectionFactory
         builder.Services.AddTransient<ISearchRoomService, SearchRoomService>();
         builder.Services.AddTransient<IBookingRepository, BookingRepository>();
         builder.Services.AddTransient<IRoomTypeRepository, RoomTypeRepository>();
+        builder.Services.AddTransient<IGuestRepository, GuestRepository>();
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

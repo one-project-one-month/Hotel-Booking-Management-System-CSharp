@@ -20,4 +20,5 @@ public interface IUserRepository
     public Task<CustomEntityResult<BasedResponseModel>> DeletePasswordOTPAsync(TblUser user);
     public Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileAsync(CreateUserProfileRequestDto dto);
     public Task<CustomEntityResult<GetUserProfileByIdResponseDto>> GetUserProfileByIdAsync(GetUserProfileByIdRequestDto dto);
+    public Task<CustomEntityResult<SeedRoleToAdminResponseDto>> SeedRoleToAdmin(SeedRoleToAdminRequestDto dto);
 }

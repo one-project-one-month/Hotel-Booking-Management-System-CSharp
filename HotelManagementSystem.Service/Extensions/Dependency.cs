@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 namespace HotelManagementSystem.Service.Extensions
@@ -35,6 +36,7 @@ namespace HotelManagementSystem.Service.Extensions
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = jwtOptions.Issuer,
                         ValidAudience = jwtOptions.Audience,
+                        RoleClaimType = ClaimTypes.Role,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
                         ClockSkew = TimeSpan.Zero,
                     };

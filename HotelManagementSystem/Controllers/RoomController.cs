@@ -10,9 +10,7 @@ using Sprache;
 namespace HotelManagementSystem.Controllers;
 
 [ApiController]
-//[AllowAnonymous]
-//[Route("api/[Controller]")]
-[Route("admin/rooms")]
+[Route("api/[Controller]")]
 public class RoomController : ControllerBase
 {
     private readonly IRoomService _service;
@@ -22,8 +20,9 @@ public class RoomController : ControllerBase
         _service = service;
     }
 
-
+    [Authorize(Roles ="Admin")]
     [HttpGet]
+    [Route("getrooms")]
     public async Task<ActionResult<BasedResponseModel>> GetRooms()
     {
         var result = await _service.GetRooms();
@@ -37,7 +36,9 @@ public class RoomController : ControllerBase
         return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
+    [Route("createroom")]
     public async Task<ActionResult<BasedResponseModel>> CreateRoom(CreateRoomRequestModel requestModel)
     {
         if (!ModelState.IsValid)
@@ -77,7 +78,7 @@ public class RoomController : ControllerBase
         }
     }
 
-    [HttpPatch("{id}")]
+    [HttpPatch("getroom/{id}")]
     public async Task<ActionResult<BasedResponseModel>> UpdateRoom(Guid id, UpdateRoomRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -96,7 +97,7 @@ public class RoomController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("deleteroom/{id}")]
     public async Task<ActionResult<BasedResponseModel>> DeleteRoom(Guid id)
     {
         var result = await _service.DeleteRoom(id);

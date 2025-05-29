@@ -28,6 +28,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                 var createBookingRequest = new TblBooking
                 {
                     UserId = model.UserId,
+                    GuestId = model.GuestId,
                     CheckInTime = model.CheckInDate,
                     CheckOutTime = model.CheckOutDate,
                     DepositAmount = model.Deposit_Amount,

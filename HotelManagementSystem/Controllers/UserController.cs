@@ -20,7 +20,7 @@ public class UserController : ControllerBase
         _service = service;
         _httpContext = httpContext;
     }
-
+    
     [HttpPost]
     [Route("SeedRole")]
     public async Task<ActionResult<SeedRoleResponseModel>> SeedRoleAsync()
@@ -32,6 +32,27 @@ public class UserController : ControllerBase
         try
         {
             var result = await _service.SeedRole();
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
+
+    [Authorize(Roles ="Admin")]
+    [HttpPost]
+    [Route("SeedRoleToAdmin")]
+    public async Task<ActionResult<BasedResponseModel>> SeedRoleToAdmin(SeedRoleToAdminRequestModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _service.SeedRoleToAdmin(model);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)

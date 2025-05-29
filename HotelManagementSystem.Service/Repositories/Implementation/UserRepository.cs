@@ -8,8 +8,6 @@ using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 
 namespace HotelManagementSystem.Service.Reposities.Implementation;
 
@@ -313,6 +311,34 @@ public class UserRepository : IUserRepository
         catch (Exception ex)
         {
             return CustomEntityResult<GetUserProfileByIdResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+        }
+    }
+
+    public async Task<CustomEntityResult<SeedRoleToAdminResponseDto>> SeedRoleToAdmin(SeedRoleToAdminRequestDto dto)
+    {
+        try
+        {
+            var registerUserRequest = new TblUser
+            {
+                UserName = dto.UserName,
+                Email = dto.Email
+            };
+            var hashedPassword = _passwordHasher.HashPassword(dto.Password);
+            registerUserRequest.Password = hashedPassword;
+            var Role = await _context.TblRoles.FirstOrDefaultAsync(r => r.RoleName == RoleConstants.Admin);
+            if (Role == null)
+            {
+                throw new RoleDoesNotExistException("User Role does not exit!");
+            }
+            registerUserRequest.RoleId = Role.RoleId;
+            await _context.AddAsync(registerUserRequest);
+            await _context.SaveChangesAsync();
+            var result = new SeedRoleToAdminResponseDto();
+            return CustomEntityResult<SeedRoleToAdminResponseDto>.GenerateSuccessEntityResult(result);
+        }
+        catch(Exception ex)
+        {
+            return CustomEntityResult<SeedRoleToAdminResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 }

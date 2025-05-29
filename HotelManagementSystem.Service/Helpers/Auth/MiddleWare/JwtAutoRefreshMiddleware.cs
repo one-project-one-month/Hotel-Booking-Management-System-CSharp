@@ -1,5 +1,6 @@
 ﻿using HotelManagementSystem.Data.Data.FeatureModels;
 using HotelManagementSystem.Data.Dtos.User;
+using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
@@ -22,11 +23,16 @@ namespace HotelManagementSystem.Service.Helpers.Auth.MiddleWare
             var accessToken = context.Request.Cookies["access_token"];
             var refreshToken = context.Request.Cookies["refresh_token"];
 
-            if (!string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
+            if (!string.IsNullOrEmpty(accessToken))
             {
+                if (!context.Request.Headers.ContainsKey("Authorization"))
+                {
+                    context.Request.Headers.Append("Authorization", $"Bearer {accessToken}");
+                }
+
                 var handler = new JwtSecurityTokenHandler();
 
-                if (handler.CanReadToken(accessToken))
+                if (handler.CanReadToken(accessToken) && !string.IsNullOrEmpty(refreshToken))
                 {
                     var jwtToken = handler.ReadJwtToken(accessToken);
                     var expUnix = long.Parse(jwtToken.Claims.First(x => x.Type == "exp").Value);
@@ -36,18 +42,22 @@ namespace HotelManagementSystem.Service.Helpers.Auth.MiddleWare
 
                     if (timeLeft < TimeSpan.FromMinutes(2))
                     {
-                        var email = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-                        var user = await userRepo.GetUserByEmail(email);
+                       
+
+                        var id = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                        if (!Guid.TryParse(id, out var userId))
+                        {
+                            throw new InvalidUserIdException("Invalid user ID format.");
+                        }
+                        var user = await userRepo.GetUserById(userId);
+                        var refreshmodel = new RefreshTokenRequestDto
+                        {
+                            Id = userId,
+                        };
 
                         if (user != null && user.RefreshToken == refreshToken && user.TokenExpireAt > DateTime.UtcNow)
-                        {
-                            var loginDto = new LoginRequestDto
-                            {
-                                Email = email,
-                                Password = "" 
-                            };
-
-                            await tokenProcessor.GenerateToken(loginDto);
+                        { 
+                            await tokenProcessor.GenerateTokenInMiddleWare(refreshmodel);
 
                             var newRefreshToken = tokenProcessor.GenerateRefreshToken();
                             var newExpire = DateTime.UtcNow.AddDays(7);

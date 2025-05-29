@@ -10,7 +10,6 @@ using System.Security.Claims;
 namespace HotelManagementSystem.Controllers
 {
     [ApiController]
-    [AllowAnonymous]
     [Route("api/[Controller]")]
     public class BookingController : Controller
     {
@@ -33,7 +32,34 @@ namespace HotelManagementSystem.Controllers
             try
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var result = await _bookingService.CreateBookingByUser(userId, model);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest(nameof(userId) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
+                }
+                Guid UserID = Guid.Parse(userId);
+                model.UserId = UserID;
+                var result = await _bookingService.CreateBookingByUser(model);
+                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return BadRequest(message);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [Route("createbookingbyadmin")]
+        public async Task<ActionResult<BasedResponseModel>> CreateBookingByAdmin(CreateBookingRequestModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var result = await _bookingService.CreateBookingByUser(model);
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)
@@ -91,6 +117,7 @@ namespace HotelManagementSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("getallbookinglist")]
         public async Task<ActionResult<BasedResponseModel>> GetAllBookingList()

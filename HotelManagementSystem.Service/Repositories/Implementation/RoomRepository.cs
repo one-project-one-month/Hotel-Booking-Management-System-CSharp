@@ -84,7 +84,6 @@ public class RoomRepository : IRoomRepository
         {
             var createRoom = new TblRoom()
             {
-                RoomId = Guid.NewGuid(),
                 RoomNo = requestDto.RoomNo,
                 RoomStatus = requestDto.RoomStatus,
                 RoomTypeId = requestDto.RoomTypeId,

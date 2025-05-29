@@ -11,6 +11,7 @@ namespace HotelManagementSystem.Data.Models.Booking
     }
     public class CreateBookingRequestModel
     {
+        public Guid? UserId { get; set; }
         public Guid? GuestId { get; set; }
         public int Guest_Count { get; set; }
         public string? Booking_Status { get; set; }

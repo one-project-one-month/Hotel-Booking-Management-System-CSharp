@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
-    public class GuestRepositoery : IGuestRepositoery
+    public class GuestRepository : IGuestRepository
     {
         private readonly HotelDbContext _context;
-        public GuestRepositoery(HotelDbContext context)
+        public GuestRepository(HotelDbContext context)
         {
             _context = context;
         }

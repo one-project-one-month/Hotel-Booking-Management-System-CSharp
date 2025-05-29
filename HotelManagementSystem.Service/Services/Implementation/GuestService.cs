@@ -8,8 +8,8 @@ namespace HotelManagementSystem.Service.Services.Implementation
 {
     public class GuestService : IGuestService
     {
-        private readonly IGuestRepositoery _guestRepo;
-        public GuestService(IGuestRepositoery guestRepo)
+        private readonly IGuestRepository _guestRepo;
+        public GuestService(IGuestRepository guestRepo)
         {
             _guestRepo = guestRepo;
         }

@@ -15,23 +15,16 @@ namespace HotelManagementSystem.Service.Services.Implementation
         {
             _bookingRepo = bookingRepo;
         }
-        public async Task<CustomEntityResult<CreateBookingResponseModel>> CreateBookingByUser(string userId,CreateBookingRequestModel model)
+        public async Task<CustomEntityResult<CreateBookingResponseModel>> CreateBookingByUser(CreateBookingRequestModel model)
         {
             try
             {
                 #region call repo
-                if (string.IsNullOrEmpty(userId))
-                {
-                    throw new UserNotFoundException("User not found. Please login again.");
-                }
 
-                if (!Guid.TryParse(userId, out var Id))
-                {
-                    throw new InvalidUserIdException("Invalid user ID format.");
-                }
                 var createBookingRequest = new CreateBookingRequestDto
                 {
-                    UserId = Id,
+                    UserId = model.UserId,
+                    GuestId = model.GuestId,
                     Guest_Count = model.Guest_Count,
                     Booking_Status = model.Booking_Status,
                     Deposit_Amount = model.Deposit_Amount,
@@ -46,6 +39,37 @@ namespace HotelManagementSystem.Service.Services.Implementation
                     return CustomEntityResult<CreateBookingResponseModel>.GenerateFailEntityResult(createBooking.Result.RespCode,createBooking.Result.RespDescription);
                 };
                 #endregion
+                var createBookingResponse = new CreateBookingResponseModel()
+                {
+                    BookingId = createBooking.Result.BookingId
+                };
+                return CustomEntityResult<CreateBookingResponseModel>.GenerateSuccessEntityResult(createBookingResponse);
+            }
+            catch (Exception ex)
+            {
+                return CustomEntityResult<CreateBookingResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            }
+        }
+        public async Task<CustomEntityResult<CreateBookingResponseModel>> CreateBookingByAdmin(CreateBookingRequestModel model)
+        {
+            try
+            {
+                var createBookingRequest = new CreateBookingRequestDto
+                {
+                    UserId = model.UserId,
+                    Guest_Count = model.Guest_Count,
+                    Booking_Status = model.Booking_Status,
+                    Deposit_Amount = model.Deposit_Amount,
+                    Total_Amount = model.Total_Amount,
+                    CheckInDate = model.CheckInDate,
+                    CheckOutDate = model.CheckOutDate,
+                    PaymentType = model.PaymentType
+                };
+                var createBooking = await _bookingRepo.CreateBookingByUser(createBookingRequest);
+                if (createBooking.IsError)
+                {
+                    return CustomEntityResult<CreateBookingResponseModel>.GenerateFailEntityResult(createBooking.Result.RespCode, createBooking.Result.RespDescription);
+                }
                 var createBookingResponse = new CreateBookingResponseModel()
                 {
                     BookingId = createBooking.Result.BookingId
@@ -114,7 +138,7 @@ namespace HotelManagementSystem.Service.Services.Implementation
                 }
                 var listBookingResponse = new ListBookingResponseModel
                 {
-                    Booking = bookingListResult.Result.Bookings!.Select(b => new ListBookingModel
+                    Booking = bookingListResult.Result.Bookings?.Select(b => new ListBookingModel
                     {
                         BookingId = b.BookingId,
                         UserId = b.UserId,
