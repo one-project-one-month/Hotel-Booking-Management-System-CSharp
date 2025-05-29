@@ -33,7 +33,6 @@ namespace HotelManagementSystem.Controllers
             }
         }
 
-
         [HttpGet("{id}")]
         public async Task<ActionResult<BasedResponseModel>> GetRoomTypeById(Guid id)
         {
@@ -80,7 +79,7 @@ namespace HotelManagementSystem.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPatch("{id}")]
+        [HttpPatch("updateroomtype/{id}")]
         public async Task<ActionResult<BasedResponseModel>> UpdateRoomType (Guid id, UpdateRoomTypeRequestModel requestModel)
         {
             if(!ModelState.IsValid)
@@ -98,7 +97,7 @@ namespace HotelManagementSystem.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
+        [HttpDelete("deleteroomtype/{id}")]
         public async Task<ActionResult<BasedResponseModel>> DeleteRoomType (Guid id)
         {
             try
