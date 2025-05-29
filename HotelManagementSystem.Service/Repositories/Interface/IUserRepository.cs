@@ -14,7 +14,7 @@ public interface IUserRepository
     public Task<string> GetUserRolebyIdAsync(Guid id);
     public Task UpdateTokenAsync(TblUser user);
     public Task<bool> RoleExitAsync(string roleName);
-    public Task<CustomEntityResult<ForgotPasswordResponseDto>> UpdateTokenAsync(ForgotPasswordRequestDto dto);
+    public Task<CustomEntityResult<ForgotPasswordResponseDto>> UpdateOTPAsync(ForgotPasswordRequestDto dto);
     public Task<string> GetValidPasswordOtpByEmailAsync(string email);
     public Task<CustomEntityResult<BasedResponseModel>> UpdatePasswordAsync(Guid userId, string newPassword);
     public Task<CustomEntityResult<BasedResponseModel>> DeletePasswordOTPAsync(TblUser user);

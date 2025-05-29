@@ -190,7 +190,7 @@ public class UserRepository : IUserRepository
         }
     }
 
-    public async Task<CustomEntityResult<ForgotPasswordResponseDto>> UpdateTokenAsync(ForgotPasswordRequestDto dto)
+    public async Task<CustomEntityResult<ForgotPasswordResponseDto>> UpdateOTPAsync(ForgotPasswordRequestDto dto)
     {
         try
         {

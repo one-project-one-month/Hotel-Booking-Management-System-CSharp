@@ -144,7 +144,7 @@ public class UserService : IUserService
                 Email = model.Email,
                 Otp = Otp
             };
-            var response = await _userRepo.UpdateTokenAsync(forgotPasswordRequest);
+            var response = await _userRepo.UpdateOTPAsync(forgotPasswordRequest);
             if (response.IsError)
             {
                 return CustomEntityResult<ForgotPasswordResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Failed to update the token. Please check the request and try again.");
