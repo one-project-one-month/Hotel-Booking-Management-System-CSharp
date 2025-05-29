@@ -20,7 +20,7 @@ namespace HotelManagementSystem.Data.Models.User
         public string? Address { get; set; }
         public DateOnly? DateOfBirth { get; set; }
         public string? Gender { get; set; }
-        public byte[]? ProfileImg { get; set; }
+        public string? ProfileImg { get; set; }
         public string? ProfileImgMimeType { get; set; }
     }
 }

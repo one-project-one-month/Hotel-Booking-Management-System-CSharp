@@ -323,7 +323,7 @@ public class UserService : IUserService
                 Address = result.Result.Address,
                 DateOfBirth = result.Result.DateOfBirth,
                 Gender = result.Result.Gender,
-                ProfileImg = result.Result.ProfileImg,
+                ProfileImg = result.Result.ProfileImg != null ? Convert.ToBase64String(result.Result.ProfileImg) : null,
                 ProfileImgMimeType = result.Result.ProfileImgMimeType
             };
             return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateSuccessEntityResult(response);
