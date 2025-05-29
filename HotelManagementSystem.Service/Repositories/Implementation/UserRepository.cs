@@ -1,5 +1,6 @@
 using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Data;
+using HotelManagementSystem.Data.Dtos.Booking;
 using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Data.Models;
@@ -8,6 +9,7 @@ using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Operators;
 
 namespace HotelManagementSystem.Service.Reposities.Implementation;
 
@@ -274,8 +276,7 @@ public class UserRepository : IUserRepository
                 }
             }
 
-            await _context.SaveChangesAsync();
-
+             var result  = await _context.SaveChangesAsync();
             var response = new CreateUserProfileResponseDto(); 
             return CustomEntityResult<CreateUserProfileResponseDto>.GenerateSuccessEntityResult(response);
         }
@@ -339,6 +340,64 @@ public class UserRepository : IUserRepository
         catch(Exception ex)
         {
             return CustomEntityResult<SeedRoleToAdminResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+        }
+    }
+    public async Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestDto dto)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            var existingUser = await GetUserByEmail(dto.Email);
+            if (existingUser != null)
+            {
+                return CustomEntityResult<CreateUserProfileResponseDto>.GenerateFailEntityResult(
+                    ResponseMessageConstants.RESPONSE_CODE_DUPLICATE,
+                    "User already exists with this email.");
+            }
+
+            var newUser = new TblUser
+            {
+                Email = dto.Email,
+                UserName = dto.UserName,
+                Password = _passwordHasher.HashPassword(dto.Password),
+                DateOfBirth = dto.DateOfBirth,
+                Address = dto.Address,
+                Gender = dto.Gender
+            };
+
+            await _context.TblUsers.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+
+            if (dto.ProfileImg != null && dto.ProfileImg.Length > 0)
+            {
+                var userImage = new TblUserProfileImage
+                {
+                    UserId = newUser.UserId,
+                    ProfileImg = dto.ProfileImg,
+                    ProfileImgMimeType = dto.ProfileImgMimeType
+                };
+
+                await _context.TblUserProfileImages.AddAsync(userImage);
+                await _context.SaveChangesAsync();
+            }
+
+            await transaction.CommitAsync();
+
+            return CustomEntityResult<CreateUserProfileResponseDto>.GenerateSuccessEntityResult(
+                new CreateUserProfileResponseDto
+                {
+                    RespCode = ResponseMessageConstants.RESPONSE_CODE_SUCCESS,
+                    RespDescription = "User profile created successfully."
+                });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+
+            return CustomEntityResult<CreateUserProfileResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                $"Failed to create user profile: {ex.Message} {(ex.InnerException?.Message ?? "")}");
         }
     }
 }

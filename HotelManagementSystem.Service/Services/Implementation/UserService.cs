@@ -250,6 +250,44 @@ public class UserService : IUserService
             return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
+    public async Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestModel model)
+    {
+        try
+        {
+            byte[]? imageByte = null;
+            if (model.ProfileImg != null && model.ProfileImg.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await model.ProfileImg.CopyToAsync(ms);
+                imageByte = ms.ToArray();
+            }
+            var dto = new CreateUserProfileByAdminRequestDto
+            {
+                UserName = model.UserName,
+                Email = model.Email,
+                Password = model.Password,
+                Address = model.Address,
+                Gender = model.Gender,
+                DateOfBirth = model.DateOfBirth,
+                ProfileImg = imageByte,
+                ProfileImgMimeType = model.ProfileImg?.ContentType
+            };
+            var result = await _userRepo.CreateUserProfileByAdminAsync(dto);
+            if (result.IsError)
+            {
+                return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+            }
+            return CustomEntityResult<CreateUserResponseModel>.GenerateSuccessEntityResult(new CreateUserResponseModel
+            {
+                RespCode = result.Result.RespCode,
+                RespDescription = result.Result.RespDescription
+            });
+        }
+        catch (Exception ex)
+        {
+            return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+        }
+    }
     public async Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string Id, CreateUserProfileRequestModel model)
     {
         try

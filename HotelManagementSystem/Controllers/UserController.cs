@@ -165,8 +165,8 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [Route("createuserprofile")]
-    public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileAsync([FromForm] CreateUserProfileRequestModel model)
+    [Route("createuserprofilebyuser")]
+    public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileByUserAsync([FromForm] CreateUserProfileRequestModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -180,6 +180,26 @@ public class UserController : ControllerBase
                 return BadRequest("User not found. Please login again.");
             }
             var result = await _service.CreateUserProfileAsync(userId, model);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
+
+    [HttpPost]
+    [Route("createuserprofilebyadmin")]
+    public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync([FromForm] CreateUserProfileRequestModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _service.CreateUserProfileByAdminAsync(model);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
