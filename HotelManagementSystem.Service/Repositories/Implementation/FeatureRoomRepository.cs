@@ -1,15 +1,7 @@
 ﻿using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Data.Dtos.Room;
-using HotelManagementSystem.Data.Entities;
-using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Repositories.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
     public class FeatureRoomRepository: IFeatureRoomRepository
@@ -24,10 +16,10 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             try
             {
-                var lst = _hotelDbContext.TblRooms.Where(x => x.Is_Featured == true).ToList();
+                var lst = _hotelDbContext.TblRooms.Where(x => x.IsFeatured == true).ToList();
                 if(lst.Count <1 )
                 {
-                    throw new FeatureRoomNotExistException("Featured room doesn't exist.");
+                    return CustomEntityResult<GetFeatureRoomsResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "No featured rooms found.");
                 }
 
                 var RoomResponse = lst.Select(b => new GetFeatureRoomResponseDto
