@@ -18,7 +18,7 @@ public class ServiceInjectionFactory
     public static void ServiceInject(WebApplicationBuilder builder)
     {
         builder.Services.AddDbContext<HotelDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnect")));
 
         var env = builder.Environment.EnvironmentName.ToLower();
         var envFile = $".env.{env}";
@@ -41,6 +41,7 @@ public class ServiceInjectionFactory
         builder.Services.AddTransient<IBookingService, BookingService>();
         builder.Services.AddTransient<IRoomTypeService, RoomTypeService>();
         builder.Services.AddTransient<IGuestService, GuestService>();
+        builder.Services.AddTransient<IFeatureRoomService, FeatureRoomService>();
 
         //repository
         builder.Services.AddTransient<IUserRepository, UserRepository>();
@@ -49,6 +50,7 @@ public class ServiceInjectionFactory
         builder.Services.AddTransient<IBookingRepository, BookingRepository>();
         builder.Services.AddTransient<IRoomTypeRepository, RoomTypeRepository>();
         builder.Services.AddTransient<IGuestRepository, GuestRepository>();
+        builder.Services.AddTransient<IFeatureRoomRepository, FeatureRoomRepository>();
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
