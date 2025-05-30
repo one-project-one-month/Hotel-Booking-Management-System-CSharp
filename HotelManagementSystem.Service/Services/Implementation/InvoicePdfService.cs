@@ -38,9 +38,9 @@ public class InvoicePdfService : IInvoicePdfService
                             .AlignRight();
 
                         decimal subtotal = invoice.Deposite + (invoice.ExtraCharges ?? 0);
-                        col.Item().Text($"Subtotal: {subtotal:C}").AlignRight();
+                        //col.Item().Text($"Subtotal: {subtotal:C}").AlignRight();
 
-                        col.Item().Text($"Total Amount: {invoice.TotalAmount:C}")
+                        col.Item().Text($"Total Amount: {subtotal:C}")
                             .FontSize(14).Bold().AlignRight();
 
                         col.Item().LineHorizontal(1).LineColor(Colors.Grey.Medium);
