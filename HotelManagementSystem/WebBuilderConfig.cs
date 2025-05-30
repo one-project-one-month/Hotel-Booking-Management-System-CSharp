@@ -4,6 +4,7 @@ using HotelManagementSystem.Service.Extensions;
 using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Helpers.SMTP;
 using HotelManagementSystem.Service.Reposities.Implementation;
+using HotelManagementSystem.Service.Repositories.Implementation;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Implementation;
 using HotelManagementSystem.Service.Services.Interface;
@@ -34,9 +35,12 @@ public class ServiceInjectionFactory
 
         //service
         builder.Services.AddTransient<IUserService, UserService>();
+        builder.Services.AddScoped<IInvoicePdfService, InvoicePdfService>();
 
         //repository
         builder.Services.AddTransient<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
