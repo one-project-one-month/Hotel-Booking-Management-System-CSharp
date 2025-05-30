@@ -55,4 +55,76 @@ public class InvoiceRepository : IInvoiceRepository
 
         return await _pdfService.GenerateInvoicePdfAsync(invoice);
     }
+
+    public async Task<Invoice?> GetInvoiceDtoByCodeAsync(string invoiceCode)
+    {
+        var targetCode = invoiceCode.Trim().ToUpper();
+
+        var entities = await _context.TblInvoices
+        .Include(i => i.Guest)
+        .ToListAsync();
+
+        var entity = entities.FirstOrDefault(i =>
+        i.InvoiceId.ToString("N")[^4..].ToUpper() == targetCode);
+
+        if (entity == null)
+            return null;
+
+        // Convert entity to DTO
+        return new Invoice
+        {
+            InvoiceId = entity.InvoiceId,
+            InvoiceCode = entity.InvoiceId.ToString("N")[^4..].ToUpper(),
+            CheckInTime = entity.CheckInTime,
+            CheckOutTime = entity.CheckOutTime,
+            Deposite = entity.Deposite,
+            ExtraCharges = entity.ExtraCharges,
+            TotalAmount = entity.TotalAmount,
+            PaymentType = entity.PaymentType,
+            Guest = new GuestInfo
+            {
+                Nrc = entity.Guest?.Nrc ?? "N/A",
+                PhoneNo = entity.Guest?.PhoneNo ?? "N/A"
+            }
+        };
+    }
+
+    public async Task<byte[]> GenerateInvoicePdfByCodeAsync(string invoiceCode)
+    {
+        var invoice = await GetInvoiceDtoByCodeAsync(invoiceCode);
+
+        if (invoice == null)
+            throw new Exception("Invoice not found");
+
+        return await _pdfService.GenerateInvoicePdfAsync(invoice);
+    }
+
+    public async Task<List<Invoice>> GetAllInvoicesAsync()
+    {
+        var invoiceEntities = await _context.TblInvoices
+            .Include(i => i.Guest)
+            .ToListAsync();
+
+        var invoiceList = invoiceEntities.Select(i => new Invoice
+        {
+            InvoiceId = i.InvoiceId,
+            InvoiceCode = i.InvoiceId.ToString("N")[^4..].ToUpper(), // last 4 chars of Guid string
+            CheckInTime = i.CheckInTime,
+            CheckOutTime = i.CheckOutTime,
+            Deposite = i.Deposite,
+            ExtraCharges = i.ExtraCharges,
+            TotalAmount = i.TotalAmount,
+            PaymentType = i.PaymentType,
+            Guest = i.Guest == null
+                ? null
+                : new GuestInfo
+                {
+                    Nrc = i.Guest.Nrc ?? "N/A",
+                    PhoneNo = i.Guest.PhoneNo ?? "N/A"
+                }
+        }).ToList();
+
+        return invoiceList;
+    }
+
 }
