@@ -8,23 +8,19 @@ namespace HotelManagementSystem.Data.Models.Invoices;
 
 public class Invoice
 {
-    public string InvoiceCode { get; set; } = default!;
     public Guid InvoiceId { get; set; }
-    public string GuestName { get; set; } = default!;
-    public DateTime CheckInDate { get; set; }
-    public DateTime CheckOutDate { get; set; }
-    public string RoomNumber { get; set; } = "N/A"; // Stubbed: You can connect room entity if needed
-    public string RoomType { get; set; } = "Standard"; // Stubbed
-    public decimal PricePerNight { get; set; } = 100m; // Stubbed or calculate from other data
-    public decimal TaxRatePercent { get; set; } = 7.0m;
-
-    public List<HotelServiceItem> Services { get; set; } = new();
+    public string InvoiceCode { get; set; } = string.Empty;
+    public DateTime CheckInTime { get; set; }
+    public DateTime CheckOutTime { get; set; }
+    public decimal Deposite { get; set; }
+    public decimal? ExtraCharges { get; set; }
+    public decimal TotalAmount { get; set; }
+    public string? PaymentType { get; set; }
+    public GuestInfo? Guest { get; set; }
 }
 
-
-public class HotelServiceItem
+public class GuestInfo
 {
-    public string Description { get; set; }
-    public decimal Price { get; set; }
+    public string Nrc { get; set; } = string.Empty;
+    public string PhoneNo { get; set; } = string.Empty;
 }
-

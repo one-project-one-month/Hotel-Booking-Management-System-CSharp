@@ -21,6 +21,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Use CORS
+app.UseCors("AllowBlazorFrontend");
+
 app.UseAuthentication();
 app.UseAuthentication();
 
