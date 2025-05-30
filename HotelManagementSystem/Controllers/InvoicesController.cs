@@ -22,8 +22,8 @@ public class InvoicesController : ControllerBase
         _invoiceRepository = invoiceRepository;
     }
 
-    [HttpGet("download/{invoiceId}")]
-    public async Task<IActionResult> DownloadInvoice(Guid invoiceId)
+    [HttpGet("download/id/{invoiceId}")]
+    public async Task<IActionResult> DownloadInvoiceById(Guid invoiceId)
     {
         if (!ModelState.IsValid)
         {
@@ -33,6 +33,31 @@ public class InvoicesController : ControllerBase
         try
         {
             var invoice = await _invoiceRepository.GetInvoiceDtoByIdAsync(invoiceId);
+
+            if (invoice == null)
+                return NotFound("Invoice not found");
+
+            var pdfBytes = await _pdfService.GenerateInvoicePdfAsync(invoice);
+
+            return File(pdfBytes, "application/pdf", $"HotelInvoice_{invoice.InvoiceCode}.pdf");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    [HttpGet("download/{invoiceCode}")]
+    public async Task<IActionResult> DownloadInvoiceByCode(string invoiceCode)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var invoice = await _invoiceRepository.GetInvoiceDtoByCodeAsync(invoiceCode);
 
             if (invoice == null)
                 return NotFound("Invoice not found");
