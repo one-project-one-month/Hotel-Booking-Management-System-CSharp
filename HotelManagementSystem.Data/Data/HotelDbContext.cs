@@ -37,10 +37,14 @@ public partial class HotelDbContext : DbContext
     public virtual DbSet<TblRoomTypeImage> TblRoomTypeImages { get; set; }
 
     public virtual DbSet<TblUser> TblUsers { get; set; }
-
+    
     public virtual DbSet<TblUserProfileImage> TblUserProfileImages { get; set; }
 
-   
+    // If you need to it, fix it with your db.
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source= MSI\\SQLEXPRESS2022; Initial Catalog=HBMS_Dbo; Integrated Security=True; TrustServerCertificate=True; MultipleActiveResultSets=true;");
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

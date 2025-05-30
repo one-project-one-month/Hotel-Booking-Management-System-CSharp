@@ -10,6 +10,7 @@ using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Implementation;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 
 namespace HotelManagementSystem;
 
@@ -42,6 +43,7 @@ public class ServiceInjectionFactory
         builder.Services.AddTransient<IRoomTypeService, RoomTypeService>();
         builder.Services.AddTransient<IGuestService, GuestService>();
         builder.Services.AddTransient<IFeatureRoomService, FeatureRoomService>();
+        builder.Services.AddScoped<IInvoicePdfService, InvoicePdfService>();
 
         //repository
         builder.Services.AddTransient<IUserRepository, UserRepository>();
@@ -51,6 +53,22 @@ public class ServiceInjectionFactory
         builder.Services.AddTransient<IRoomTypeRepository, RoomTypeRepository>();
         builder.Services.AddTransient<IGuestRepository, GuestRepository>();
         builder.Services.AddTransient<IFeatureRoomRepository, FeatureRoomRepository>();
+        builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+      
+        //License
+        QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
+        // Add CORS policy
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowBlazorFrontend", policy =>
+            {
+                policy.WithOrigins("https://localhost:7144")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
+
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
