@@ -16,6 +16,10 @@ public class Invoice
     public decimal? ExtraCharges { get; set; }
     public decimal TotalAmount { get; set; }
     public string? PaymentType { get; set; }
+
+    //Metadata for the room
+    public string? RoomType { get; set; } = string.Empty;
+
     public GuestInfo? Guest { get; set; }
 }
 
@@ -23,4 +27,5 @@ public class GuestInfo
 {
     public string Nrc { get; set; } = string.Empty;
     public string PhoneNo { get; set; } = string.Empty;
+    public string? Email { get; set; } = string.Empty;
 }
