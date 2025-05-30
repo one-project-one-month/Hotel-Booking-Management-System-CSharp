@@ -10,6 +10,6 @@ namespace HotelManagementSystem.Service.Repositories.Interface
 {
     public interface IFeatureRoomRepository
     {
-        public CustomEntityResult<GetFeatureRoomsResponseDto> GetRoomByFeature();
+        Task<CustomEntityResult<GetFeatureRoomsResponseDto>> GetRoomByFeature();
     }
 }

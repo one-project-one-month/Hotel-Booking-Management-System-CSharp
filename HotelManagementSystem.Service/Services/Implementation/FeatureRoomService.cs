@@ -19,11 +19,11 @@ public class FeatureRoomService: IFeatureRoomService
         _featureRoomRepo = featureRoomReepo;
     }
 
-    public CustomEntityResult<GetFeatureRoomsResponseModel> GetFeatureRoom()
+    public async Task<CustomEntityResult<GetFeatureRoomsResponseModel>> GetFeatureRoom()
     {
         try
         {
-            var result = _featureRoomRepo.GetRoomByFeature();
+            var result = await _featureRoomRepo.GetRoomByFeature();
             if (result.IsError)
             {
                 return CustomEntityResult<GetFeatureRoomsResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);

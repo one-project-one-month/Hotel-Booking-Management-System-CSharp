@@ -4,6 +4,7 @@ using HotelManagementSystem.Data.Dtos.Room;
 using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,11 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
             _hotelDbContext = AppDbConnect;
         }
 
-        public CustomEntityResult<GetFeatureRoomsResponseDto> GetRoomByFeature()
+        public async Task<CustomEntityResult<GetFeatureRoomsResponseDto>> GetRoomByFeature()
         {
             try
             {
-                var lst = _hotelDbContext.TblRooms.Where(x => x.Is_Featured == false).ToList();
+                var lst = await _hotelDbContext.TblRooms.Where(x => x.Is_Featured == true).ToListAsync();
                 if(lst.Count <1 )
                 {
                     throw new FeatureRoomNotExistException("Featured room doesn't exist.");

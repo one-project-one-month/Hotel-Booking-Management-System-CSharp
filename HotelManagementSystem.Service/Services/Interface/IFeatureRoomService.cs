@@ -11,5 +11,5 @@ namespace HotelManagementSystem.Service.Services.Interface;
 
 public interface IFeatureRoomService
 {
-    public CustomEntityResult<GetFeatureRoomsResponseModel> GetFeatureRoom();
+    Task<CustomEntityResult<GetFeatureRoomsResponseModel>> GetFeatureRoom();
 }

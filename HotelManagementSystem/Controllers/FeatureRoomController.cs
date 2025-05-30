@@ -22,7 +22,7 @@ namespace HotelManagementSystem.Controllers
 
         [HttpGet]
         [Route("GetFeatureRoom")]
-        public ActionResult<GetFeatureRoomsResponseModel> GetFeatureRoom()
+        public async Task<ActionResult<GetFeatureRoomsResponseModel>> GetFeatureRoom()
         {
             if (!ModelState.IsValid)
         {
@@ -30,7 +30,7 @@ namespace HotelManagementSystem.Controllers
         }
             try
             {
-                var result = _featureRoomService.GetFeatureRoom();
+                var result = await _featureRoomService.GetFeatureRoom();
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)
