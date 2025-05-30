@@ -1,7 +1,20 @@
 using HotelManagementSystem;
+using HotelManagementSystem.Service.Helpers.Auth.MiddleWare;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy  =>
+        {
+            policy.WithOrigins("https://localhost:7144",
+                "http://localhost:5053").AllowAnyMethod().AllowAnyHeader();
+        });
+});
 // Add services to the container.
 ServiceInjectionFactory.ServiceInject(builder);
 
@@ -21,11 +34,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Use CORS
-app.UseCors("AllowBlazorFrontend");
+//app.UseCors("AllowBlazorFrontend");
+
+app.UseCors(MyAllowSpecificOrigins);
+app.UseMiddleware<JwtAutoRefreshMiddleware>();
 
 app.UseAuthentication();
-app.UseAuthentication();
+app.UseAuthorization();
 
 //app.UseHttpsRedirection();
 app.MapControllers();
