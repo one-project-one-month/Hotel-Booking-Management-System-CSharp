@@ -43,10 +43,10 @@ public class FeatureRoomService: IFeatureRoomService
             return CustomEntityResult<GetFeatureRoomsResponseModel>.GenerateSuccessEntityResult(getFeatureRoomsResponse);
 
         }
-        catch (Exception)
+        catch (Exception ex)
         {
 
-            throw;
+            return CustomEntityResult<GetFeatureRoomsResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 

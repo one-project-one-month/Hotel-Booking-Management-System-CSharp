@@ -21,9 +21,13 @@ namespace HotelManagementSystem.Controllers
         }
 
         [HttpGet]
-        [Route("FeatureRoom")]
+        [Route("GetFeatureRoom")]
         public ActionResult<GetFeatureRoomsResponseModel> GetFeatureRoom()
         {
+            if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
             try
             {
                 var result = _featureRoomService.GetFeatureRoom();
@@ -32,7 +36,7 @@ namespace HotelManagementSystem.Controllers
             catch (Exception ex)
             {
                 var message = ex.Message;
-                return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
+                return BadRequest(message);
             }
 
         }

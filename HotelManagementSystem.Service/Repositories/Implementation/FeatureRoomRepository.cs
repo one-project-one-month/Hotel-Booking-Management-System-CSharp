@@ -24,7 +24,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             try
             {
-                var lst = _hotelDbContext.TblRooms.Where(x => x.Is_Featured == true).ToList();
+                var lst = _hotelDbContext.TblRooms.Where(x => x.Is_Featured == false).ToList();
                 if(lst.Count <1 )
                 {
                     throw new FeatureRoomNotExistException("Featured room doesn't exist.");
@@ -48,7 +48,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
             }
             catch (Exception ex)
             {
-                throw new Exception("Fail to get selected room.", ex);
+                return CustomEntityResult<GetFeatureRoomsResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
             }
         }
     }

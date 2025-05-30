@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Data.Models.Room;
 
-public class GetFeatureRoomResponseModel : BasedResponseModel
+public class GetFeatureRoomResponseModel 
 {
     public Guid RoomId { get; set; }
 
