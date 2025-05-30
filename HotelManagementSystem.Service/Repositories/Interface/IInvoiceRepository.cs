@@ -7,4 +7,5 @@ public interface IInvoiceRepository
 {
     Task<Invoice?> GetInvoiceDtoByIdAsync(Guid invoiceId);
     Task<byte[]> GenerateInvoicePdfByIdAsync(Guid invoiceId);
+    Task<List<Invoice>> GetAllInvoicesAsync();
 }

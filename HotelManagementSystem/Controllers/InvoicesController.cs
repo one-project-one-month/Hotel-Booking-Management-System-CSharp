@@ -46,4 +46,22 @@ public class InvoicesController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
+
+    [HttpGet("all")]
+    public async Task<ActionResult<List<Invoice>>> GetAllInvoicesAsync()
+    {
+        try
+        {
+            var invoices = await _invoiceRepository.GetAllInvoicesAsync();
+            
+            return Ok(invoices);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error retrieving invoices: {ex.Message}");
+        }
+    }
+
+
 }

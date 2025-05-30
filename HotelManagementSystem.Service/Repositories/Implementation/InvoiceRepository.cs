@@ -55,4 +55,33 @@ public class InvoiceRepository : IInvoiceRepository
 
         return await _pdfService.GenerateInvoicePdfAsync(invoice);
     }
+
+    public async Task<List<Invoice>> GetAllInvoicesAsync()
+    {
+        var invoiceEntities = await _context.TblInvoices
+            .Include(i => i.Guest)
+            .ToListAsync();
+
+        var invoiceList = invoiceEntities.Select(i => new Invoice
+        {
+            InvoiceId = i.InvoiceId,
+            InvoiceCode = i.InvoiceId.ToString("N")[^4..].ToUpper(), // last 4 chars of Guid string
+            CheckInTime = i.CheckInTime,
+            CheckOutTime = i.CheckOutTime,
+            Deposite = i.Deposite,
+            ExtraCharges = i.ExtraCharges,
+            TotalAmount = i.TotalAmount,
+            PaymentType = i.PaymentType,
+            Guest = i.Guest == null
+                ? null
+                : new GuestInfo
+                {
+                    Nrc = i.Guest.Nrc ?? "N/A",
+                    PhoneNo = i.Guest.PhoneNo ?? "N/A"
+                }
+        }).ToList();
+
+        return invoiceList;
+    }
+
 }
