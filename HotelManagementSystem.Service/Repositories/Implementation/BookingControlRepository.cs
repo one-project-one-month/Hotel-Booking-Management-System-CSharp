@@ -32,9 +32,9 @@ public class BookingControlRepository : IBookingControlRepository
 
         var getBookingResponse = bookings.Select(b => new GetBookingResponseDto
         {
-            BookingId = b.BookingId,
-            UserId = b.UserId,
-            GuestId = b.GuestId,
+            //BookingId = b.BookingId,
+            //UserId = b.UserId,
+            //GuestId = b.GuestId,
             GuestCount = b.GuestCount,
             CheckIn_Time = b.CheckInTime,
             CheckOut_Time = b.CheckOutTime,
@@ -61,33 +61,24 @@ public class BookingControlRepository : IBookingControlRepository
         return CustomEntityResult<GetBookingsResponseDto>.GenerateSuccessEntityResult(getBookingsResponse);
     }
 
-    public async Task<CustomEntityResult<GetBookingsResponseDto>> DeleteBooking(string BookingId)
+    public async Task<CustomEntityResult<GetBookingsResponseDto>> DeleteBooking(DeleteBookingRequestDto Booking)
     {
         try
         {
             var booking = await _hotelDbContext.TblBookings
                 .Include(b => b.TblRoomBookings)
-            .Where(b => b.BookingId.ToString() == BookingId)
+            .Where(b => b.BookingId == Booking.BookingId)
             .FirstOrDefaultAsync();
 
             if (booking == null)
             {
-                throw new BookingNotFoundException(BookingId);
+                throw new BookingNotFoundException(Booking.BookingId.ToString());
             }
-            var roomBookingId = booking.TblRoomBookings.Select(rb => rb.BookingId)
-                .ToList();
+            var existingRoomBookings = booking.TblRoomBookings.ToList();
 
-            foreach(var roombooingIdIndex in roomBookingId)
+            foreach(var existingRoomBooking in existingRoomBookings)
             {
-                var roomBooking = await _hotelDbContext.TblRoomBookings
-                .Where(b => b.BookingId == roombooingIdIndex)
-                .FirstOrDefaultAsync();
-
-                if (roomBooking == null)
-                {
-                    throw new BookingNotFoundException(BookingId);
-                }
-                _hotelDbContext.TblRoomBookings.Remove(roomBooking!);
+                _hotelDbContext.TblRoomBookings.Remove(existingRoomBooking);
             }   
 
             _hotelDbContext.TblBookings.Remove(booking);
@@ -101,51 +92,37 @@ public class BookingControlRepository : IBookingControlRepository
         }        
     }
 
-    public async Task<CustomEntityResult<UpdateBookingResponseDto>> UpdateBooking(string BookingId, UpdateBookingRequestDto requestBookingDto)
+    public async Task<CustomEntityResult<UpdateBookingResponseDto>> UpdateBooking(UpdateBookingRequestDto requestBookingDto)
     {
         try
         {
             var booking = await _hotelDbContext.TblBookings
                 .Include(b => b.TblRoomBookings)
-            .Where(b => b.BookingId.ToString() == BookingId)
+            .Where(b => b.BookingId == requestBookingDto.BookingId)
             .FirstOrDefaultAsync();
 
             if (booking == null)
             {
-                throw new BookingNotFoundException(BookingId);
+                throw new BookingNotFoundException(requestBookingDto.BookingId.ToString());
             }
-            //var roomBookingId = booking.TblRoomBookings.Select(rb => rb.BookingId)
-            //    .ToList();
 
-            //foreach (var roombooingIdIndex in roomBookingId)
-            //{
-            //    var roomBooking = await _hotelDbContext.TblRoomBookings
-            //    .Where(b => b.BookingId == roombooingIdIndex)
-            //    .FirstOrDefaultAsync();
-
-            //    if (roomBooking == null)
-            //    {
-            //        throw new BookingNotFoundException(BookingId);
-            //    }
-
-            //    roomBooking.BookingId = requestBookingDto.BookingId;
-            //    roomBooking.RoomId = requestBookingDto.RoomId;
-            //}
-
-            foreach(var requestRoomBooking in requestBookingDto.Rooms)
+            var existingRoomBookings = booking.TblRoomBookings.ToList();
+            foreach (var existingRoomBooking in existingRoomBookings)
             {
-                var roomBooking = await _hotelDbContext.TblRoomBookings
-                    .Where(rb => rb.BookingId.ToString() == BookingId)
-                    .FirstOrDefaultAsync();
-
-                if (roomBooking == null)
-                {
-                    throw new BookingNotFoundException(BookingId);
-                }
-
-                roomBooking.RoomId = requestRoomBooking;
+                _hotelDbContext.TblRoomBookings.Remove(existingRoomBooking);
             }
 
+            foreach (var requestRoomBooking in requestBookingDto.Rooms)
+            {                
+                var roomId = requestRoomBooking;
+                var roomBooking = new TblRoomBooking
+                {
+                    BookingId = booking.BookingId,
+                    RoomId = roomId
+                };
+                booking.TblRoomBookings.Add(roomBooking);
+            }
+            
             booking.UserId = requestBookingDto.UserId;
             booking.GuestId = requestBookingDto.GuestId;
             booking.GuestCount = requestBookingDto.GuestCount;

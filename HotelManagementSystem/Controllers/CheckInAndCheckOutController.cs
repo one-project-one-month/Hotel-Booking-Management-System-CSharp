@@ -20,6 +20,7 @@ public class CheckInAndCheckOutController : ControllerBase
     }
 
     [HttpPost]
+    [Route("/admin/CheckInCheckOut")]
     public async Task<ActionResult<CreateCheckInAndCheckOutResponseModel>> CreateCheckInAndCheckOutAsync(CreateCheckInAndCheckOutRequestModel requestModel)
     {
         try

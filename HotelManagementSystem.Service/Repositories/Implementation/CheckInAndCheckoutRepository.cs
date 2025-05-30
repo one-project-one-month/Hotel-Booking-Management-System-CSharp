@@ -28,6 +28,14 @@ public class CheckInAndCheckoutRepository: ICheckInAndCheckoutRepository
     {
         try
         {
+            var guest = await _hotelDbContext.TblGuests
+               .Where(rb => rb.GuestId == requestDto.GuestId)
+               .FirstOrDefaultAsync();
+            if (guest == null)
+            {
+                throw new GuestNotFoundException(requestDto.GuestId.ToString());
+            }
+
             var checkInOut = new CheckInOut
             {
                 GuestId = requestDto.GuestId,
@@ -39,10 +47,6 @@ public class CheckInAndCheckoutRepository: ICheckInAndCheckoutRepository
 
             await _hotelDbContext.AddAsync(checkInOut);
             await _hotelDbContext.SaveChangesAsync();
-
-            var guest = await _hotelDbContext.TblGuests
-               .Where(rb => rb.GuestId == checkInOut.GuestId)
-               .FirstOrDefaultAsync();
 
             var checkInOutResponse = new CreateCheckInAndCheckOutResponseDto()
             {

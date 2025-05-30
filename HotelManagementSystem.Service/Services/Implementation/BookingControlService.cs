@@ -36,9 +36,9 @@ public class BookingControlService : IBookingControlService
         {
             Bookings = result.Result.Bookings.Select(b => new GetBookingResponseModel
             {
-                BookingId = b.BookingId,
-                UserId = b.UserId,
-                GuestId = b.GuestId,
+                //BookingId = b.BookingId,
+                //UserId = b.UserId,
+                //GuestId = b.GuestId,
                 GuestCount = b.GuestCount,
                 CheckIn_Time = b.CheckIn_Time,
                 CheckOut_Time = b.CheckOut_Time,
@@ -57,21 +57,26 @@ public class BookingControlService : IBookingControlService
         return CustomEntityResult<GetBookingsResponseModel>.GenerateSuccessEntityResult(getBookingResponse);
     }
 
-    public async Task<CustomEntityResult<GetBookingsResponseModel>> DeleteBooking(string BookingId)
+    public async Task<CustomEntityResult<DeleteBookingResponseModel>> DeleteBooking(DeleteBookingRequestModel Booking)
     {
-        var result = await _bookingControlRepository.DeleteBooking(BookingId);
+        var bookingRequestDto = new DeleteBookingRequestDto()
+        {
+            BookingId = Booking.BookingId
+        };
+        var result = await _bookingControlRepository.DeleteBooking(bookingRequestDto);
         if (result.IsError)
         {
-            return CustomEntityResult<GetBookingsResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+            return CustomEntityResult<DeleteBookingResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
         }
-        var returnModel = new GetBookingsResponseModel();
-        return CustomEntityResult<GetBookingsResponseModel>.GenerateSuccessEntityResult(returnModel);
+        var returnModel = new DeleteBookingResponseModel();
+        return CustomEntityResult<DeleteBookingResponseModel>.GenerateSuccessEntityResult(returnModel);
     }
 
-    public async Task<CustomEntityResult<UpdateBookingResponseModel>> UpdateBooking(string BookingId, UpdateBookingRequestModel requestModel)
+    public async Task<CustomEntityResult<UpdateBookingResponseModel>> UpdateBooking(UpdateBookingRequestModel requestModel)
     {
         var bookingRequestDto = new UpdateBookingRequestDto()
         {
+            BookingId = requestModel.BookingId,
             UserId = requestModel.UserId,
             GuestId = requestModel.GuestId,
             GuestCount = requestModel.GuestCount,
@@ -85,9 +90,9 @@ public class BookingControlService : IBookingControlService
         };
 
         bookingRequestDto.Rooms = requestModel.Rooms;
-        var roomBookingId = await _bookingControlRepository.UpdateBooking(BookingId, bookingRequestDto);
+        var roomBookingId = await _bookingControlRepository.UpdateBooking(bookingRequestDto);
 
-        var result = await _bookingControlRepository.UpdateBooking(BookingId, bookingRequestDto);
+        var result = await _bookingControlRepository.UpdateBooking(bookingRequestDto);
         if (result.IsError)
         {
             return CustomEntityResult<UpdateBookingResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);

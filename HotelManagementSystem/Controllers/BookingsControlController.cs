@@ -18,6 +18,7 @@ public class BookingsControlController : ControllerBase
         _bookingControlService = bookingControlService;
     }
     [HttpGet]
+    [Route("/admin/Bookings")]
     public async Task<ActionResult<GetBookingsResponseModel>> GetBookings()
     {
         try
@@ -32,12 +33,14 @@ public class BookingsControlController : ControllerBase
         }
     }
 
-    [HttpPut("{BookingId}")]
-    public async Task<ActionResult<UpdateBookingResponseModel>> UpdateBooking(string BookingId, UpdateBookingRequestModel requestModel)
+    //[HttpPut("{BookingId}")]
+    [HttpPost]
+    [Route("/admin/UpdateBooking")]
+    public async Task<ActionResult<UpdateBookingResponseModel>> UpdateBooking(UpdateBookingRequestModel requestModel)
     {
         try
         {
-            var result = await _bookingControlService.UpdateBooking(BookingId, requestModel);
+            var result = await _bookingControlService.UpdateBooking(requestModel);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
@@ -47,12 +50,13 @@ public class BookingsControlController : ControllerBase
         }
     }
 
-    [HttpDelete("{BookingId}")]
-    public async Task<ActionResult<GetBookingsResponseModel>> DeleteBooking(string BookingId)
+    [HttpPost]
+    [Route("/admin/DeleteBooking")]
+    public async Task<ActionResult<DeleteBookingResponseModel>> DeleteBooking(DeleteBookingRequestModel Booking)
     {
         try
         {
-            var result = await _bookingControlService.DeleteBooking(BookingId);
+            var result = await _bookingControlService.DeleteBooking(Booking);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)

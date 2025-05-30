@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Data.Dtos.BookingControl;
 
-public class UpdateBookingsDto
+public class UpdateBookingDto
 {
 }
 

@@ -17,7 +17,7 @@ public class GetBookingRequestModel
 
 }
 
-public class GetBookingResponseModel : BasedResponseModel
+public class GetBookingResponseModel
 {
     public string UserName { get; set; } = null!;
     public string GuestNrc { get; set; } = null!;
@@ -37,11 +37,11 @@ public class GetBookingResponseModel : BasedResponseModel
     public decimal? TotalAmount { get; set; }
     public string? PaymentType { get; set; }
 
-    public Guid BookingId { get; set; }
+    //public Guid BookingId { get; set; }
 
-    public Guid? UserId { get; set; }
+    //public Guid? UserId { get; set; }
 
-    public Guid? GuestId { get; set; }   
+    //public Guid? GuestId { get; set; }   
 
     public DateTime? CreatedAt { get; set; }
         
