@@ -21,14 +21,14 @@ public class RoomController : ControllerBase
 
     [HttpGet]
     [Route("getrooms")]
-    public async Task<ActionResult<BasedResponseModel>> GetRooms()
+    public async Task<ActionResult<RoomListResponseModel>> GetRooms()
     {
         var result = await _service.GetRooms();
         return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<BasedResponseModel>> GetRoomById(Guid id)
+    public async Task<ActionResult<RoomResponseModel>> GetRoomById(Guid id)
     {
         var result = await _service.GetRoomById(id); 
         return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
