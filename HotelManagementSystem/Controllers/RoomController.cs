@@ -27,7 +27,7 @@ public class RoomController : ControllerBase
         return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
     }
 
-    [HttpGet("id")]
+    [HttpGet("{id}")]
     public async Task<ActionResult<BasedResponseModel>> GetRoomById(Guid id)
     {
         var result = await _service.GetRoomById(id); 

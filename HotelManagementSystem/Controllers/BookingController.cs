@@ -97,7 +97,7 @@ namespace HotelManagementSystem.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("getallbookingbyuserid/{userId}")]
+        [Route("getallbookingbyuserid")]
         public async Task<ActionResult<BasedResponseModel>> GetAllBookingByUserId()
         {
             if(!ModelState.IsValid)

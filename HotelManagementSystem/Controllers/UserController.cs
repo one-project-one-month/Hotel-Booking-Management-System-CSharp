@@ -4,6 +4,7 @@ using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Sprache;
 using System.Security.Claims;
 
 namespace HotelManagementSystem.Controllers;
@@ -165,7 +166,7 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [Route("createuserprofilebyuser")]
+    [Route("createuserprofilebyuser{id}")]
     public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileByUserAsync([FromForm] CreateUserProfileRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -253,6 +254,34 @@ public class UserController : ControllerBase
             }
             var result = await _service.GetUserProfileByIdAsync(userId);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
+
+    [HttpPost]
+    [Route("getclaim")]
+    public async Task<ActionResult<BasedResponseModel>> GetClaimAsync()
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            return Ok(new
+            {
+                UserId = userId,
+                Email = email,
+                Role = role
+            });
         }
         catch (Exception ex)
         {
