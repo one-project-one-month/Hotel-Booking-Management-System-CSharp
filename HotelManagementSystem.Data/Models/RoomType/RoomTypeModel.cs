@@ -8,6 +8,7 @@ namespace HotelManagementSystem.Data.Models.RoomType
 {
     public class RoomTypeModel
     {
+        public Guid? RoomId { get; set; }
         public string? RoomTypeName { get; set; } = null!;
 
         public string? Description { get; set; }

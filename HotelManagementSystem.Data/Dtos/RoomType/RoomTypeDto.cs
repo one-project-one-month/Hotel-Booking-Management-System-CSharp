@@ -9,6 +9,7 @@ namespace HotelManagementSystem.Data.Dtos.RoomType
 {
     public class RoomTypeDto
     {
+        public Guid RoomId { get; set; }
         public string? RoomTypeName { get; set; } = null!;
 
         public string? Description { get; set; }
