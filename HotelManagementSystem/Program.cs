@@ -33,8 +33,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//app.UseCors("AllowBlazorFrontend");
+
 app.UseCors(MyAllowSpecificOrigins);
 app.UseMiddleware<JwtAutoRefreshMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
