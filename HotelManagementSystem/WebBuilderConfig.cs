@@ -38,6 +38,8 @@ public class ServiceInjectionFactory
         //service
         builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<IRoomService, RoomService>();
+        builder.Services.AddTransient<IBookingControlService, BookingControlService>();
+        builder.Services.AddTransient<ICheckInAndCheckoutService, CheckInAndCheckoutService>();
         builder.Services.AddTransient<ISearchRoomRepository, SearchRoomRepository>();
         builder.Services.AddTransient<IBookingService, BookingService>();
         builder.Services.AddTransient<IRoomTypeService, RoomTypeService>();
@@ -68,6 +70,8 @@ public class ServiceInjectionFactory
                     .AllowAnyMethod();
             });
         });
+        builder.Services.AddTransient<IBookingControlRepository, BookingControlRepository>();
+        builder.Services.AddTransient<ICheckInAndCheckoutRepository, CheckInAndCheckoutRepository>();
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
