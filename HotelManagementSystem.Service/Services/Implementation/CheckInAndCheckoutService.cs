@@ -1,9 +1,7 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.BookingControl;
+﻿using HotelManagementSystem.Data.Dtos.BookingControl;
 using HotelManagementSystem.Data.Models.CheckInAndCheckOutDto;
 using HotelManagementSystem.Data.Models.CheckInAndCheckOutModel;
 using HotelManagementSystem.Service.Repositories.Implementation;
-using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
 using System;
 using System.Collections.Generic;

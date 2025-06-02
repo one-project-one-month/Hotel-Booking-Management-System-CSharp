@@ -1,14 +1,11 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Data.Dtos.SearchRoom;
+﻿using HotelManagementSystem.Data.Dtos.SearchRoom;
 using HotelManagementSystem.Data.Dtos.User;
-using HotelManagementSystem.Service.Repositories.Interface;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RoomDto = HotelManagementSystem.Data.Dtos.SearchRoom.RoomDto;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {

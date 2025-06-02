@@ -1,14 +1,8 @@
-using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Data.Dtos.Booking;
 using HotelManagementSystem.Data.Dtos.User;
-using HotelManagementSystem.Data.Entities;
-using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.Constants;
 using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
-using HotelManagementSystem.Service.Repositories.Interface;
-using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Crypto.Operators;
 
 namespace HotelManagementSystem.Service.Reposities.Implementation;

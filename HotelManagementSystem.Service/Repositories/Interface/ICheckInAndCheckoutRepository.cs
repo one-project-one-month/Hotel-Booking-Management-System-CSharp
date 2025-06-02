@@ -1,5 +1,4 @@
 ﻿using HotelManagementSystem.Data.Models.CheckInAndCheckOutDto;
-using HotelManagementSystem.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

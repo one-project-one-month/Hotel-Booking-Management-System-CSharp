@@ -1,9 +1,5 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.BookingControl;
+﻿using HotelManagementSystem.Data.Dtos.BookingControl;
 using HotelManagementSystem.Data.Models.BookingControl;
-using HotelManagementSystem.Helpers;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagementSystem.Controllers;
 

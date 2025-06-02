@@ -1,12 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Data.Models.RoomType;
-using HotelManagementSystem.Helpers;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace HotelManagementSystem.Controllers
+﻿namespace HotelManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

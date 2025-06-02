@@ -1,13 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Data.Dtos.Room;
-using HotelManagementSystem.Data.Dtos.RoomType;
-using HotelManagementSystem.Data.Entities;
-using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Service.Repositories.Interface;
-using Microsoft.EntityFrameworkCore;
-
-namespace HotelManagementSystem.Service.Repositories.Implementation;
+﻿namespace HotelManagementSystem.Service.Repositories.Implementation;
 
 public class RoomTypeRepository : IRoomTypeRepository
 {

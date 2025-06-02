@@ -1,5 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.User;
+﻿using HotelManagementSystem.Data.Dtos.User;
 namespace HotelManagementSystem.Service.Helpers.Auth.Token
 {
     public interface ITokenProcessors

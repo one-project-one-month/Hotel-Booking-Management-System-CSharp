@@ -1,5 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models.User;
+﻿using HotelManagementSystem.Data.Models.User;
 
 namespace HotelManagementSystem.Service.Services.Interface
 {

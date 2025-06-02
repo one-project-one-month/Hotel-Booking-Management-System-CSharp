@@ -1,7 +1,4 @@
 ﻿using HotelManagementSystem.Data.Models.Guest;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagementSystem.Controllers
 {

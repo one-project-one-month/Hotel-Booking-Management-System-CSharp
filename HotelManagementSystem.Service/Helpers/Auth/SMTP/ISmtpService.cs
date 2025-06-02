@@ -1,5 +1,4 @@
 ﻿using HotelManagementSystem.Data.Models.User;
-using HotelManagementSystem.Data;
 
 namespace HotelManagementSystem.Service.Helpers.Auth.SMTP
 {

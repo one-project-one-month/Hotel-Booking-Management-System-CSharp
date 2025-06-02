@@ -1,8 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.RoomType;
-using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Data.Models.RoomType;
-using HotelManagementSystem.Service.Repositories.Interface;
+﻿using HotelManagementSystem.Data.Models.RoomType;
 using HotelManagementSystem.Service.Services.Interface;
 
 namespace HotelManagementSystem.Service.Services.Implementation;

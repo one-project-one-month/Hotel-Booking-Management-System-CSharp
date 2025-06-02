@@ -1,7 +1,5 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models.SearchRoom;
+﻿using HotelManagementSystem.Data.Models.SearchRoom;
 using HotelManagementSystem.Service.Services.Interface;
-using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Data.Dtos.SearchRoom;
 
 namespace HotelManagementSystem.Service.Services.Implementation

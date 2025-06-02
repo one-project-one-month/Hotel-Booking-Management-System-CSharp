@@ -1,10 +1,6 @@
 using Azure;
-using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.Room;
-using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.Room;
 using HotelManagementSystem.Data.Models.RoomType;
-using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
 using System.Security.AccessControl;
 
