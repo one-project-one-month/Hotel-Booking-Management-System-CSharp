@@ -6,11 +6,6 @@ using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation;
 
