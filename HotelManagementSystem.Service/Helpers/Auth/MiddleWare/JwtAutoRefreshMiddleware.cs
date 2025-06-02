@@ -4,6 +4,7 @@ using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -70,7 +71,7 @@ namespace HotelManagementSystem.Service.Helpers.Auth.MiddleWare
             }
             catch (Exception ex)
             {
-                
+                Debug.WriteLine("Error in JwtAutoRefreshMiddleware: {Message}", ex.Message);
             }
 
             await _next(context);
