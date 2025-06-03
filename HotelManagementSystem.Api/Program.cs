@@ -1,10 +1,10 @@
 using HotelManagementSystem;
+using HotelManagementSystem.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-ServiceInjectionFactory.ServiceInject(builder);
-
+builder.AddHotelManagementService();
 builder.Services.AddControllers();
 
 // Add services to the container.
