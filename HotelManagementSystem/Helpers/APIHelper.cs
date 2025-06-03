@@ -1,4 +1,5 @@
-using HotelManagementSystem.Models;
+using HotelManagementSystem.Data;
+using HotelManagementSystem.Data.Models;
 
 namespace HotelManagementSystem.Helpers;
 

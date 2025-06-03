@@ -1,28 +1,28 @@
 using System.Text.Json;
-using HotelManagementSystem.Features.User;
+using HotelManagementSystem.Data.Models;
+using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Helpers;
-using HotelManagementSystem.Models;
-using HotelManagementSystem.Models.User;
+using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HotelManagementSystem.Api.Controllers;
+namespace HotelManagementSystem.Controllers;
 
 [ApiController]
 [AllowAnonymous]
 [Route("api/[Controller]")]
 public class UserController : ControllerBase
 {
-    private readonly BL_User _blUser;
-
-    public UserController(BL_User blUser)
+    private readonly IUserService _service;
+    
+    public UserController(IUserService service)
     {
-        _blUser = blUser;
+        _service = service;
     }
-
+    
     [HttpPost]
     [Route("CreateUser")]
-    public async Task<ActionResult<BasedResponseModel>> CreateUser([FromBody] CreateUserRequestModel model)
+    public async Task<ActionResult<BasedResponseModel>> CreateUser([FromBody]CreateUserRequestModel model)
     {
         #region UserGetClaimsValue
 
@@ -51,8 +51,8 @@ public class UserController : ControllerBase
             //     return BadRequest(ErrorMessageConstant.EM_UserTypeNotAcceptable); ///Not Acceptable
             // }
             #endregion
-
-            var result = await _blUser.CreateUser(model);
+            
+            var result = await _service.CreateUser(model);
 
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
