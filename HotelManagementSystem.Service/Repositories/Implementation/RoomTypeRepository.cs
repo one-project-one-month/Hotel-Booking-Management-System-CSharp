@@ -17,7 +17,7 @@ public class RoomTypeRepository : IRoomTypeRepository
                 .Include(x=>x.TblRoomTypeImage)
                 .Select(x=>new RoomTypeDto
             {
-                RoomId = x.RoomTypeId,
+                RoomTypeId = x.RoomTypeId,
                 RoomTypeName = x.RoomTypeName,
                 Description = x.Description,
                 RoomImg = x.TblRoomTypeImage != null ? x.TblRoomTypeImage.RoomImg : null,

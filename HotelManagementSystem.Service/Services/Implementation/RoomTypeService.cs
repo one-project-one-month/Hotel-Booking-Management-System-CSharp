@@ -22,7 +22,7 @@ public class RoomTypeService : IRoomTypeService
 
             var lst = result.Result.RoomTypeList.Select(x => new RoomTypeModel
             {
-                RoomId = x.RoomId,
+                RoomTypeId = x.RoomTypeId,
                 RoomTypeName = x.RoomTypeName,
                 Description = x.Description,
                 RoomImg = x.RoomImg != null ? Convert.ToBase64String(x.RoomImg) : null,

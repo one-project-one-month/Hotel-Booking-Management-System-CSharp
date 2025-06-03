@@ -86,7 +86,7 @@
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [HttpDelete("deleteroomtype/{id}")]
         public async Task<ActionResult<BasedResponseModel>> DeleteRoomType (Guid id)
         {
