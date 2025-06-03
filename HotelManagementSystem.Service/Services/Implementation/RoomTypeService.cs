@@ -49,6 +49,7 @@ public class RoomTypeService : IRoomTypeService
 
             var model = new RoomTypeModel
             {
+                RoomTypeId = result.Result.RoomType.RoomTypeId,
                 RoomTypeName = result.Result.RoomType.RoomTypeName,
                 Description = result.Result.RoomType.Description,
                 RoomImg = result.Result.RoomType.RoomImg != null ? Convert.ToBase64String(result.Result.RoomType.RoomImg) : null,

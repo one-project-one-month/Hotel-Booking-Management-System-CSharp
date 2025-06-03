@@ -45,6 +45,7 @@ public class RoomTypeRepository : IRoomTypeRepository
             if (roomType == null) return CustomEntityResult<RoomTypeResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Room Type Not Found");
             var dto = new RoomTypeDto
             {
+                RoomTypeId = roomType.RoomTypeId,
                 RoomTypeName = roomType.RoomTypeName,
                 Description = roomType.Description,
                 RoomImg = roomType.TblRoomTypeImage != null ? roomType.TblRoomTypeImage.RoomImg : null,
