@@ -3,11 +3,6 @@ using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Data.Dtos.Guest;
 using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Service.Repositories.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
@@ -30,7 +25,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     PhoneNo = model.PhoneNo,
                     CreatedAt = DateTime.UtcNow
                 };
-                _context.TblGuests.Add(guest);
+                await _context.TblGuests.AddAsync(guest);
                 await _context.SaveChangesAsync();
                 var response = new CreateGuestResponseDto
                 {

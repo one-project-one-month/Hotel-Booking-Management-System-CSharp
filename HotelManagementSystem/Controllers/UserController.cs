@@ -166,7 +166,7 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [Route("createuserprofilebyuser{id}")]
+    [Route("createuserprofilebyuser")]
     public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileByUserAsync([FromForm] CreateUserProfileRequestModel model)
     {
         if (!ModelState.IsValid)

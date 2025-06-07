@@ -50,35 +50,37 @@ namespace HotelManagementSystem.Service.Services.Implementation
                 return CustomEntityResult<CreateBookingResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
             }
         }
-        public async Task<CustomEntityResult<CreateBookingResponseModel>> CreateBookingByAdmin(CreateBookingRequestModel model)
+        public async Task<CustomEntityResult<CreateBookingByAdminResponseModel>> CreateBookingByAdmin(CreateBookingByAdminRequestModel model)
         {
             try
             {
-                var createBookingRequest = new CreateBookingRequestDto
+                var createBookingRequest = new CreateBookingByAdminRequestDto
                 {
+                    GuestId = model.GuestId,
                     UserId = model.UserId,
-                    Guest_Count = model.Guest_Count,
-                    Booking_Status = model.Booking_Status,
-                    Deposit_Amount = model.Deposit_Amount,
-                    Total_Amount = model.Total_Amount,
-                    CheckInDate = model.CheckInDate,
-                    CheckOutDate = model.CheckOutDate,
-                    PaymentType = model.PaymentType
+                    GuestCount = model.GuestCount,
+                    BookingStatus = model.BookingStatus,
+                    DepositAmount = model.DepositAmount,
+                    TotalAmount = model.TotalAmount,
+                    CheckInTime = model.CheckInTime,
+                    CheckOutTime = model.CheckOutTime,
+                    PhoneNo = model.PhoneNo,
+                    Nrc = model.Nrc,
                 };
-                var createBooking = await _bookingRepo.CreateBookingByUser(createBookingRequest);
+                var createBooking = await _bookingRepo.CreateBookingByAdmin(createBookingRequest);
                 if (createBooking.IsError)
                 {
-                    return CustomEntityResult<CreateBookingResponseModel>.GenerateFailEntityResult(createBooking.Result.RespCode, createBooking.Result.RespDescription);
+                    return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateFailEntityResult(createBooking.Result.RespCode, createBooking.Result.RespDescription);
                 }
-                var createBookingResponse = new CreateBookingResponseModel()
+                var createBookingResponse = new CreateBookingByAdminResponseModel()
                 {
                     BookingId = createBooking.Result.BookingId
                 };
-                return CustomEntityResult<CreateBookingResponseModel>.GenerateSuccessEntityResult(createBookingResponse);
+                return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateSuccessEntityResult(createBookingResponse);
             }
             catch (Exception ex)
             {
-                return CustomEntityResult<CreateBookingResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+                return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
             }
         }
         public async Task<CustomEntityResult<GetBookingByIdResponseModel>> GetBookingById(GetBookingByIdRequestModel bookingId)

@@ -5,7 +5,6 @@ using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
-using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.BookingControl;
 

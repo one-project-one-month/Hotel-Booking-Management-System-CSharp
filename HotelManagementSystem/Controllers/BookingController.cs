@@ -51,7 +51,7 @@ namespace HotelManagementSystem.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("createbookingbyadmin")]
-        public async Task<ActionResult<BasedResponseModel>> CreateBookingByAdmin(CreateBookingRequestModel model)
+        public async Task<ActionResult<BasedResponseModel>> CreateBookingByAdmin(CreateBookingByAdminRequestModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -59,7 +59,7 @@ namespace HotelManagementSystem.Controllers
             }
             try
             {
-                var result = await _bookingService.CreateBookingByUser(model);
+                var result = await _bookingService.CreateBookingByAdmin(model);
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)

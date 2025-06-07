@@ -1,6 +1,7 @@
 ﻿using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Data;
 using HotelManagementSystem.Data.Dtos.Booking;
+using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Data.Models.Booking;
 using HotelManagementSystem.Service.Repositories.Interface;
@@ -21,6 +22,56 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             _context = context;
         }
+        public async Task<CustomEntityResult<CreateBookingByAdminResponseDto>> CreateBookingByAdmin(CreateBookingByAdminRequestDto dto)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var guest = new TblGuest
+                {
+                    UserId = dto.UserId,
+                    Nrc = dto.Nrc,
+                    PhoneNo = dto.PhoneNo,
+                    CreatedAt = DateTime.UtcNow
+                };
+                await _context.TblGuests.AddAsync(guest);
+                await _context.SaveChangesAsync();
+
+                var GuestId = guest.GuestId;
+                var createBookingRequest = new TblBooking
+                {
+                    UserId = dto.UserId,
+                    GuestId = GuestId,
+                    GuestCount = dto.GuestCount,
+                    CheckInTime = dto.CheckInTime,
+                    CheckOutTime = dto.CheckOutTime,
+                    DepositAmount = dto.DepositAmount,
+                    BookingStatus = "Booked",
+                    TotalAmount = dto.TotalAmount
+                };
+
+                var createBooking = await _context.TblBookings.AddAsync(createBookingRequest);
+                await _context.SaveChangesAsync();
+
+                var creteBookingResponse = new CreateBookingByAdminResponseDto
+                {
+                    BookingId = createBooking.Entity.BookingId
+                };
+
+                await transaction.CommitAsync();
+
+                return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateSuccessEntityResult(creteBookingResponse);
+            }
+            catch(Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateFailEntityResult(
+                    ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                    $"Failed to create user profile: {ex.Message} {(ex.InnerException?.Message ?? "")}");
+            }
+        }
+
         public async Task<CustomEntityResult<CreateBookingResponseDto>> CreateBookingByUser(CreateBookingRequestDto model)
         {
             try
