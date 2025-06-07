@@ -1,9 +1,5 @@
-﻿using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Data.Entities;
-using HotelManagementSystem.Data.Models.Invoices;
-using HotelManagementSystem.Service.Repositories.Interface;
+﻿using HotelManagementSystem.Data.Models.Invoices;
 using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation;
 

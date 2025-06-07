@@ -1,5 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.Guest;
+﻿using HotelManagementSystem.Data.Dtos.Guest;
 
 namespace HotelManagementSystem.Service.Repositories.Interface
 {

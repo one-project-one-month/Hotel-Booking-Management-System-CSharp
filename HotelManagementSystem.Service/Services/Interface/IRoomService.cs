@@ -1,5 +1,3 @@
-using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.Room;
 
 namespace HotelManagementSystem.Service.Services.Interface;

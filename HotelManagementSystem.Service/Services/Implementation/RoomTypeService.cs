@@ -1,8 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.RoomType;
-using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Data.Models.RoomType;
-using HotelManagementSystem.Service.Repositories.Interface;
+﻿using HotelManagementSystem.Data.Models.RoomType;
 using HotelManagementSystem.Service.Services.Interface;
 
 namespace HotelManagementSystem.Service.Services.Implementation;
@@ -26,7 +22,7 @@ public class RoomTypeService : IRoomTypeService
 
             var lst = result.Result.RoomTypeList.Select(x => new RoomTypeModel
             {
-                RoomId = x.RoomId,
+                RoomTypeId = x.RoomTypeId,
                 RoomTypeName = x.RoomTypeName,
                 Description = x.Description,
                 RoomImg = x.RoomImg != null ? Convert.ToBase64String(x.RoomImg) : null,
@@ -53,6 +49,7 @@ public class RoomTypeService : IRoomTypeService
 
             var model = new RoomTypeModel
             {
+                RoomTypeId = result.Result.RoomType.RoomTypeId,
                 RoomTypeName = result.Result.RoomType.RoomTypeName,
                 Description = result.Result.RoomType.Description,
                 RoomImg = result.Result.RoomType.RoomImg != null ? Convert.ToBase64String(result.Result.RoomType.RoomImg) : null,

@@ -1,9 +1,5 @@
-﻿using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Data.Models.SearchRoom;
-using HotelManagementSystem.Helpers;
+﻿using HotelManagementSystem.Data.Models.SearchRoom;
 using HotelManagementSystem.Service;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagementSystem.Controllers
 {

@@ -1,7 +1,4 @@
-using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Dtos.User;
-using HotelManagementSystem.Data.Entities;
-using HotelManagementSystem.Data.Models;
 
 namespace HotelManagementSystem.Service.Repositories.Interface;
 

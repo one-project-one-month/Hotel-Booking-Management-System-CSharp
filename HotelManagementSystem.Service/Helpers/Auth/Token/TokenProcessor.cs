@@ -1,7 +1,5 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data.FeatureModels;
+﻿using HotelManagementSystem.Data.Data.FeatureModels;
 using HotelManagementSystem.Data.Dtos.User;
-using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;

@@ -11,6 +11,8 @@ namespace HotelManagementSystem.Data.Models.Booking
         public string? BookingId { get; set; }
         public string? UserId { get; set; }
         public string? GuestId { get; set; }
+        public string UserName { get; set; } = null!;
+        public string Emai { get; set; } = null!;
         public int Guest_Count { get; set; }
         public string? Booking_Status { get; set; }
         public decimal? Deposit_Amount { get; set; }

@@ -2,7 +2,6 @@
 using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.Token;
-using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;

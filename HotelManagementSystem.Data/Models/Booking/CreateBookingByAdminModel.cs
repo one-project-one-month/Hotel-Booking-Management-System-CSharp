@@ -15,6 +15,7 @@ namespace HotelManagementSystem.Data.Models.Booking
         public Guid? UserId { get; set; }
 
         public Guid? GuestId { get; set; }
+        public string Name { get; set; } = null!;
         public string Nrc { get; set; } = null!;
 
         public string PhoneNo { get; set; } = null!;

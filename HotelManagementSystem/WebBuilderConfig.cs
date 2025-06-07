@@ -1,5 +1,4 @@
 using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Extensions;
 using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using HotelManagementSystem.Service.Helpers.Auth.SMTP;
@@ -8,7 +7,6 @@ using HotelManagementSystem.Service.Reposities.Implementation;
 using HotelManagementSystem.Service.Repositories.Implementation;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Implementation;
-using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Infrastructure;
 

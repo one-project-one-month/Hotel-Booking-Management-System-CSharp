@@ -1,6 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Data.Dtos.Guest;
+﻿using HotelManagementSystem.Data.Dtos.Guest;
 using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Service.Repositories.Interface;
 

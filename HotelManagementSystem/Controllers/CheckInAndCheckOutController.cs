@@ -1,9 +1,5 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models.CheckInAndCheckOutModel;
-using HotelManagementSystem.Helpers;
+﻿using HotelManagementSystem.Data.Models.CheckInAndCheckOutModel;
 using HotelManagementSystem.Service.Services.Implementation;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagementSystem.Controllers;
 

@@ -1,8 +1,6 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.Booking;
+﻿using HotelManagementSystem.Data.Dtos.Booking;
 using HotelManagementSystem.Data.Models.Booking;
 using HotelManagementSystem.Service.Exceptions;
-using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Interface;
 using System.Runtime.CompilerServices;
 

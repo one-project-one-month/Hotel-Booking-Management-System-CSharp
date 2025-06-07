@@ -1,7 +1,3 @@
-using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.Room;
-using HotelManagementSystem.Data.Models;
-
 namespace HotelManagementSystem.Service.Repositories.Interface;
 
 public interface IRoomRepository

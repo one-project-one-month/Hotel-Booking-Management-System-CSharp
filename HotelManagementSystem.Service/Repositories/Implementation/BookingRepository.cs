@@ -1,11 +1,7 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Data.Dtos.Booking;
+﻿using HotelManagementSystem.Data.Dtos.Booking;
 using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Data.Entities;
 using HotelManagementSystem.Data.Models.Booking;
-using HotelManagementSystem.Service.Repositories.Interface;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
