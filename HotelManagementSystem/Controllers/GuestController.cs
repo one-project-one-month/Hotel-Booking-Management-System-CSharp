@@ -26,8 +26,5 @@ namespace HotelManagementSystem.Controllers
             }
             return Ok(result.Result);
         }
-
-        [HttpGet]
-        [Route("")]
     }
 }

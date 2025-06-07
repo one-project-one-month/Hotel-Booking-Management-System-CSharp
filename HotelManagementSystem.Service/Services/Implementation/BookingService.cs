@@ -56,6 +56,7 @@ namespace HotelManagementSystem.Service.Services.Implementation
                 {
                     GuestId = model.GuestId,
                     UserId = model.UserId,
+                    Name = model.Name,
                     GuestCount = model.GuestCount,
                     BookingStatus = model.BookingStatus,
                     DepositAmount = model.DepositAmount,
@@ -64,6 +65,7 @@ namespace HotelManagementSystem.Service.Services.Implementation
                     CheckOutTime = model.CheckOutTime,
                     PhoneNo = model.PhoneNo,
                     Nrc = model.Nrc,
+                    PaymentType = model.PaymentType
                 };
                 var createBooking = await _bookingRepo.CreateBookingByAdmin(createBookingRequest);
                 if (createBooking.IsError)

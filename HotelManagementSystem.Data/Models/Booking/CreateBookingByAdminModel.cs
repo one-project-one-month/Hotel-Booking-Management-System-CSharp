@@ -31,6 +31,7 @@ namespace HotelManagementSystem.Data.Models.Booking
         public string? BookingStatus { get; set; }
 
         public decimal? TotalAmount { get; set; }
+        public string? PaymentType { get; set; }
     }
 
     public class CreateBookingByAdminResponseModel : BasedResponseModel

@@ -16,6 +16,7 @@ namespace HotelManagementSystem.Data.Dtos.Booking
         public Guid? UserId { get; set; }
 
         public Guid? GuestId { get; set; }
+        public string Name { get; set; } = null!;
         public string Nrc { get; set; } = null!;
 
         public string PhoneNo { get; set; } = null!;
@@ -31,6 +32,7 @@ namespace HotelManagementSystem.Data.Dtos.Booking
         public string? BookingStatus { get; set; }
 
         public decimal? TotalAmount { get; set; }
+        public string? PaymentType { get; set; }
     }
 
 }

@@ -1,12 +1,4 @@
 ﻿using HotelManagementSystem.Data.Dtos.Booking;
-using HotelManagementSystem.Data.Dtos.User;
-using HotelManagementSystem.Data.Entities;
-using HotelManagementSystem.Data.Models.Booking;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
@@ -26,6 +18,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                 var guest = new TblGuest
                 {
                     UserId = dto.UserId,
+                    Name = dto.Name,
                     Nrc = dto.Nrc,
                     PhoneNo = dto.PhoneNo,
                     CreatedAt = DateTime.UtcNow
@@ -43,7 +36,8 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     CheckOutTime = dto.CheckOutTime,
                     DepositAmount = dto.DepositAmount,
                     BookingStatus = "Booked",
-                    TotalAmount = dto.TotalAmount
+                    TotalAmount = dto.TotalAmount,
+                    PaymentType = dto.PaymentType,
                 };
 
                 var createBooking = await _context.TblBookings.AddAsync(createBookingRequest);
