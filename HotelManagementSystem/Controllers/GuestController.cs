@@ -26,5 +26,48 @@ namespace HotelManagementSystem.Controllers
             }
             return Ok(result.Result);
         }
+
+        [HttpGet]
+        [Route("GetGuestList")]
+        public async Task<IActionResult> GetGuestList()
+        {
+            try
+            {
+                var result = await _service.GetAllGuestList();
+                if (result.IsError)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, result.Result.RespDescription);
+                }
+                return Ok(result.Result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetGuestById/{id}")]
+        public async Task<IActionResult> GetGuestById([FromQuery] Guid id)
+        {
+            try
+            {
+                var requestModel = new GetGuestByIdRequestModel
+                {
+                    GuestId = id
+                };
+
+                var result = await _service.GetGuestById(requestModel);
+                if (result.IsError)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, result.Result.RespDescription);
+                }
+                return Ok(result.Result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
