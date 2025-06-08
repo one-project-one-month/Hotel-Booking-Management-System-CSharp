@@ -13,9 +13,9 @@ using QuestPDF.Infrastructure;
 
 namespace HotelManagementSystem;
 
-public class ServiceInjectionFactory
+public static class ServiceInjectionFactory
 {
-    public static void ServiceInject(WebApplicationBuilder builder)
+    public static void AddServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddDbContext<HotelDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

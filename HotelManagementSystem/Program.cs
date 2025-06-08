@@ -1,9 +1,7 @@
 using HotelManagementSystem;
 using HotelManagementSystem.Service.Helpers.Auth.MiddleWare;
 
-
 var builder = WebApplication.CreateBuilder(args);
-
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
@@ -16,7 +14,7 @@ builder.Services.AddCors(options =>
         });
 });
 // Add services to the container.
-ServiceInjectionFactory.ServiceInject(builder);
+builder.AddServices();
 
 builder.Services.AddControllers();
 
