@@ -232,6 +232,27 @@ public class UserController : ControllerBase
 
     //[Authorize]
     [HttpGet]
+    [Route("getalluserprofile")]
+    public async Task<ActionResult<GetAllUserInfoResponseModel>> GetAllUserProfileAsync()
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        try
+        {
+            var result = await _service.GetAllUserInfoAsync();
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return BadRequest(500);
+        }
+    }
+
+    //[Authorize]
+    [HttpGet]
     [Route("getuserprofilebyid")]
     public async Task<ActionResult<GetUserProfileByIdResponseModel>> GetUserById()
     {

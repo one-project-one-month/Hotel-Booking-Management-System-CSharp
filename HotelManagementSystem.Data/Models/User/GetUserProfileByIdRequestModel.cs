@@ -24,9 +24,4 @@ namespace HotelManagementSystem.Data.Models.User
         public string? ProfileImg { get; set; }
         public string? ProfileImgMimeType { get; set; }
     }
-
-    public class  GetAllUserProfileResponseModel : BasedResponseModel
-    {
-        public List<GetUserProfileByIdModel>? Users { get; set; }
-    }
 }

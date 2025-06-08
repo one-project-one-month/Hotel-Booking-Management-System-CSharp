@@ -14,5 +14,6 @@ namespace HotelManagementSystem.Service.Services.Interface
         public Task<CustomEntityResult<GetUserProfileByIdResponseModel>> GetUserProfileByIdAsync(string Id);
         public Task<CustomEntityResult<SeedRoleToAdminResponseModel>> SeedRoleToAdmin(SeedRoleToAdminRequestModel model);
         public Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestModel model);
+        public Task<CustomEntityResult<GetAllUserInfoResponseModel>> GetAllUserInfoAsync();
     }
 }

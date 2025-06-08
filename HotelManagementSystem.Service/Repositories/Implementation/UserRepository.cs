@@ -397,5 +397,35 @@ public class UserRepository : IUserRepository
                 $"Failed to create user profile: {ex.Message} {(ex.InnerException?.Message ?? "")}");
         }
     }
+
+    public async Task<CustomEntityResult<GetAllUserInforResponseDto>> GetAllUserInfoAsync()
+    {
+        try
+        {
+            var userList = await _context.TblUsers.Include(u => u.Role)
+                .Select(u => new GetAllUSerInfoDto
+                {
+                    UserId = u.UserId,
+                    UserName = u.UserName,
+                    Email = u.Email,
+                    RoleName = u.Role.RoleName,
+                    Gender = u.Gender,
+                    Address = u.Address,
+                    DateOfBirth = u.DateOfBirth,
+                    CreatedAt = u.CreatedAt
+                }).ToListAsync();
+
+            var response = new GetAllUserInforResponseDto
+            {
+                Users = userList
+            };
+
+            return CustomEntityResult<GetAllUserInforResponseDto>.GenerateSuccessEntityResult(response);
+        }
+        catch (Exception ex)
+        {
+            return CustomEntityResult<GetAllUserInforResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+        }
+    }
 }
 

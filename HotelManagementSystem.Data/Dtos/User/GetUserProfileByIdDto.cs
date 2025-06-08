@@ -18,9 +18,4 @@ namespace HotelManagementSystem.Data.Dtos.User
         public byte[]? ProfileImg { get; set; }
         public string? ProfileImgMimeType { get; set; }
     }
-
-    public class GetAllUserProfileResponseDto : BasedResponseModel
-    {
-        public List<GetUserProfileByIdDto>? Users { get; set; }
-    }
 }

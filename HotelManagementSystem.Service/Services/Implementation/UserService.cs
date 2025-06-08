@@ -1,5 +1,6 @@
 using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Data.Models.Constants;
+using HotelManagementSystem.Data.Models.Guest;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
@@ -387,6 +388,49 @@ public class UserService : IUserService
         catch(Exception ex)
         {
             return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+        }
+    }
+
+    public async Task<CustomEntityResult<GetAllUserInfoResponseModel>> GetAllUserInfoAsync()
+    {
+        try
+        {
+            var userListResult = await _userRepo.GetAllUserInfoAsync();
+
+            if (userListResult.IsError)
+            {
+                return CustomEntityResult<GetAllUserInfoResponseModel>.GenerateFailEntityResult(userListResult.Result.RespCode, userListResult.Result.RespDescription);
+            }
+
+            var userListResponse = new GetAllUserInfoResponseModel
+            {
+                Users = userListResult.Result.Users!.Select(u => new GetAllUSerInfoModel
+                {
+                    UserId = u.UserId,
+                    UserName = u.UserName,
+                    Email = u.Email,
+                    RoleName = u.RoleName,
+                    Gender = u.Gender,
+                    Address = u.Address,
+                    DateOfBirth = u.DateOfBirth,
+                    CreatedAt = u.CreatedAt,
+                }).ToList()
+            };
+
+            if (userListResponse.Users == null || !userListResponse.Users.Any())
+            {
+                return CustomEntityResult<GetAllUserInfoResponseModel>.GenerateFailEntityResult(
+                    ResponseMessageConstants.RESPONSE_CODE_NOTFOUND,
+                    "No Guest found");
+            }
+
+            return CustomEntityResult<GetAllUserInfoResponseModel>.GenerateSuccessEntityResult(userListResponse);
+        }
+        catch (Exception ex)
+        {
+            return CustomEntityResult<GetAllUserInfoResponseModel>.GenerateFailEntityResult(
+                    ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                    ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 }
