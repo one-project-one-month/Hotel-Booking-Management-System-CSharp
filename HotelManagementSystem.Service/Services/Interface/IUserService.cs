@@ -9,7 +9,6 @@ namespace HotelManagementSystem.Service.Services.Interface
         public Task<CustomEntityResult<SeedRoleResponseModel>> SeedRole();
         public Task<CustomEntityResult<ForgotPasswordResponseModel>> ForgotPasswordAsync(ForgetPasswordRequestModel model);
         public Task<CustomEntityResult<ResetPasswordResponseModel>> ResetPasswordAsync(ResetPasswordRequestModel model);
-        public Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileAsync(string userId, CreateUserProfileRequestModel model);
         public Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string userId, CreateUserProfileRequestModel model);
         public Task<CustomEntityResult<GetUserProfileByIdResponseModel>> GetUserProfileByIdAsync(string Id);
         public Task<CustomEntityResult<SeedRoleToAdminResponseModel>> SeedRoleToAdmin(SeedRoleToAdminRequestModel model);

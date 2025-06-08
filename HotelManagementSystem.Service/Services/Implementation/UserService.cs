@@ -210,55 +210,7 @@ public class UserService : IUserService
             return CustomEntityResult<ResetPasswordResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
-    public async Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileAsync(string Id, CreateUserProfileRequestModel model)
-    {
-        try
-        {
-            if (string.IsNullOrEmpty(Id))
-            {
-                throw new UserNotFoundException("User not found. Please login again.");
-            }
 
-            if (!Guid.TryParse(Id, out var userId))
-            {
-                throw new InvalidUserIdException("Invalid user ID format.");
-            }
-
-            byte[]? imageByte = null;
-            if (model.ProfileImg != null && model.ProfileImg.Length > 0)
-            {
-                using var ms = new MemoryStream();
-                await model.ProfileImg.CopyToAsync(ms);
-                imageByte = ms.ToArray();
-            }
-
-            var createProfile = new CreateUserProfileRequestDto
-            {
-                UserId = userId,
-                Address = model.Address,
-                DateOfBirth = model.DateOfBirth,
-                Gender = model.Gender,
-                UserName = model.UserName,
-                ProfileImg = imageByte,
-                ProfileImgMimeType = model.ProfileImg?.ContentType
-            };
-            var result = await _userRepo.CreateUserProfileAsync(createProfile);
-            if (result.IsError)
-            {
-                return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
-            }
-            var response = new CreateUserResponseModel
-            {
-                RespCode = result.Result.RespCode,
-                RespDescription = result.Result.RespDescription
-            };
-            return CustomEntityResult<CreateUserResponseModel>.GenerateSuccessEntityResult(response);
-        }
-        catch (Exception ex)
-        {
-            return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
-        }
-    }
     public async Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestModel model)
     {
         try
