@@ -207,7 +207,7 @@ public class UserController : ControllerBase
     [Authorize]
     [HttpPatch]
     [Route("updateuserprofile")]
-    public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync([FromForm] CreateUserProfileRequestModel model)
+    public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(CreateUserProfileRequestModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -230,9 +230,9 @@ public class UserController : ControllerBase
         }
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpGet]
-    [Route("getuserprofile")]
+    [Route("getuserprofilebyid")]
     public async Task<ActionResult<GetUserProfileByIdResponseModel>> GetUserById()
     {
         if (!ModelState.IsValid)

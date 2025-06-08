@@ -336,20 +336,22 @@ public class UserRepository : IUserRepository
             return CustomEntityResult<SeedRoleToAdminResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
+
     public async Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestDto dto)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
 
         try
         {
-            var existingUser = await GetUserByEmail(dto.Email);
-            if (existingUser != null)
+            var role = await RoleExitAsync(RoleConstants.User);
+            if (!role)
             {
-                return CustomEntityResult<CreateUserProfileResponseDto>.GenerateFailEntityResult(
-                    ResponseMessageConstants.RESPONSE_CODE_DUPLICATE,
-                    "User already exists with this email.");
+                throw new RoleDoesNotExistException("User role does not exist.");
             }
-
+            var roleid = await _context.TblRoles
+                .Where(r => r.RoleName == RoleConstants.User)
+                .Select(r => r.RoleId)
+                .FirstOrDefaultAsync();
             var newUser = new TblUser
             {
                 Email = dto.Email,
@@ -357,7 +359,8 @@ public class UserRepository : IUserRepository
                 Password = _passwordHasher.HashPassword(dto.Password),
                 DateOfBirth = dto.DateOfBirth,
                 Address = dto.Address,
-                Gender = dto.Gender
+                Gender = dto.Gender,
+                RoleId = roleid
             };
 
             await _context.TblUsers.AddAsync(newUser);
