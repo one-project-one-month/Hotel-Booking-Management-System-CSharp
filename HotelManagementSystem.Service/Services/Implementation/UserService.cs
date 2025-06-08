@@ -1,6 +1,7 @@
 using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Data.Models.Constants;
 using HotelManagementSystem.Data.Models.Guest;
+using HotelManagementSystem.Data.Models.RoomType;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
@@ -253,12 +254,21 @@ public class UserService : IUserService
     {
         try
         {
-            byte[]? imageByte = null;
-            if (model.ProfileImg != null && model.ProfileImg.Length > 0)
+            byte[]? imgBytes = null;
+
+            if (!string.IsNullOrWhiteSpace(model.ProfileImg))
             {
-                using var ms = new MemoryStream();
-                await model.ProfileImg.CopyToAsync(ms);
-                imageByte = ms.ToArray();
+                try
+                {
+                    imgBytes = Convert.FromBase64String(model.ProfileImg);
+                }
+                catch (FormatException ex)
+                {
+                    return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(
+                        "400",
+                        "Invalid Base64 image data: " + ex.Message
+                    );
+                }
             }
             var dto = new CreateUserProfileByAdminRequestDto
             {
@@ -268,8 +278,8 @@ public class UserService : IUserService
                 Address = model.Address,
                 Gender = model.Gender,
                 DateOfBirth = model.DateOfBirth,
-                ProfileImg = imageByte,
-                ProfileImgMimeType = model.ProfileImg?.ContentType
+                ProfileImg = imgBytes,
+                ProfileImgMimeType = model.ProfileImgMimeType
             };
             var result = await _userRepo.CreateUserProfileByAdminAsync(dto);
             if (result.IsError)
