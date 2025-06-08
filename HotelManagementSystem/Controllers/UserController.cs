@@ -36,7 +36,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [Authorize(Roles ="Admin")]
+    //[Authorize(Roles ="Admin")]
     [HttpPost]
     [Route("SeedRoleToAdmin")]
     public async Task<ActionResult<BasedResponseModel>> SeedRoleToAdmin(SeedRoleToAdminRequestModel model)
@@ -158,7 +158,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpPost]
     [Route("createuserprofilebyuser")]
     public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileByUserAsync([FromForm] CreateUserProfileRequestModel model)

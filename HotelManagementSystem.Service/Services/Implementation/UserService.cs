@@ -364,6 +364,12 @@ public class UserService : IUserService
                 UserId = userId
             };
             var result = await _userRepo.GetUserProfileByIdAsync(id);
+
+            if (result.IsError)
+            {
+                return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+            }
+
             var response = new GetUserProfileByIdResponseModel
             {
                 UserName = result.Result.UserName,
@@ -392,6 +398,10 @@ public class UserService : IUserService
                 Password = model.Password,
             };
             var operate = await _userRepo.SeedRoleToAdmin(request);
+            if (operate.IsError)
+            {
+                return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateFailEntityResult(operate.Result.RespCode,operate.Result.RespDescription);
+            }
             var response = new SeedRoleToAdminResponseModel();
             return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateSuccessEntityResult(response);
         }
