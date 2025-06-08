@@ -19,7 +19,7 @@ public class UserService : IUserService
     private readonly IPasswordHasher _passwordHasher;
     private readonly ISmtpService _smtpService;
 
-    public UserService(IUserRepository userRepo, ITokenProcessors tokenProcessor, 
+    public UserService(IUserRepository userRepo, ITokenProcessors tokenProcessor,
         IPasswordHasher passwordHasher, ISmtpService smtpService)
     {
         _userRepo = userRepo;
@@ -77,7 +77,8 @@ public class UserService : IUserService
                     await _userRepo.SeedRoleAsync(seedRoleRequest);
                 }
             }
-            var seedRoleResponse = new SeedRoleResponseModel {
+            var seedRoleResponse = new SeedRoleResponseModel
+            {
                 RespCode = ResponseMessageConstants.RESPONSE_CODE_SUCCESS,
                 RespDescription = "Roles seeded successfully."
             };
@@ -96,7 +97,7 @@ public class UserService : IUserService
             var email = model.Email;
             var user = await _userRepo.GetUserByEmail(email);
             var existingPassword = user.Password;
-            if(existingPassword == null)
+            if (existingPassword == null)
             {
                 throw new PasswordCorruptedException("Password is corrupted or not set for this user. Please reset your password.");
             }
@@ -110,6 +111,10 @@ public class UserService : IUserService
             {
                 throw new IncorrectPasswordException("Password is incorrect");
             }
+
+            // generate access token 
+            // generate refresh token
+
             var result = await _tokenProcessor.GenerateToken(LoginResponse);
             if (result.IsError)
             {
@@ -121,10 +126,14 @@ public class UserService : IUserService
             user.RefreshToken = refreshToken;
             user.TokenExpireAt = refreshTokenExpireAt;
             await _userRepo.UpdateTokenAsync(user);
+
             _tokenProcessor.WriteTokenInHttpOnlyCookie("refresh_token", refreshToken, refreshTokenExpireAt);
-            var loginResponse = new LoginResponseModel {
+            var loginResponse = new LoginResponseModel
+            {
                 RespCode = result.Result.RespCode,
                 RespDescription = result.Result.RespDescription,
+                AccessToken = result.Result.AccessToken,
+                ExpireAt = result.Result.ExpireAt,
             };
             return CustomEntityResult<LoginResponseModel>.GenerateSuccessEntityResult(loginResponse);
         }
@@ -163,7 +172,7 @@ public class UserService : IUserService
                 RespDescription = "OTP sent successfully to your email.",
             };
             return CustomEntityResult<ForgotPasswordResponseModel>.GenerateSuccessEntityResult(forgotPasswordResponse);
-        
+
         }
         catch (Exception ex)
         {
@@ -180,7 +189,7 @@ public class UserService : IUserService
                 throw new OTPNotFoudException("OTP not found");
             }
             var existingUser = await _userRepo.GetUserByEmail(model.Email);
-            if(existingUser.OtpExpireAt < DateTime.UtcNow)
+            if (existingUser.OtpExpireAt < DateTime.UtcNow)
             {
                 throw new OTPNotFoudException("OTP expired");
             }
@@ -196,7 +205,7 @@ public class UserService : IUserService
             return CustomEntityResult<ResetPasswordResponseModel>.GenerateSuccessEntityResult(resetPasswordResponse);
 
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return CustomEntityResult<ResetPasswordResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
@@ -245,7 +254,7 @@ public class UserService : IUserService
             };
             return CustomEntityResult<CreateUserResponseModel>.GenerateSuccessEntityResult(response);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
@@ -381,7 +390,7 @@ public class UserService : IUserService
             };
             return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateSuccessEntityResult(response);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
@@ -400,12 +409,12 @@ public class UserService : IUserService
             var operate = await _userRepo.SeedRoleToAdmin(request);
             if (operate.IsError)
             {
-                return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateFailEntityResult(operate.Result.RespCode,operate.Result.RespDescription);
+                return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateFailEntityResult(operate.Result.RespCode, operate.Result.RespDescription);
             }
             var response = new SeedRoleToAdminResponseModel();
             return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateSuccessEntityResult(response);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }

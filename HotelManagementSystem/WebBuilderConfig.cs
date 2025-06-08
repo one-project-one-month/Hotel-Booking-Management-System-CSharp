@@ -6,6 +6,7 @@ using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Reposities.Implementation;
 using HotelManagementSystem.Service.Repositories.Implementation;
 using HotelManagementSystem.Service.Repositories.Interface;
+using HotelManagementSystem.Service.Services;
 using HotelManagementSystem.Service.Services.Implementation;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Infrastructure;
@@ -54,7 +55,10 @@ public class ServiceInjectionFactory
         builder.Services.AddTransient<IGuestRepository, GuestRepository>();
         builder.Services.AddTransient<IFeatureRoomRepository, FeatureRoomRepository>();
         builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-      
+
+        builder.Services.AddScoped<BlogService>();
+        builder.Services.AddScoped<HttpContextService>();
+
         //License
         QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 

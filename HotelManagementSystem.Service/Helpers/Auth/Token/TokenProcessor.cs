@@ -44,16 +44,20 @@ namespace HotelManagementSystem.Service.Helpers.Auth.Token
                 claims.Add(new Claim(ClaimTypes.Role, userRole));
 
                 var expires = DateTime.UtcNow.AddMinutes(_jwt.ExpireTime);
-                var token = new JwtSecurityToken(
+                var jwtSecurityToken = new JwtSecurityToken(
                     issuer: _jwt.Issuer,
                     audience: _jwt.Audience,
                     claims: claims,
                     expires: expires,
                     signingCredentials: credential
                 );
-                var tokenHandler = new JwtSecurityTokenHandler().WriteToken(token);
-                WriteTokenInHttpOnlyCookie("access_token", tokenHandler, expires);
-                var result = new LoginResponseDto();
+                var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+                WriteTokenInHttpOnlyCookie("access_token", token, expires);
+                var result = new LoginResponseDto()
+                {
+                    AccessToken = token,
+                    ExpireAt = expires
+                };
                 return CustomEntityResult<LoginResponseDto>.GenerateSuccessEntityResult(result);
             }
             catch(Exception ex)
