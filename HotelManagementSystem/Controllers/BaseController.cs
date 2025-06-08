@@ -19,5 +19,8 @@ namespace HotelManagementSystem.Controllers
 
         protected string Email =>
             _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)?.Value!;
+
+        protected string Role =>
+            _httpContextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Role)?.Value!;
     }
 }

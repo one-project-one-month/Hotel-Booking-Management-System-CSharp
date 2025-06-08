@@ -5,17 +5,14 @@ namespace HotelManagementSystem.Controllers;
 
 [ApiController]
 [Route("api/[Controller]")]
-public class UserController : ControllerBase
+public class UserController : BaseController
 {
     private readonly IUserService _service;
-    private readonly IHttpContextAccessor _httpContext;
-
-    public UserController(IUserService service, IHttpContextAccessor httpContext)
+    public UserController(IHttpContextAccessor httpContextAccessor, IUserService service) : base(httpContextAccessor)
     {
         _service = service;
-        _httpContext = httpContext;
     }
-    
+
     [HttpPost]
     [Route("SeedRole")]
     public async Task<ActionResult<SeedRoleResponseModel>> SeedRoleAsync()
@@ -73,17 +70,18 @@ public class UserController : ControllerBase
         try
         {
             #region CheckRequiredField
-            //if (String.IsNullOrEmpty(model.UserName))
-            //{
-            //return APIHelper.GenerateResponseForRequiredField(nameof(model.UserName), _sharedLocalizer);
-            //}
             #endregion
 
             #region Check Format
-            // if(model.UserType != EntitiesConstant.USER_TYPE.USER.GetHashCode())
-            // {
-            //     return BadRequest(ErrorMessageConstant.EM_UserTypeNotAcceptable); ///Not Acceptable
-            // }
+            var passwordErrors = PasswordPolicyValidator.Validate(model.Password);
+            if (passwordErrors.Any())
+            {
+                return BadRequest(new BasedResponseModel
+                {
+                    RespCode = "400",
+                    RespDescription = string.Join(", ", passwordErrors)
+                });
+            }
             #endregion
 
             var result = await _service.RegisterUser(model);
@@ -105,6 +103,17 @@ public class UserController : ControllerBase
         {
             return BadRequest(ModelState);
         }
+        #region Check Format
+        var passwordErrors = PasswordPolicyValidator.Validate(model.Password);
+        if (passwordErrors.Any())
+        {
+            return BadRequest(new BasedResponseModel
+            {
+                RespCode = "400",
+                RespDescription = string.Join(", ", passwordErrors)
+            });
+        }
+        #endregion
         try
         {
             var result = await _service.LoginAsync(model);
@@ -146,35 +155,20 @@ public class UserController : ControllerBase
         {
             return BadRequest(ModelState);
         }
+        #region Check Format
+        var passwordErrors = PasswordPolicyValidator.Validate(model.Password);
+        if (passwordErrors.Any())
+        {
+            return BadRequest(new BasedResponseModel
+            {
+                RespCode = "400",
+                RespDescription = string.Join(", ", passwordErrors)
+            });
+        }
+        #endregion
         try
         {
             var result = await _service.ResetPasswordAsync(model);
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
-        }
-        catch (Exception ex)
-        {
-            var message = ex.Message;
-            return BadRequest(500);
-        }
-    }
-
-    //[Authorize]
-    [HttpPost]
-    [Route("createuserprofilebyuser")]
-    public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileByUserAsync([FromForm] CreateUserProfileRequestModel model)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        try
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return BadRequest("User not found. Please login again.");
-            }
-            var result = await _service.CreateUserProfileAsync(userId, model);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
@@ -206,7 +200,6 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpPatch]
-    [Route("updateuserprofile")]
     public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(CreateUserProfileRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -215,12 +208,11 @@ public class UserController : ControllerBase
         }
         try
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(UserId))
             {
                 return BadRequest("User not found. Please login again.");
             }
-            var result = await _service.UpdateUserProfileByIdAsync(userId, model);
+            var result = await _service.UpdateUserProfileByIdAsync(UserId, model);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
@@ -232,7 +224,6 @@ public class UserController : ControllerBase
 
     //[Authorize]
     [HttpGet]
-    [Route("getalluserprofile")]
     public async Task<ActionResult<GetAllUserInfoResponseModel>> GetAllUserProfileAsync()
     {
         if (!ModelState.IsValid)
@@ -262,41 +253,12 @@ public class UserController : ControllerBase
         }
         try
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(UserId))
             {
                 return BadRequest("User not found. Please login again.");
             }
-            var result = await _service.GetUserProfileByIdAsync(userId);
+            var result = await _service.GetUserProfileByIdAsync(UserId);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
-        }
-        catch (Exception ex)
-        {
-            var message = ex.Message;
-            return BadRequest(500);
-        }
-    }
-
-    [HttpPost]
-    [Route("getclaim")]
-    public async Task<ActionResult<BasedResponseModel>> GetClaimAsync()
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        try
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            var role = User.FindFirst(ClaimTypes.Role)?.Value;
-
-            return Ok(new
-            {
-                UserId = userId,
-                Email = email,
-                Role = role
-            });
         }
         catch (Exception ex)
         {
