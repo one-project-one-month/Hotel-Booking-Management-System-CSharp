@@ -82,7 +82,6 @@ public class BookingControlService : IBookingControlService
         };
 
         bookingRequestDto.Rooms = requestModel.Rooms;
-        var roomBookingId = await _bookingControlRepository.UpdateBooking(bookingRequestDto);
 
         var result = await _bookingControlRepository.UpdateBooking(bookingRequestDto);
         if (result.IsError)

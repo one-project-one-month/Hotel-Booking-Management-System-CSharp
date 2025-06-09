@@ -28,9 +28,9 @@ public class RoomController : ControllerBase
         return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
     }
 
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpPost]
-    [Route("createroom")]
+    [Route("/admin/createroom")]
     public async Task<ActionResult<BasedResponseModel>> CreateRoom(CreateRoomRequestModel requestModel)
     {
         if (!ModelState.IsValid)
@@ -70,7 +70,7 @@ public class RoomController : ControllerBase
         }
     }
 
-    [HttpPatch("updateroom/{id}")]
+    [HttpPatch("/admin/updateroom/{id}")]
     public async Task<ActionResult<BasedResponseModel>> UpdateRoom(Guid id, UpdateRoomRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -89,7 +89,7 @@ public class RoomController : ControllerBase
         }
     }
 
-    [HttpDelete("deleteroom/{id}")]
+    [HttpDelete("/admin/deleteroom/{id}")]
     public async Task<ActionResult<BasedResponseModel>> DeleteRoom(Guid id)
     {
         var result = await _service.DeleteRoom(id);

@@ -29,7 +29,8 @@ namespace HotelManagementSystem.Service.Services.Implementation
                     Total_Amount = model.Total_Amount,
                     CheckInDate = model.CheckInDate,
                     CheckOutDate = model.CheckOutDate,
-                    PaymentType = model.PaymentType
+                    PaymentType = model.PaymentType,
+                    Rooms = model.Rooms,
                 };
                 var createBooking = await _bookingRepo.CreateBookingByUser(createBookingRequest);
                 if (createBooking.IsError)
@@ -73,7 +74,8 @@ namespace HotelManagementSystem.Service.Services.Implementation
                     Total_Amount = getBookingById.Result.Total_Amount,
                     CheckInDate = getBookingById.Result.CheckInDate,
                     CheckOutDate = getBookingById.Result.CheckOutDate,
-                    PaymentType = getBookingById.Result.PaymentType
+                    PaymentType = getBookingById.Result.PaymentType,
+                    RoomNumbers = getBookingById.Result.RoomNumbers,
                 };
                 return CustomEntityResult<GetBookingByIdResponseModel>.GenerateSuccessEntityResult(GetBookingByIdResponse);
             }
@@ -119,6 +121,7 @@ namespace HotelManagementSystem.Service.Services.Implementation
                         CheckOutDate = b.CheckOutDate,
                         PaymentType = b.PaymentType,
                         CreatedAt = b.CreatedAt,
+                        RoomNumbers = b.RoomNumbers,
                     }).ToList()
                 };
                 if (listBookingResponse.Booking == null || !listBookingResponse.Booking.Any())

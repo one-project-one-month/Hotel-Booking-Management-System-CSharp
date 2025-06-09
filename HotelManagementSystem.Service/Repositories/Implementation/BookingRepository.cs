@@ -1,4 +1,5 @@
-﻿using HotelManagementSystem.Data.Dtos.Booking;
+﻿using HotelManagementSystem.Data.Data;
+using HotelManagementSystem.Data.Dtos.Booking;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
@@ -10,37 +11,23 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             _context = context;
         }
-        public async Task<CustomEntityResult<CreateBookingByAdminResponseDto>> CreateBookingByAdmin(CreateBookingByAdminRequestDto dto)
+
+        public async Task<CustomEntityResult<CreateBookingResponseDto>> CreateBookingByUser(CreateBookingRequestDto dto)
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var guest = new TblGuest
-                {
-                    UserId = dto.UserId,
-                    Name = dto.Name,
-                    Nrc = dto.Nrc,
-                    PhoneNo = dto.PhoneNo,
-                    CreatedAt = DateTime.UtcNow
-                };
-                await _context.TblGuests.AddAsync(guest);
-                await _context.SaveChangesAsync();
-
-                var GuestId = guest.GuestId;
                 var createBookingRequest = new TblBooking
                 {
                     UserId = dto.UserId,
-                    GuestId = GuestId,
-                    GuestCount = dto.GuestCount,
-                    CheckInTime = dto.CheckInTime,
-                    CheckOutTime = dto.CheckOutTime,
-                    DepositAmount = dto.DepositAmount,
-                    BookingStatus = "Booked",
-                    TotalAmount = dto.TotalAmount,
-                    PaymentType = dto.PaymentType,
-                    CreatedAt = DateTime.UtcNow
+                    GuestId = dto.GuestId,
+                    CheckInTime = dto.CheckInDate,
+                    CheckOutTime = dto.CheckOutDate,
+                    DepositAmount = dto.Deposit_Amount,
+                    BookingStatus = dto.Booking_Status,
+                    TotalAmount = dto.Total_Amount,
+                    PaymentType = dto.PaymentType
                 };
-
                 var createBooking = await _context.TblBookings.AddAsync(createBookingRequest);
                 await _context.SaveChangesAsync();
 
@@ -55,62 +42,42 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     await _context.TblRoomBookings.AddRangeAsync(roomBookings);
                     await _context.SaveChangesAsync();
                 }
-
                 await transaction.CommitAsync();
-
-                var creteBookingResponse = new CreateBookingByAdminResponseDto
-                {
-                    BookingId = createBooking.Entity.BookingId
-                };
-
-                return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateSuccessEntityResult(creteBookingResponse);
-            }
-            catch(Exception ex)
-            {
-                await transaction.RollbackAsync();
-
-                return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateFailEntityResult(
-                    ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
-                    $"Failed to create user profile: {ex.Message} {(ex.InnerException?.Message ?? "")}");
-            }
-        }
-
-        public async Task<CustomEntityResult<CreateBookingResponseDto>> CreateBookingByUser(CreateBookingRequestDto model)
-        {
-            try
-            {
-                var createBookingRequest = new TblBooking
-                {
-                    UserId = model.UserId,
-                    GuestId = model.GuestId,
-                    CheckInTime = model.CheckInDate,
-                    CheckOutTime = model.CheckOutDate,
-                    DepositAmount = model.Deposit_Amount,
-                    BookingStatus = model.Booking_Status,
-                    TotalAmount = model.Total_Amount,
-                    PaymentType = model.PaymentType
-                };
-                var createBooking = await _context.TblBookings.AddAsync(createBookingRequest);
-                await _context.SaveChangesAsync();
                 var creteBookingResponse = new CreateBookingResponseDto();
                 return CustomEntityResult<CreateBookingResponseDto>.GenerateSuccessEntityResult(creteBookingResponse);
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 return CustomEntityResult<CreateBookingResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
             }
         }
-        public async Task<CustomEntityResult<GetBookingByIdResponseDto>> GetBookingById(GetBookingByIdRequestDto bookingId)
+
+        public async Task<CustomEntityResult<GetBookingByIdResponseDto>> GetBookingById(GetBookingByIdRequestDto dto)
         {
             try
             {
-                var booking = await _context.TblBookings.FindAsync(bookingId);
+                var booking = await _context.TblBookings.FindAsync(dto);
                 if (booking is null)
                 {
                     return CustomEntityResult<GetBookingByIdResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Booking not found");
                 }
                 var getBookingResponse = new GetBookingByIdResponseDto
                 {
+                    BookingId = booking.BookingId,
+                    UserId = booking.UserId,
+                    GuestId = booking.GuestId,
+                    Guest_Count = booking.GuestCount,
+                    Booking_Status = booking.BookingStatus,
+                    Deposit_Amount = booking.DepositAmount,
+                    Total_Amount = booking.TotalAmount,
+                    CheckInDate = booking.CheckInTime,
+                    CheckOutDate = booking.CheckOutTime,
+                    PaymentType = booking.PaymentType,
+                    RoomNumbers = booking.TblRoomBookings
+                .Where(rb => rb.Room != null)
+                .Select(rb => rb.Room.RoomNo.ToString())
+                .ToList()
                 };
                 return CustomEntityResult<GetBookingByIdResponseDto>.GenerateSuccessEntityResult(getBookingResponse);
             }
@@ -147,7 +114,11 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                         CheckInDate = b.CheckInTime,
                         CheckOutDate = b.CheckOutTime,
                         PaymentType = b.PaymentType,
-                        CreatedAt = b.CreatedAt
+                        CreatedAt = b.CreatedAt,
+                        RoomNumbers = b.TblRoomBookings
+                            .Where(rb => rb.Room != null)
+                            .Select(rb => rb.Room.RoomNo.ToString())
+                            .ToList()
                     }).ToList()
                 };
 

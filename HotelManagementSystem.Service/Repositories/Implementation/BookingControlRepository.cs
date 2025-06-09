@@ -87,47 +87,61 @@ public class BookingControlRepository : IBookingControlRepository
         }        
     }
 
-    public async Task<CustomEntityResult<UpdateBookingResponseDto>> UpdateBooking(UpdateBookingRequestDto requestBookingDto)
+    public async Task<CustomEntityResult<UpdateBookingResponseDto>> UpdateBooking(UpdateBookingRequestDto dto)
     {
         try
         {
             var booking = await _hotelDbContext.TblBookings
                 .Include(b => b.TblRoomBookings)
-            .Where(b => b.BookingId == requestBookingDto.BookingId)
+            .Where(b => b.BookingId == dto.BookingId)
             .FirstOrDefaultAsync();
 
             if (booking == null)
             {
-                throw new BookingNotFoundException(requestBookingDto.BookingId.ToString());
+                throw new BookingNotFoundException(dto.BookingId.ToString());
             }
 
-            var existingRoomBookings = booking.TblRoomBookings.ToList();
-            foreach (var existingRoomBooking in existingRoomBookings)
+            if (dto.UserId.HasValue)
+                booking.UserId = dto.UserId;
+
+            if (dto.GuestId.HasValue)
+                booking.GuestId = dto.GuestId;
+
+            if (dto.GuestCount.HasValue)
+                booking.GuestCount = dto.GuestCount;
+
+            if (dto.CheckInTime.HasValue)
+                booking.CheckInTime = dto.CheckInTime;
+
+            if (dto.CheckOutTime.HasValue)
+                booking.CheckOutTime = dto.CheckOutTime;
+
+            if (dto.DepositAmount.HasValue)
+                booking.DepositAmount = dto.DepositAmount;
+
+            if (!string.IsNullOrWhiteSpace(dto.BookingStatus))
+                booking.BookingStatus = dto.BookingStatus;
+
+            if (dto.TotalAmount.HasValue)
+                booking.TotalAmount = dto.TotalAmount;
+
+            if (dto.CreatedAt.HasValue)
+                booking.CreatedAt = dto.CreatedAt;
+
+            if (!string.IsNullOrWhiteSpace(dto.PaymentType))
+                booking.PaymentType = dto.PaymentType;
+            if (dto.Rooms != null && dto.Rooms.Any())
             {
-                _hotelDbContext.TblRoomBookings.Remove(existingRoomBooking);
-            }
-
-            foreach (var requestRoomBooking in requestBookingDto.Rooms)
-            {                
-                var roomId = requestRoomBooking;
-                var roomBooking = new TblRoomBooking
+                _hotelDbContext.TblRoomBookings.RemoveRange(booking.TblRoomBookings);
+                foreach (var roomId in dto.Rooms)
                 {
-                    BookingId = booking.BookingId,
-                    RoomId = roomId
-                };
-                booking.TblRoomBookings.Add(roomBooking);
+                    booking.TblRoomBookings.Add(new TblRoomBooking
+                    {
+                        BookingId = booking.BookingId,
+                        RoomId = roomId
+                    });
+                }
             }
-            
-            booking.UserId = requestBookingDto.UserId;
-            booking.GuestId = requestBookingDto.GuestId;
-            booking.GuestCount = requestBookingDto.GuestCount;
-            booking.CheckInTime = requestBookingDto.CheckInTime;
-            booking.CheckOutTime = requestBookingDto.CheckOutTime;
-            booking.DepositAmount = requestBookingDto.DepositAmount;
-            booking.BookingStatus = requestBookingDto.BookingStatus;
-            booking.TotalAmount = requestBookingDto.TotalAmount;
-            booking.CreatedAt = requestBookingDto.CreatedAt;
-            booking.PaymentType = requestBookingDto.PaymentType;
 
             var result = await _hotelDbContext.SaveChangesAsync();
             var returnModel = new UpdateBookingResponseDto();

@@ -179,7 +179,7 @@ public class UserController : BaseController
     }
 
     [HttpPost]
-    [Route("createuserprofilebyadmin")]
+    [Route("/admin/createprofile")]
     public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -200,7 +200,7 @@ public class UserController : BaseController
 
     [Authorize]
     [HttpPatch]
-    public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(CreateUserProfileRequestModel model)
+    public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync([FromForm] UpdateUserProfileByIdRequestModel model)
     {
         if (!ModelState.IsValid)
         {

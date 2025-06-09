@@ -39,7 +39,7 @@
         }
         
         [HttpPost]
-        [Route("createroomtype")]
+        [Route("/admin/createroomtype")]
         public async Task<ActionResult<BasedResponseModel>> CreateRoomType(CreateRoomTypeRequestModel requestModel)
         {
             if (!ModelState.IsValid)
@@ -69,7 +69,7 @@
             }          
         }
         
-        [HttpPatch("updateroomtype/{id}")]
+        [HttpPatch("/admin/updateroomtype/{id}")]
         public async Task<ActionResult<BasedResponseModel>> UpdateRoomType (Guid id, UpdateRoomTypeRequestModel requestModel)
         {
             if(!ModelState.IsValid)

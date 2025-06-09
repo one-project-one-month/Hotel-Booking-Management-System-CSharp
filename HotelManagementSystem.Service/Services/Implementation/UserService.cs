@@ -258,7 +258,7 @@ public class UserService : IUserService
             return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
-    public async Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string Id, CreateUserProfileRequestModel model)
+    public async Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string Id, UpdateUserProfileByIdRequestModel model)
     {
         try
         {
