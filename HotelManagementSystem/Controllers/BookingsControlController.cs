@@ -1,5 +1,4 @@
-﻿using HotelManagementSystem.Data.Dtos.BookingControl;
-using HotelManagementSystem.Data.Models.BookingControl;
+﻿using HotelManagementSystem.Data.Models.BookingControl;
 
 namespace HotelManagementSystem.Controllers;
 
@@ -53,6 +52,22 @@ public class BookingsControlController : ControllerBase
         try
         {
             var result = await _bookingControlService.DeleteBooking(Booking);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
+        }
+    }
+
+    [HttpPost]
+    [Route("/admin/CreateBooking")]
+    public async Task<ActionResult<CreateBookingByAdminResponseModel>> CreateBooking(CreateBookingByAdminRequestModel model)
+    {
+        try
+        {
+            var result = await _bookingControlService.CreateBookingByAdmin(model);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)

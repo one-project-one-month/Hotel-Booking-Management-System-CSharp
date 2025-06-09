@@ -39,27 +39,6 @@
             }
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [Route("createbookingbyadmin")]
-        public async Task<ActionResult<BasedResponseModel>> CreateBookingByAdmin(CreateBookingByAdminRequestModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                var result = await _bookingService.CreateBookingByAdmin(model);
-                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-                return BadRequest(message);
-            }
-        }
-
         [HttpGet]
         [Route("getbookingbyid/{bookingId}")]
         public async Task<ActionResult<BasedResponseModel>> GetBookingById(GetBookingByIdRequestModel bookingId)
@@ -99,27 +78,6 @@
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var result = await _bookingService.GetAllBookingByUserId(userId);
-                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-                return BadRequest(message);
-            }
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        [Route("getallbookinglist")]
-        public async Task<ActionResult<BasedResponseModel>> GetAllBookingList()
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                var result = await _bookingService.GetAllBookingList();
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)

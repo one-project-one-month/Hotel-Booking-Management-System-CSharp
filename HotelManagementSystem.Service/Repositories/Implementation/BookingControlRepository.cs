@@ -1,9 +1,7 @@
-﻿using HotelManagementSystem.Data.Dtos.BookingControl;
+﻿using HotelManagementSystem.Data.Dtos.Booking;
+using HotelManagementSystem.Data.Dtos.BookingControl;
 using HotelManagementSystem.Service.Exceptions;
-using HotelManagementSystem.Service.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
-using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Data.Models.BookingControl;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation;
 
@@ -28,9 +26,9 @@ public class BookingControlRepository : IBookingControlRepository
 
         var getBookingResponse = bookings.Select(b => new GetBookingResponseDto
         {
-            //BookingId = b.BookingId,
-            //UserId = b.UserId,
-            //GuestId = b.GuestId,
+            BookingId = b.BookingId,
+            UserId = b.UserId,
+            GuestId = b.GuestId,
             GuestCount = b.GuestCount,
             CheckIn_Time = b.CheckInTime,
             CheckOut_Time = b.CheckOutTime,
@@ -42,6 +40,7 @@ public class BookingControlRepository : IBookingControlRepository
             GuestNrc = b.Guest!.Nrc,
             GuestPhoneNo = b.Guest!.PhoneNo, 
             UserName = b.User!.UserName,
+            GuestName = b.Guest.Name,
 
             RoomNo = b.TblRoomBookings
                 .Where(rb => rb.Room != null)
@@ -137,6 +136,71 @@ public class BookingControlRepository : IBookingControlRepository
         catch (Exception ex)
         {
             return CustomEntityResult<UpdateBookingResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+        }
+    }
+
+    public async Task<CustomEntityResult<CreateBookingByAdminResponseDto>> CreateBookingByAdmin(CreateBookingByAdminRequestDto dto)
+    {
+        await using var transaction = await _hotelDbContext.Database.BeginTransactionAsync();
+        try
+        {
+            var guest = new TblGuest
+            {
+                UserId = dto.UserId,
+                Name = dto.Name,
+                Nrc = dto.Nrc,
+                PhoneNo = dto.PhoneNo,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _hotelDbContext.TblGuests.AddAsync(guest);
+            await _hotelDbContext.SaveChangesAsync();
+
+            var GuestId = guest.GuestId;
+            var createBookingRequest = new TblBooking
+            {
+                UserId = dto.UserId,
+                GuestId = GuestId,
+                GuestCount = dto.GuestCount,
+                CheckInTime = dto.CheckInTime,
+                CheckOutTime = dto.CheckOutTime,
+                DepositAmount = dto.DepositAmount,
+                BookingStatus = "Booked",
+                TotalAmount = dto.TotalAmount,
+                PaymentType = dto.PaymentType,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var createBooking = await _hotelDbContext.TblBookings.AddAsync(createBookingRequest);
+            await _hotelDbContext.SaveChangesAsync();
+
+            if (dto.Rooms != null && dto.Rooms.Any())
+            {
+                var roomBookings = dto.Rooms.Select(roomId => new TblRoomBooking
+                {
+                    RoomId = roomId,
+                    BookingId = createBooking.Entity.BookingId
+                });
+
+                await _hotelDbContext.TblRoomBookings.AddRangeAsync(roomBookings);
+                await _hotelDbContext.SaveChangesAsync();
+            }
+
+            await transaction.CommitAsync();
+
+            var creteBookingResponse = new CreateBookingByAdminResponseDto
+            {
+                BookingId = createBooking.Entity.BookingId
+            };
+
+            return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateSuccessEntityResult(creteBookingResponse);
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+
+            return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                $"Failed to create user profile: {ex.Message} {(ex.InnerException?.Message ?? "")}");
         }
     }
 }

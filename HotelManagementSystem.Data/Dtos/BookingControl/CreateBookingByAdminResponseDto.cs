@@ -16,6 +16,8 @@ namespace HotelManagementSystem.Data.Dtos.Booking
 
         public string PhoneNo { get; set; } = null!;
 
+        public List<Guid> Rooms { get; set; } = new();
+
         public int? GuestCount { get; set; }
 
         public DateOnly? CheckInTime { get; set; }

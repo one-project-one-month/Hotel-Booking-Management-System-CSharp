@@ -20,7 +20,8 @@ public class GetBookingRequestDto
 
 public class GetBookingResponseDto
 {
-    public string UserName { get; set; } = null!;
+    public string? UserName { get; set; }
+    public string? GuestName { get; set; } 
     public string GuestNrc { get; set; } = null!;
 
     public string GuestPhoneNo { get; set; } = null!;
@@ -38,11 +39,11 @@ public class GetBookingResponseDto
     public decimal? TotalAmount { get; set; }
     public string? PaymentType { get; set; }
 
-    //public Guid BookingId { get; set; }
+    public Guid BookingId { get; set; }
 
-    //public Guid? UserId { get; set; }
+    public Guid? UserId { get; set; }
 
-    //public Guid? GuestId { get; set; }
+    public Guid? GuestId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 }

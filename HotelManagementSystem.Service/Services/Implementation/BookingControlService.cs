@@ -1,13 +1,8 @@
 ﻿using HotelManagementSystem.Data.Dtos.BookingControl;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HotelManagementSystem.Service.Repositories.Implementation;
-using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Service.Services.Interface;
 using HotelManagementSystem.Data.Models.BookingControl;
+using HotelManagementSystem.Data.Dtos.Booking;
+using HotelManagementSystem.Data.Models.Booking;
 
 namespace HotelManagementSystem.Service.Services.Implementation;
 
@@ -32,9 +27,9 @@ public class BookingControlService : IBookingControlService
         {
             Bookings = result.Result.Bookings.Select(b => new GetBookingResponseModel
             {
-                //BookingId = b.BookingId,
-                //UserId = b.UserId,
-                //GuestId = b.GuestId,
+                BookingId = b.BookingId,
+                UserId = b.UserId,
+                GuestId = b.GuestId,
                 GuestCount = b.GuestCount,
                 CheckIn_Time = b.CheckIn_Time,
                 CheckOut_Time = b.CheckOut_Time,
@@ -46,6 +41,7 @@ public class BookingControlService : IBookingControlService
                 GuestNrc = b.GuestNrc,
                 GuestPhoneNo = b.GuestPhoneNo,
                 UserName = b.UserName,
+                GuestNamme = b.GuestName,
                 RoomNo = b.RoomNo
             }).ToList()
         };
@@ -96,5 +92,42 @@ public class BookingControlService : IBookingControlService
 
         var returnModel = new UpdateBookingResponseModel();
         return CustomEntityResult<UpdateBookingResponseModel>.GenerateSuccessEntityResult(returnModel);
+    }
+
+    public async Task<CustomEntityResult<CreateBookingByAdminResponseModel>> CreateBookingByAdmin(CreateBookingByAdminRequestModel model)
+    {
+        try
+        {
+            var createBookingRequest = new CreateBookingByAdminRequestDto
+            {
+                GuestId = model.GuestId,
+                UserId = model.UserId,
+                Name = model.Name,
+                Rooms = model.Rooms,
+                GuestCount = model.GuestCount,
+                BookingStatus = model.BookingStatus,
+                DepositAmount = model.DepositAmount,
+                TotalAmount = model.TotalAmount,
+                CheckInTime = model.CheckInTime,
+                CheckOutTime = model.CheckOutTime,
+                PhoneNo = model.PhoneNo,
+                Nrc = model.Nrc,
+                PaymentType = model.PaymentType
+            };
+            var createBooking = await _bookingControlRepository.CreateBookingByAdmin(createBookingRequest);
+            if (createBooking.IsError)
+            {
+                return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateFailEntityResult(createBooking.Result.RespCode, createBooking.Result.RespDescription);
+            }
+            var createBookingResponse = new CreateBookingByAdminResponseModel()
+            {
+                BookingId = createBooking.Result.BookingId
+            };
+            return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateSuccessEntityResult(createBookingResponse);
+        }
+        catch (Exception ex)
+        {
+            return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+        }
     }
 }

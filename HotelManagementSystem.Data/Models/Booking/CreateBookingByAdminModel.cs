@@ -19,6 +19,7 @@ namespace HotelManagementSystem.Data.Models.Booking
         public string Nrc { get; set; } = null!;
 
         public string PhoneNo { get; set; } = null!;
+        public List<Guid> Rooms { get; set; } = new();
 
         public int? GuestCount { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using HotelManagementSystem.Data.Dtos.BookingControl;
+﻿using HotelManagementSystem.Data.Dtos.Booking;
+using HotelManagementSystem.Data.Dtos.BookingControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,4 +13,5 @@ public interface IBookingControlRepository
     public Task<CustomEntityResult<GetBookingsResponseDto>> GetBookings();
     public Task<CustomEntityResult<UpdateBookingResponseDto>> UpdateBooking(UpdateBookingRequestDto requestBookingDto);
     public Task<CustomEntityResult<GetBookingsResponseDto>> DeleteBooking(DeleteBookingRequestDto Booking);
+    public Task<CustomEntityResult<CreateBookingByAdminResponseDto>> CreateBookingByAdmin(CreateBookingByAdminRequestDto dto);
 }

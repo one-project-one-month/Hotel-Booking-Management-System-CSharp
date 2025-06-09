@@ -38,17 +38,30 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     BookingStatus = "Booked",
                     TotalAmount = dto.TotalAmount,
                     PaymentType = dto.PaymentType,
+                    CreatedAt = DateTime.UtcNow
                 };
 
                 var createBooking = await _context.TblBookings.AddAsync(createBookingRequest);
                 await _context.SaveChangesAsync();
 
+                if (dto.Rooms != null && dto.Rooms.Any())
+                {
+                    var roomBookings = dto.Rooms.Select(roomId => new TblRoomBooking
+                    {
+                        RoomId = roomId,
+                        BookingId = createBooking.Entity.BookingId
+                    });
+
+                    await _context.TblRoomBookings.AddRangeAsync(roomBookings);
+                    await _context.SaveChangesAsync();
+                }
+
+                await transaction.CommitAsync();
+
                 var creteBookingResponse = new CreateBookingByAdminResponseDto
                 {
                     BookingId = createBooking.Entity.BookingId
                 };
-
-                await transaction.CommitAsync();
 
                 return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateSuccessEntityResult(creteBookingResponse);
             }
@@ -122,6 +135,19 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                 {
                     Bookings = bookings.Select(b => new ListBookingDto
                     {
+                        BookingId = b.BookingId,
+                        UserId = b.UserId,
+                        GuestId = b.GuestId,
+                        UserName = b.Guest!.Name,
+                        Email = b.Guest!.Email,
+                        Guest_Count = b.GuestCount,
+                        Booking_Status = b.BookingStatus,
+                        Deposit_Amount = b.DepositAmount,
+                        Total_Amount = b.TotalAmount,
+                        CheckInDate = b.CheckInTime,
+                        CheckOutDate = b.CheckOutTime,
+                        PaymentType = b.PaymentType,
+                        CreatedAt = b.CreatedAt
                     }).ToList()
                 };
 
@@ -134,36 +160,5 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     ex.Message + ex.InnerException?.Message);
             }
         }
-
-        public async Task<CustomEntityResult<ListBookingResponseDto>> GetAllBookingList()
-        {
-            try
-            {
-                var bookings = await _context.TblBookings.ToListAsync();
-
-                if (bookings == null || !bookings.Any())
-                {
-                    return CustomEntityResult<ListBookingResponseDto>.GenerateFailEntityResult(
-                        ResponseMessageConstants.RESPONSE_CODE_NOTFOUND,
-                        "No bookings found");
-                }
-
-                var bookingList = new ListBookingResponseDto
-                {
-                    Bookings = bookings.Select(b => new ListBookingDto
-                    {
-                    }).ToList()
-                };
-
-                return CustomEntityResult<ListBookingResponseDto>.GenerateSuccessEntityResult(bookingList);
-            }
-            catch (Exception ex)
-            {
-                return CustomEntityResult<ListBookingResponseDto>.GenerateFailEntityResult(
-                    ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
-                    ex.Message + ex.InnerException?.Message);
-            }
-        }
-
     }
 }

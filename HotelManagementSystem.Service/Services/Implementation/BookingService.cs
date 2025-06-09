@@ -48,41 +48,7 @@ namespace HotelManagementSystem.Service.Services.Implementation
                 return CustomEntityResult<CreateBookingResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
             }
         }
-        public async Task<CustomEntityResult<CreateBookingByAdminResponseModel>> CreateBookingByAdmin(CreateBookingByAdminRequestModel model)
-        {
-            try
-            {
-                var createBookingRequest = new CreateBookingByAdminRequestDto
-                {
-                    GuestId = model.GuestId,
-                    UserId = model.UserId,
-                    Name = model.Name,
-                    GuestCount = model.GuestCount,
-                    BookingStatus = model.BookingStatus,
-                    DepositAmount = model.DepositAmount,
-                    TotalAmount = model.TotalAmount,
-                    CheckInTime = model.CheckInTime,
-                    CheckOutTime = model.CheckOutTime,
-                    PhoneNo = model.PhoneNo,
-                    Nrc = model.Nrc,
-                    PaymentType = model.PaymentType
-                };
-                var createBooking = await _bookingRepo.CreateBookingByAdmin(createBookingRequest);
-                if (createBooking.IsError)
-                {
-                    return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateFailEntityResult(createBooking.Result.RespCode, createBooking.Result.RespDescription);
-                }
-                var createBookingResponse = new CreateBookingByAdminResponseModel()
-                {
-                    BookingId = createBooking.Result.BookingId
-                };
-                return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateSuccessEntityResult(createBookingResponse);
-            }
-            catch (Exception ex)
-            {
-                return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
-            }
-        }
+
         public async Task<CustomEntityResult<GetBookingByIdResponseModel>> GetBookingById(GetBookingByIdRequestModel bookingId)
         {
             try
@@ -151,7 +117,8 @@ namespace HotelManagementSystem.Service.Services.Implementation
                         Total_Amount = b.Total_Amount,
                         CheckInDate = b.CheckInDate,
                         CheckOutDate = b.CheckOutDate,
-                        PaymentType = b.PaymentType
+                        PaymentType = b.PaymentType,
+                        CreatedAt = b.CreatedAt,
                     }).ToList()
                 };
                 if (listBookingResponse.Booking == null || !listBookingResponse.Booking.Any())
@@ -169,51 +136,5 @@ namespace HotelManagementSystem.Service.Services.Implementation
                     ex.Message + (ex.InnerException?.Message ?? ""));
             }
         }
-
-        public async Task<CustomEntityResult<ListBookingResponseModel>> GetAllBookingList()
-        {
-            try
-            {
-                var bookingListResult = await _bookingRepo.GetAllBookingList();
-
-                if (bookingListResult.IsError)
-                {
-                    return CustomEntityResult<ListBookingResponseModel>.GenerateFailEntityResult(bookingListResult.Result.RespCode, bookingListResult.Result.RespDescription);
-                }
-
-                var listBookingResponse = new ListBookingResponseModel
-                {
-                    Booking = bookingListResult.Result.Bookings!.Select(b => new ListBookingModel
-                    {
-                        BookingId = b.BookingId,
-                        UserId = b.UserId,
-                        GuestId = b.GuestId,
-                        Guest_Count = b.Guest_Count,
-                        Booking_Status = b.Booking_Status,
-                        Deposit_Amount = b.Deposit_Amount,
-                        Total_Amount = b.Total_Amount,
-                        CheckInDate = b.CheckInDate,
-                        CheckOutDate = b.CheckOutDate,
-                        PaymentType = b.PaymentType
-                    }).ToList()
-                };
-
-                if (listBookingResponse.Booking == null || !listBookingResponse.Booking.Any())
-                {
-                    return CustomEntityResult<ListBookingResponseModel>.GenerateFailEntityResult(
-                        ResponseMessageConstants.RESPONSE_CODE_NOTFOUND,
-                        "No bookings found");
-                }
-
-                return CustomEntityResult<ListBookingResponseModel>.GenerateSuccessEntityResult(listBookingResponse);
-            }
-            catch (Exception ex)
-            {
-                return CustomEntityResult<ListBookingResponseModel>.GenerateFailEntityResult(
-                    ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
-                    ex.Message + (ex.InnerException?.Message ?? ""));
-            }
-        }
-
     }
 }
