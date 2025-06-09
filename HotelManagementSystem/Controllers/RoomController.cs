@@ -92,7 +92,15 @@ public class RoomController : ControllerBase
     [HttpDelete("/admin/deleteroom/{id}")]
     public async Task<ActionResult<BasedResponseModel>> DeleteRoom(Guid id)
     {
-        var result = await _service.DeleteRoom(id);
-        return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        try
+        {
+            var result = await _service.DeleteRoom(id);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch(Exception ex)
+        {
+            var message = ex.Message;
+            return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
+        }
     }
 }
