@@ -7,5 +7,6 @@ namespace HotelManagementSystem.Service.Services.Interface
         public Task<CustomEntityResult<CreateBookingResponseModel>> CreateBookingByUser(CreateBookingRequestModel model);
         public Task<CustomEntityResult<GetBookingByIdResponseModel>> GetBookingById(GetBookingByIdRequestModel bookingId);
         public Task<CustomEntityResult<ListBookingResponseModel>> GetAllBookingByUserId(string Id);
+        public Task<CustomEntityResult<CancelResponseModel>> CancelBookingByUser(CancelRequestModel model);
     }
 }

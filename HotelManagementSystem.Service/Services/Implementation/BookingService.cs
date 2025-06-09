@@ -2,7 +2,6 @@
 using HotelManagementSystem.Data.Models.Booking;
 using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Services.Interface;
-using System.Runtime.CompilerServices;
 
 namespace HotelManagementSystem.Service.Services.Implementation
 {
@@ -135,6 +134,34 @@ namespace HotelManagementSystem.Service.Services.Implementation
             catch (Exception ex)
             {
                 return CustomEntityResult<ListBookingResponseModel>.GenerateFailEntityResult(
+                    ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                    ex.Message + (ex.InnerException?.Message ?? ""));
+            }
+        }
+
+        public async Task<CustomEntityResult<CancelResponseModel>> CancelBookingByUser(CancelRequestModel model)
+        {
+            try
+            {
+                var bookingId = new CancelRequestDto
+                {
+                    BookingId = model.BookingId,
+                };
+                var result = await _bookingRepo.CancelBookingByUser(bookingId);
+                if (result.IsError)
+                {
+                    return CustomEntityResult<CancelResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+                }
+                var response = new CancelResponseModel
+                {
+                    RespCode = result.Result.RespCode,
+                    RespDescription = result.Result.RespDescription,
+                };
+                return CustomEntityResult<CancelResponseModel>.GenerateSuccessEntityResult(response);
+            }
+            catch(Exception ex)
+            {
+                return CustomEntityResult<CancelResponseModel>.GenerateFailEntityResult(
                     ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
                     ex.Message + (ex.InnerException?.Message ?? ""));
             }

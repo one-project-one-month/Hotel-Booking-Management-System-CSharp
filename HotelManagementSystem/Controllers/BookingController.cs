@@ -1,5 +1,4 @@
-﻿
-using HotelManagementSystem.Service.Services.Implementation;
+﻿using Sprache;
 
 namespace HotelManagementSystem.Controllers
 {
@@ -79,6 +78,27 @@ namespace HotelManagementSystem.Controllers
             {
                 var message = ex.Message;
                 return BadRequest(message);
+            }
+        }
+
+        [HttpPost]
+        [Route("cancel/{bookingid}")]
+        public async Task<ActionResult<CancelResponseModel>> CancelBooking(Guid bookingid, CancelRequestModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                model.BookingId = bookingid;
+                var result = await _bookingService.CancelBookingByUser(model);
+                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            }
+            catch(Exception ex)
+            {
+                var message = ex.Message;
+                return BadRequest(500);
             }
         }
     }

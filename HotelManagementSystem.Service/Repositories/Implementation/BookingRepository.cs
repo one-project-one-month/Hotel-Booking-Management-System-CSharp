@@ -1,5 +1,4 @@
-﻿using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Data.Dtos.Booking;
+﻿using HotelManagementSystem.Data.Dtos.Booking;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
@@ -57,7 +56,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             try
             {
-                var booking = await _context.TblBookings.FindAsync(dto);
+                var booking = await _context.TblBookings.FindAsync(dto.BookingId);
                 if (booking is null)
                 {
                     return CustomEntityResult<GetBookingByIdResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Booking not found");
@@ -127,6 +126,32 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
             catch (Exception ex)
             {
                 return CustomEntityResult<ListBookingResponseDto>.GenerateFailEntityResult(
+                    ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                    ex.Message + ex.InnerException?.Message);
+            }
+        }
+
+        public async Task<CustomEntityResult<CancelResponseDto>> CancelBookingByUser(CancelRequestDto dto)
+        {
+            try
+            {
+                var existingBooking = await _context.TblBookings.FindAsync(dto.BookingId);
+                if(existingBooking is null)
+                {
+                    return CustomEntityResult<CancelResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Booking not found");
+                }
+                existingBooking.BookingStatus = "Cancelled";
+                await _context.SaveChangesAsync();
+                var result = new CancelResponseDto
+                {
+                    RespCode = "200",
+                    RespDescription = "Booking Cancelled Successfully"
+                };
+                return CustomEntityResult<CancelResponseDto>.GenerateSuccessEntityResult(result);
+            }
+            catch (Exception ex)
+            {
+                return CustomEntityResult<CancelResponseDto>.GenerateFailEntityResult(
                     ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
                     ex.Message + ex.InnerException?.Message);
             }

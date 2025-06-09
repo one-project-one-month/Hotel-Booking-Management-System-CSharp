@@ -1,7 +1,6 @@
 ﻿using HotelManagementSystem.Data.Dtos.Booking;
 using HotelManagementSystem.Data.Dtos.BookingControl;
 using HotelManagementSystem.Service.Exceptions;
-using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation;
 

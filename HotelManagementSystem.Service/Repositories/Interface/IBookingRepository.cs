@@ -13,5 +13,6 @@ namespace HotelManagementSystem.Service.Repositories.Interface
         Task<CustomEntityResult<CreateBookingResponseDto>> CreateBookingByUser(CreateBookingRequestDto model);
         Task<CustomEntityResult<GetBookingByIdResponseDto>> GetBookingById(GetBookingByIdRequestDto bookingId);
         Task<CustomEntityResult<ListBookingResponseDto>> GetAllBookingByUserId(ListBookingRequestByUserDto dto);
+        Task<CustomEntityResult<CancelResponseDto>> CancelBookingByUser(CancelRequestDto dto);
     }
 }
