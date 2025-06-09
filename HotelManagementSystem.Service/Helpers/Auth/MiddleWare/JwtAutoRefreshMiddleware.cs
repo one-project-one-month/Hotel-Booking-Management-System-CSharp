@@ -72,7 +72,6 @@ namespace HotelManagementSystem.Service.Helpers.Auth.MiddleWare
             {
                 Debug.WriteLine("Error in JwtAutoRefreshMiddleware: {Message}", ex.Message);
             }
-
             await _next(context);
         }
     }

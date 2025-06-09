@@ -16,7 +16,6 @@ builder.Services.AddCors(options =>
 });
 // Add services to the container.
 builder.AddServices();
-
 builder.Services.AddControllers();
 
 // Add services to the container.
@@ -26,10 +25,9 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Your API",
+        Title = "Hotel Management System",
         Version = "v1"
     });
-
     options.OperationFilter<FileUploadOperationFilter>();
 });
 
@@ -41,12 +39,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1");
     });
 }
 
 //app.UseCors("AllowBlazorFrontend");
-
 app.UseCors(MyAllowSpecificOrigins);
 app.UseMiddleware<JwtAutoRefreshMiddleware>();
 
@@ -55,5 +52,4 @@ app.UseAuthorization();
 
 //app.UseHttpsRedirection();
 app.MapControllers();
-
 app.Run();

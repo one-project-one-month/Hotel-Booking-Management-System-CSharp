@@ -186,6 +186,12 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
+        #region Check Format
+        if(model.ProfileImg != null)
+        {
+            var check = MimeTypeValidator.IsValidatorMimeType(model.ProfileImgMimeType);
+        }
+        #endregion
         try
         {
             var result = await _service.CreateUserProfileByAdminAsync(model);
