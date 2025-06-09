@@ -73,13 +73,14 @@ public class UserController : BaseController
             #endregion
 
             #region Check Format
-            var passwordErrors = PasswordPolicyValidator.Validate(model.Password);
-            if (passwordErrors.Any())
+
+            var passwordErrors = model.Password.IsValidPassword();
+            if (!passwordErrors.IsValid)
             {
                 return BadRequest(new BasedResponseModel
                 {
                     RespCode = "400",
-                    RespDescription = string.Join(", ", passwordErrors)
+                    RespDescription = string.Join(", ", passwordErrors.Errors)
                 });
             }
             #endregion
@@ -187,9 +188,9 @@ public class UserController : BaseController
             return BadRequest(ModelState);
         }
         #region Check Format
-        if(model.ProfileImg != null)
+        if(model.ProfileImg != null && !model.ProfileImg.IsValidImage())
         {
-            var check = MimeTypeValidator.IsValidatorMimeType(model.ProfileImgMimeType);
+            return BadRequest();
         }
         #endregion
         try
