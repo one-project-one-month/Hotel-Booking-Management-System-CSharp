@@ -9,8 +9,6 @@ namespace HotelManagementSystem.Data.Dtos.Booking
     public class CreateBookingByAdminRequestDto
     {
         public Guid? UserId { get; set; }
-
-        public Guid? GuestId { get; set; }
         public string Name { get; set; } = null!;
         public string Nrc { get; set; } = null!;
 

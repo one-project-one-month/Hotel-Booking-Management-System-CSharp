@@ -100,7 +100,6 @@ public class BookingControlService : IBookingControlService
         {
             var createBookingRequest = new CreateBookingByAdminRequestDto
             {
-                GuestId = model.GuestId,
                 UserId = model.UserId,
                 Name = model.Name,
                 Rooms = model.Rooms,
