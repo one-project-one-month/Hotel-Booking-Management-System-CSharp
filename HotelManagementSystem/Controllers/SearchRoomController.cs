@@ -22,27 +22,12 @@ namespace HotelManagementSystem.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             if (model.RoomType!.isNullOrEmptyCustom() && model.GuestLimit <=0 && model.Price <= 0)
             {
                 return BadRequest();
             }
             try
             {
-                #region CheckRequiredField
-                // if (String.IsNullOrEmpty(model.UserId))
-                // {
-                //     return APIHelper.GenerateResponseForRequiredField(nameof(model.UserId), _sharedLocalizer);
-                // }
-                #endregion
-
-                #region Check Format
-                // if(model.UserType != EntitiesConstant.USER_TYPE.USER.GetHashCode())
-                // {
-                //     return BadRequest(ErrorMessageConstant.EM_UserTypeNotAcceptable); ///Not Acceptable
-                // }
-                #endregion
-
                 var result = await _service.SearchRoom(model);
 
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);

@@ -1,14 +1,11 @@
 using HotelManagementSystem.Data.Dtos.User;
 using HotelManagementSystem.Data.Models.Constants;
-using HotelManagementSystem.Data.Models.Guest;
-using HotelManagementSystem.Data.Models.RoomType;
 using HotelManagementSystem.Data.Models.User;
 using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using HotelManagementSystem.Service.Helpers.Auth.SMTP;
 using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Services.Interface;
-using MimeKit;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace HotelManagementSystem.Service.Services.Implementation;

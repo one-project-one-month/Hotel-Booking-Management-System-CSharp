@@ -1,11 +1,4 @@
 ﻿using HotelManagementSystem.Data.Dtos.SearchRoom;
-using HotelManagementSystem.Data.Dtos.User;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RoomDto = HotelManagementSystem.Data.Dtos.SearchRoom.RoomDto;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
@@ -102,7 +95,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                                         &&
                                     (!model.GuestLimit.HasValue || r.GuestLimit >= model.GuestLimit.Value)
                             )
-                    .Select(r => new RoomDto
+                    .Select(r => new RoomSearchDto
                     {
                         RoomId = r.RoomId,
                         RoomNumber = r.RoomNo,
@@ -114,21 +107,21 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     .ToListAsync();
 
 
-                var searchRoomList = availableRooms.Select(x => new RoomDto()
+                var searchRoomList = availableRooms.Select(x => new RoomSearchDto()
                 {
+                    RoomId = x.RoomId,
                     RoomType = x.RoomType,
                     Price = x.Price,
                     GuestLimit = x.GuestLimit ?? 0,
                     RoomNumber = x.RoomNumber,
                     Description = x.Description,
-                    ImgUrl = x.ImgUrl,
+                    ImgUrl = x.ImgUrl 
 
                 }).ToList();
 
                 var searchRoomResponse = new SearchRoomResponseDto
                 {
                     Rooms = searchRoomList,
-
                 };
                 
                 return CustomEntityResult<SearchRoomResponseDto>.GenerateSuccessEntityResult(searchRoomResponse);

@@ -27,8 +27,16 @@ namespace HotelManagementSystem.Service.Services.Implementation
 
                 var searchRoomResponse = new SearchRoomResponseModel()
                 {
-                  
-                    Rooms = result.Result.Rooms
+                    Rooms = result.Result.Rooms!.Select(s => new RoomModel
+                    {
+                        RoomId = s.RoomId,
+                        RoomType = s.RoomType,
+                        Price = s.Price,
+                        GuestLimit = s.GuestLimit ?? 0,
+                        RoomNumber = s.RoomNumber,
+                        Description = s.Description,
+                        ImgUrl = s.ImgUrl != null ? Convert.ToBase64String(s.ImgUrl) : null
+                    }).ToList()
                 };
 
                 return CustomEntityResult<SearchRoomResponseModel>.GenerateSuccessEntityResult(searchRoomResponse);
