@@ -16,6 +16,5 @@ namespace HotelManagementSystem.Data.Dtos.User
         public DateOnly? DateOfBirth { get; set; }
         public string? Gender { get; set; }
         public byte[]? ProfileImg { get; set; }
-        public string? ProfileImgMimeType { get; set; }
     }
 }

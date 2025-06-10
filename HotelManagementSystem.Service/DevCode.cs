@@ -25,5 +25,18 @@ namespace HotelManagementSystem.Service
             }
         }
 
+        public static string ToByteArray(this string str)
+        {   if(str != null)
+            {
+                var dataParts = str.Split(',');
+                var mimeTypePart = dataParts[0];
+                var base64Data = dataParts[1];
+                var mimeType = mimeTypePart.Split(':')[1].Split(';')[0];
+                byte[] imageBytes;
+                imageBytes = Convert.FromBase64String(base64Data);
+                return mimeType;
+            }
+            return null;
+        }
     }
 }

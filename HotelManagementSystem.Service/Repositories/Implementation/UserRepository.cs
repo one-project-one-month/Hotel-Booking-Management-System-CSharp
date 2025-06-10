@@ -297,8 +297,7 @@ public class UserRepository : IUserRepository
                 Address = user.Address,
                 DateOfBirth = user.DateOfBirth,
                 Gender = user.Gender,
-                ProfileImg = user.TblUserProfileImage?.ProfileImg,
-                ProfileImgMimeType = user.TblUserProfileImage?.ProfileImgMimeType
+                ProfileImg = user.TblUserProfileImage?.ProfileImg
             };
 
             return CustomEntityResult<GetUserProfileByIdResponseDto>.GenerateSuccessEntityResult(result);

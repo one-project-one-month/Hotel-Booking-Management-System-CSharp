@@ -69,9 +69,6 @@ public class UserController : BaseController
 
         try
         {
-            #region CheckRequiredField
-            #endregion
-
             #region Check Format
 
             var passwordErrors = model.Password.IsValidPassword();
@@ -104,19 +101,20 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
-        #region Check Format
-        var passwordErrors = PasswordPolicyValidator.Validate(model.Password);
-        if (passwordErrors.Any())
-        {
-            return BadRequest(new BasedResponseModel
-            {
-                RespCode = "400",
-                RespDescription = string.Join(", ", passwordErrors)
-            });
-        }
-        #endregion
         try
         {
+            #region Check Format
+
+            var passwordErrors = model.Password.IsValidPassword();
+            if (!passwordErrors.IsValid)
+            {
+                return BadRequest(new BasedResponseModel
+                {
+                    RespCode = "400",
+                    RespDescription = string.Join(", ", passwordErrors.Errors)
+                });
+            }
+            #endregion
             var result = await _service.LoginAsync(model);
 
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
@@ -156,19 +154,20 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
-        #region Check Format
-        var passwordErrors = PasswordPolicyValidator.Validate(model.Password);
-        if (passwordErrors.Any())
-        {
-            return BadRequest(new BasedResponseModel
-            {
-                RespCode = "400",
-                RespDescription = string.Join(", ", passwordErrors)
-            });
-        }
-        #endregion
         try
         {
+            #region Check Format
+
+            var passwordErrors = model.Password.IsValidPassword();
+            if (!passwordErrors.IsValid)
+            {
+                return BadRequest(new BasedResponseModel
+                {
+                    RespCode = "400",
+                    RespDescription = string.Join(", ", passwordErrors.Errors)
+                });
+            }
+            #endregion
             var result = await _service.ResetPasswordAsync(model);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
@@ -207,12 +206,18 @@ public class UserController : BaseController
 
     [Authorize]
     [HttpPatch]
-    public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync([FromForm] UpdateUserProfileByIdRequestModel model)
+    public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(UpdateUserProfileByIdRequestModel model)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
+        #region Check Format
+        if (model.ProfileImg != null && !model.ProfileImg.IsValidImage())
+        {
+            return BadRequest();
+        }
+        #endregion
         try
         {
             if (string.IsNullOrEmpty(UserId))
@@ -231,7 +236,7 @@ public class UserController : BaseController
 
     //[Authorize]
     [HttpGet]
-    public async Task<ActionResult<GetAllUserInfoResponseModel>> GetAllUserProfileAsync()
+    public async Task<ActionResult<GetAllUserInfoResponseModel>> GetAllUserInfoAsync()
     {
         if (!ModelState.IsValid)
         {

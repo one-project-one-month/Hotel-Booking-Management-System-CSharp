@@ -8,6 +8,7 @@ using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using HotelManagementSystem.Service.Helpers.Auth.SMTP;
 using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Services.Interface;
+using MimeKit;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace HotelManagementSystem.Service.Services.Implementation;
@@ -216,12 +217,14 @@ public class UserService : IUserService
         try
         {
             byte[]? imgBytes = null;
+            string? imgMimeType = null;
 
             if (!string.IsNullOrWhiteSpace(model.ProfileImg))
             {
                 try
                 {
                     imgBytes = Convert.FromBase64String(model.ProfileImg);
+                    imgMimeType = model.ProfileImg.ToByteArray();
                 }
                 catch (FormatException ex)
                 {
@@ -240,7 +243,7 @@ public class UserService : IUserService
                 Gender = model.Gender,
                 DateOfBirth = model.DateOfBirth,
                 ProfileImg = imgBytes,
-                ProfileImgMimeType = model.ProfileImgMimeType
+                ProfileImgMimeType = imgMimeType
             };
             var result = await _userRepo.CreateUserProfileByAdminAsync(dto);
             if (result.IsError)
@@ -258,6 +261,7 @@ public class UserService : IUserService
             return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
+
     public async Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string Id, UpdateUserProfileByIdRequestModel model)
     {
         try
@@ -272,12 +276,23 @@ public class UserService : IUserService
                 throw new InvalidUserIdException("Invalid user ID format.");
             }
 
-            byte[]? imageByte = null;
-            if (model.ProfileImg != null && model.ProfileImg.Length > 0)
+            byte[]? imgBytes = null;
+            string? imgMimeType = null;
+
+            if (!string.IsNullOrWhiteSpace(model.ProfileImg))
             {
-                using var ms = new MemoryStream();
-                await model.ProfileImg.CopyToAsync(ms);
-                imageByte = ms.ToArray();
+                try
+                {
+                    imgBytes = Convert.FromBase64String(model.ProfileImg);
+                    imgMimeType = model.ProfileImg.ToByteArray();
+                }
+                catch (FormatException ex)
+                {
+                    return CustomEntityResult<UpdateUserProfileByIdResponseModel>.GenerateFailEntityResult(
+                        "400",
+                        "Invalid Base64 image data: " + ex.Message
+                    );
+                }
             }
 
             var createProfile = new CreateUserProfileRequestDto
@@ -287,8 +302,8 @@ public class UserService : IUserService
                 DateOfBirth = model.DateOfBirth,
                 Gender = model.Gender,
                 UserName = model.UserName,
-                ProfileImg = imageByte,
-                ProfileImgMimeType = model.ProfileImg?.ContentType
+                ProfileImg = imgBytes,
+                ProfileImgMimeType = imgMimeType
             };
             var result = await _userRepo.CreateUserProfileAsync(createProfile);
             if (result.IsError)
@@ -337,8 +352,7 @@ public class UserService : IUserService
                 Address = result.Result.Address,
                 DateOfBirth = result.Result.DateOfBirth,
                 Gender = result.Result.Gender,
-                ProfileImg = result.Result.ProfileImg != null ? Convert.ToBase64String(result.Result.ProfileImg) : null,
-                ProfileImgMimeType = result.Result.ProfileImgMimeType
+                ProfileImg = result.Result.ProfileImg != null ? Convert.ToBase64String(result.Result.ProfileImg) : null
             };
             return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateSuccessEntityResult(response);
         }
