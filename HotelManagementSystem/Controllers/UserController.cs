@@ -8,6 +8,7 @@ namespace HotelManagementSystem.Controllers;
 public class UserController : BaseController
 {
     private readonly IUserService _service;
+
     public UserController(IHttpContextAccessor httpContextAccessor, IUserService service) : base(httpContextAccessor)
     {
         _service = service;
@@ -21,10 +22,13 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
+
         try
         {
             var result = await _service.SeedRole();
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -42,10 +46,13 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
+
         try
         {
             var result = await _service.SeedRoleToAdmin(model);
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -80,11 +87,14 @@ public class UserController : BaseController
                     RespDescription = string.Join(", ", passwordErrors.Errors)
                 });
             }
+
             #endregion
 
             var result = await _service.RegisterUser(model);
 
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -101,6 +111,7 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
+
         try
         {
             #region Check Format
@@ -114,10 +125,14 @@ public class UserController : BaseController
                     RespDescription = string.Join(", ", passwordErrors.Errors)
                 });
             }
+
             #endregion
+
             var result = await _service.LoginAsync(model);
 
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -134,10 +149,13 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
+
         try
         {
             var result = await _service.ForgotPasswordAsync(model);
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -154,6 +172,7 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
+
         try
         {
             #region Check Format
@@ -167,9 +186,13 @@ public class UserController : BaseController
                     RespDescription = string.Join(", ", passwordErrors.Errors)
                 });
             }
+
             #endregion
+
             var result = await _service.ResetPasswordAsync(model);
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -180,22 +203,29 @@ public class UserController : BaseController
 
     [HttpPost]
     [Route("/admin/createprofile")]
-    public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestModel model)
+    public async Task<ActionResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync(
+        CreateUserProfileByAdminRequestModel model)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
+
         #region Check Format
-        if(model.ProfileImg != null && !model.ProfileImg.IsValidImage())
+
+        if (model.ProfileImg != null && !model.ProfileImg.IsValidImage())
         {
             return BadRequest();
         }
+
         #endregion
+
         try
         {
             var result = await _service.CreateUserProfileByAdminAsync(model);
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -206,26 +236,34 @@ public class UserController : BaseController
 
     [Authorize]
     [HttpPatch]
-    public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(UpdateUserProfileByIdRequestModel model)
+    public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(
+        UpdateUserProfileByIdRequestModel model)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
+
         #region Check Format
+
         if (model.ProfileImg != null && !model.ProfileImg.IsValidImage())
         {
             return BadRequest();
         }
+
         #endregion
+
         try
         {
             if (string.IsNullOrEmpty(UserId))
             {
                 return BadRequest("User not found. Please login again.");
             }
+
             var result = await _service.UpdateUserProfileByIdAsync(UserId, model);
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -242,10 +280,13 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
+
         try
         {
             var result = await _service.GetAllUserInfoAsync();
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {
@@ -263,14 +304,18 @@ public class UserController : BaseController
         {
             return BadRequest(ModelState);
         }
+
         try
         {
             if (string.IsNullOrEmpty(UserId))
             {
                 return BadRequest("User not found. Please login again.");
             }
+
             var result = await _service.GetUserProfileByIdAsync(UserId);
-            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
         {

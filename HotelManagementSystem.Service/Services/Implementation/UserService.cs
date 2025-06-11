@@ -39,7 +39,8 @@ public class UserService : IUserService
             var registerUser = await _userRepo.RegisterUser(registerUserRequest);
             if (registerUser.IsError)
             {
-                return CustomEntityResult<RegisterUserResponseModel>.GenerateFailEntityResult(registerUser.Result.RespCode, registerUser.Result.RespDescription);
+                return CustomEntityResult<RegisterUserResponseModel>.GenerateFailEntityResult(
+                    registerUser.Result.RespCode, registerUser.Result.RespDescription);
             }
 
             var registerUserResponse = new RegisterUserResponseModel
@@ -51,7 +52,8 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<RegisterUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+            return CustomEntityResult<RegisterUserResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 
@@ -75,6 +77,7 @@ public class UserService : IUserService
                     await _userRepo.SeedRoleAsync(seedRoleRequest);
                 }
             }
+
             var seedRoleResponse = new SeedRoleResponseModel
             {
                 RespCode = ResponseMessageConstants.RESPONSE_CODE_SUCCESS,
@@ -84,7 +87,8 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<SeedRoleResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+            return CustomEntityResult<SeedRoleResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 
@@ -97,8 +101,10 @@ public class UserService : IUserService
             var existingPassword = user.Password;
             if (existingPassword == null)
             {
-                throw new PasswordCorruptedException("Password is corrupted or not set for this user. Please reset your password.");
+                throw new PasswordCorruptedException(
+                    "Password is corrupted or not set for this user. Please reset your password.");
             }
+
             var LoginResponse = new LoginRequestDto
             {
                 Email = model.Email,
@@ -116,7 +122,8 @@ public class UserService : IUserService
             var result = await _tokenProcessor.GenerateToken(LoginResponse);
             if (result.IsError)
             {
-                return CustomEntityResult<LoginResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+                return CustomEntityResult<LoginResponseModel>.GenerateFailEntityResult(result.Result.RespCode,
+                    result.Result.RespDescription);
             }
 
             var refreshToken = _tokenProcessor.GenerateRefreshToken();
@@ -137,11 +144,13 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<LoginResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+            return CustomEntityResult<LoginResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 
-    public async Task<CustomEntityResult<ForgotPasswordResponseModel>> ForgotPasswordAsync(ForgetPasswordRequestModel model)
+    public async Task<CustomEntityResult<ForgotPasswordResponseModel>> ForgotPasswordAsync(
+        ForgetPasswordRequestModel model)
     {
         try
         {
@@ -154,30 +163,37 @@ public class UserService : IUserService
             var response = await _userRepo.UpdateOTPAsync(forgotPasswordRequest);
             if (response.IsError)
             {
-                return CustomEntityResult<ForgotPasswordResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Failed to update the token. Please check the request and try again.");
+                return CustomEntityResult<ForgotPasswordResponseModel>.GenerateFailEntityResult(
+                    ResponseMessageConstants.RESPONSE_CODE_NOTFOUND,
+                    "Failed to update the token. Please check the request and try again.");
             }
+
             var subject = "Reset Your Password";
             var body = $"your password reset OTP is: {Otp}";
 
             var result = await _smtpService.SentPasswordOTPAsync(forgotPasswordRequest.Email, subject, body);
             if (result.IsError)
             {
-                return CustomEntityResult<ForgotPasswordResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+                return CustomEntityResult<ForgotPasswordResponseModel>.GenerateFailEntityResult(result.Result.RespCode,
+                    result.Result.RespDescription);
             }
+
             var forgotPasswordResponse = new ForgotPasswordResponseModel
             {
                 RespCode = ResponseMessageConstants.RESPONSE_CODE_SUCCESS,
                 RespDescription = "OTP sent successfully to your email.",
             };
             return CustomEntityResult<ForgotPasswordResponseModel>.GenerateSuccessEntityResult(forgotPasswordResponse);
-
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<ForgotPasswordResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+            return CustomEntityResult<ForgotPasswordResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
-    public async Task<CustomEntityResult<ResetPasswordResponseModel>> ResetPasswordAsync(ResetPasswordRequestModel model)
+
+    public async Task<CustomEntityResult<ResetPasswordResponseModel>> ResetPasswordAsync(
+        ResetPasswordRequestModel model)
     {
         try
         {
@@ -186,11 +202,13 @@ public class UserService : IUserService
             {
                 throw new OTPNotFoudException("OTP not found");
             }
+
             var existingUser = await _userRepo.GetUserByEmail(model.Email);
             if (existingUser.OtpExpireAt < DateTime.UtcNow)
             {
                 throw new OTPNotFoudException("OTP expired");
             }
+
             var hashedPassword = _passwordHasher.HashPassword(model.Password);
             existingUser.Password = hashedPassword;
             await _userRepo.UpdatePasswordAsync(existingUser.UserId, hashedPassword);
@@ -201,15 +219,16 @@ public class UserService : IUserService
                 RespDescription = "Password reset successfully. You can now login with your new password.",
             };
             return CustomEntityResult<ResetPasswordResponseModel>.GenerateSuccessEntityResult(resetPasswordResponse);
-
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<ResetPasswordResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+            return CustomEntityResult<ResetPasswordResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 
-    public async Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestModel model)
+    public async Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync(
+        CreateUserProfileByAdminRequestModel model)
     {
         try
         {
@@ -231,6 +250,7 @@ public class UserService : IUserService
                     );
                 }
             }
+
             var dto = new CreateUserProfileByAdminRequestDto
             {
                 UserName = model.UserName,
@@ -245,8 +265,10 @@ public class UserService : IUserService
             var result = await _userRepo.CreateUserProfileByAdminAsync(dto);
             if (result.IsError)
             {
-                return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+                return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(result.Result.RespCode,
+                    result.Result.RespDescription);
             }
+
             return CustomEntityResult<CreateUserResponseModel>.GenerateSuccessEntityResult(new CreateUserResponseModel
             {
                 RespCode = result.Result.RespCode,
@@ -255,11 +277,13 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+            return CustomEntityResult<CreateUserResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 
-    public async Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string Id, UpdateUserProfileByIdRequestModel model)
+    public async Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string Id,
+        UpdateUserProfileByIdRequestModel model)
     {
         try
         {
@@ -305,8 +329,10 @@ public class UserService : IUserService
             var result = await _userRepo.CreateUserProfileAsync(createProfile);
             if (result.IsError)
             {
-                return CustomEntityResult<UpdateUserProfileByIdResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+                return CustomEntityResult<UpdateUserProfileByIdResponseModel>.GenerateFailEntityResult(
+                    result.Result.RespCode, result.Result.RespDescription);
             }
+
             var response = new UpdateUserProfileByIdResponseModel
             {
                 RespCode = result.Result.RespCode,
@@ -316,7 +342,8 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<UpdateUserProfileByIdResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+            return CustomEntityResult<UpdateUserProfileByIdResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 
@@ -328,10 +355,12 @@ public class UserService : IUserService
             {
                 throw new UserNotFoundException("User not found. Please login again.");
             }
+
             if (!Guid.TryParse(Id, out var userId))
             {
                 throw new InvalidUserIdException("Invalid user ID format.");
             }
+
             var id = new GetUserProfileByIdRequestDto
             {
                 UserId = userId
@@ -340,7 +369,8 @@ public class UserService : IUserService
 
             if (result.IsError)
             {
-                return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+                return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateFailEntityResult(
+                    result.Result.RespCode, result.Result.RespDescription);
             }
 
             var response = new GetUserProfileByIdResponseModel
@@ -355,11 +385,13 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+            return CustomEntityResult<GetUserProfileByIdResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 
-    public async Task<CustomEntityResult<SeedRoleToAdminResponseModel>> SeedRoleToAdmin(SeedRoleToAdminRequestModel model)
+    public async Task<CustomEntityResult<SeedRoleToAdminResponseModel>> SeedRoleToAdmin(
+        SeedRoleToAdminRequestModel model)
     {
         try
         {
@@ -372,14 +404,17 @@ public class UserService : IUserService
             var operate = await _userRepo.SeedRoleToAdmin(request);
             if (operate.IsError)
             {
-                return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateFailEntityResult(operate.Result.RespCode, operate.Result.RespDescription);
+                return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateFailEntityResult(
+                    operate.Result.RespCode, operate.Result.RespDescription);
             }
+
             var response = new SeedRoleToAdminResponseModel();
             return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateSuccessEntityResult(response);
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+            return CustomEntityResult<SeedRoleToAdminResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 
@@ -391,7 +426,8 @@ public class UserService : IUserService
 
             if (userListResult.IsError)
             {
-                return CustomEntityResult<GetAllUserInfoResponseModel>.GenerateFailEntityResult(userListResult.Result.RespCode, userListResult.Result.RespDescription);
+                return CustomEntityResult<GetAllUserInfoResponseModel>.GenerateFailEntityResult(
+                    userListResult.Result.RespCode, userListResult.Result.RespDescription);
             }
 
             var userListResponse = new GetAllUserInfoResponseModel
@@ -421,8 +457,8 @@ public class UserService : IUserService
         catch (Exception ex)
         {
             return CustomEntityResult<GetAllUserInfoResponseModel>.GenerateFailEntityResult(
-                    ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
-                    ex.Message + (ex.InnerException?.Message ?? ""));
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
 }
