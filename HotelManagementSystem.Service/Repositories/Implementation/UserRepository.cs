@@ -5,17 +5,17 @@ using HotelManagementSystem.Service.Exceptions;
 using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using Org.BouncyCastle.Crypto.Operators;
 
-namespace HotelManagementSystem.Service.Reposities.Implementation;
+namespace HotelManagementSystem.Service.Repositories.Implementation;
 
 public class UserRepository : IUserRepository
 {
     private readonly HotelDbContext _context;
     private readonly IPasswordHasher _passwordHasher;
+
     public UserRepository(HotelDbContext context, IPasswordHasher passwordHasher)
     {
         _context = context;
         _passwordHasher = passwordHasher;
-
     }
 
     public async Task<CustomEntityResult<RegisterUserResponseDto>> RegisterUser(RegisterUserrequestDto model)
@@ -37,7 +37,8 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<RegisterUserResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<RegisterUserResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 
@@ -48,6 +49,7 @@ public class UserRepository : IUserRepository
         {
             throw new UserNotFoundException(email);
         }
+
         return user;
     }
 
@@ -58,6 +60,7 @@ public class UserRepository : IUserRepository
         {
             throw new UserDoesNotExitException(userId);
         }
+
         return user;
     }
 
@@ -78,7 +81,8 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<SeedRoleResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<SeedRoleResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 
@@ -89,11 +93,13 @@ public class UserRepository : IUserRepository
         {
             throw new UserDoesNotExitException(id);
         }
+
         var role = await _context.TblRoles.FirstOrDefaultAsync(x => x.RoleId == user.RoleId);
         if (role == null)
         {
             throw new RoleDoesNotExistException("Role does not exit!");
         }
+
         return role.RoleName;
     }
 
@@ -109,6 +115,7 @@ public class UserRepository : IUserRepository
         {
             throw new RoleDoesNotExistException("User Role does not exit!");
         }
+
         var RoleId = Role.RoleId;
         return RoleId;
     }
@@ -124,6 +131,7 @@ public class UserRepository : IUserRepository
             {
                 throw new UserNotFoundException(user.Email);
             }
+
             if (user.RefreshToken != null)
                 existingUser.RefreshToken = user.RefreshToken;
 
@@ -149,6 +157,7 @@ public class UserRepository : IUserRepository
             {
                 throw new UserNotFoundException(user.Email);
             }
+
             existingUser.ForgetPasswordOtp = null;
             existingUser.OtpExpireAt = default;
             await _context.SaveChangesAsync();
@@ -156,9 +165,10 @@ public class UserRepository : IUserRepository
             var returnModel = new BasedResponseModel();
             return CustomEntityResult<BasedResponseModel>.GenerateSuccessEntityResult(returnModel);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            return CustomEntityResult<BasedResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<BasedResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 
@@ -178,9 +188,10 @@ public class UserRepository : IUserRepository
             {
                 throw new OTPNotFoudException("OTP not found");
             }
+
             return token;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             throw new Exception($"{ex.Message}", ex);
         }
@@ -196,6 +207,7 @@ public class UserRepository : IUserRepository
             {
                 throw new UserNotFoundException(dto.Email);
             }
+
             user.ForgetPasswordOtp = dto.Otp;
             user.OtpExpireAt = DateTime.UtcNow.AddMinutes(15);
             await _context.SaveChangesAsync();
@@ -204,7 +216,8 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<ForgotPasswordResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<ForgotPasswordResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 
@@ -218,17 +231,20 @@ public class UserRepository : IUserRepository
             {
                 throw new UserDoesNotExitException(userId);
             }
+
             await _context.SaveChangesAsync();
             var returnModel = new BasedResponseModel();
             return CustomEntityResult<BasedResponseModel>.GenerateSuccessEntityResult(returnModel);
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<BasedResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<BasedResponseModel>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 
-    public async Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileAsync(CreateUserProfileRequestDto dto)
+    public async Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileAsync(
+        CreateUserProfileRequestDto dto)
     {
         try
         {
@@ -270,17 +286,19 @@ public class UserRepository : IUserRepository
                 }
             }
 
-             var result  = await _context.SaveChangesAsync();
-            var response = new CreateUserProfileResponseDto(); 
+            var result = await _context.SaveChangesAsync();
+            var response = new CreateUserProfileResponseDto();
             return CustomEntityResult<CreateUserProfileResponseDto>.GenerateSuccessEntityResult(response);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            return CustomEntityResult<CreateUserProfileResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<CreateUserProfileResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 
-    public async Task<CustomEntityResult<GetUserProfileByIdResponseDto>> GetUserProfileByIdAsync(GetUserProfileByIdRequestDto dto)
+    public async Task<CustomEntityResult<GetUserProfileByIdResponseDto>> GetUserProfileByIdAsync(
+        GetUserProfileByIdRequestDto dto)
     {
         try
         {
@@ -291,6 +309,7 @@ public class UserRepository : IUserRepository
             {
                 throw new UserNotFoundException(dto.UserId.ToString());
             }
+
             var result = new GetUserProfileByIdResponseDto
             {
                 UserName = user.UserName,
@@ -304,7 +323,8 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<GetUserProfileByIdResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<GetUserProfileByIdResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 
@@ -324,19 +344,22 @@ public class UserRepository : IUserRepository
             {
                 throw new RoleDoesNotExistException("User Role does not exit!");
             }
+
             registerUserRequest.RoleId = Role.RoleId;
             await _context.AddAsync(registerUserRequest);
             await _context.SaveChangesAsync();
             var result = new SeedRoleToAdminResponseDto();
             return CustomEntityResult<SeedRoleToAdminResponseDto>.GenerateSuccessEntityResult(result);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            return CustomEntityResult<SeedRoleToAdminResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<SeedRoleToAdminResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 
-    public async Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestDto dto)
+    public async Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileByAdminAsync(
+        CreateUserProfileByAdminRequestDto dto)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -347,6 +370,7 @@ public class UserRepository : IUserRepository
             {
                 throw new RoleDoesNotExistException("User role does not exist.");
             }
+
             var roleid = await _context.TblRoles
                 .Where(r => r.RoleName == RoleConstants.User)
                 .Select(r => r.RoleId)
@@ -423,8 +447,8 @@ public class UserRepository : IUserRepository
         }
         catch (Exception ex)
         {
-            return CustomEntityResult<GetAllUserInforResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+            return CustomEntityResult<GetAllUserInforResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
 }
-
