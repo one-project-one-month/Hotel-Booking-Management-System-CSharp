@@ -55,7 +55,7 @@ public class RoomService : IRoomService
             {
                 RoomNo = room.Result.Room.RoomNo,
                 GuestLimit = room.Result.Room.GuestLimit,
-                RoomStatus = room.Result.Room.RoomNo,
+                RoomStatus = room.Result.Room.RoomStatus.IsRoomAvailable(),
                 IsFeatured = room.Result.Room.IsFeatured,
                 RoomType = room.Result.Room.RoomType != null ? new RoomTypeModel
                 {
