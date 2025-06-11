@@ -23,7 +23,7 @@ public class RoomService : IRoomService
         {
             RoomNo = x.RoomNo,
             GuestLimit = x.GuestLimit,
-            RoomStatus = x.RoomStatus,
+            RoomStatus = x.RoomStatus.IsRoomAvailable(),
             IsFeatured = x.IsFeatured,
             RoomType = x.RoomType != null ? new RoomTypeModel
             {

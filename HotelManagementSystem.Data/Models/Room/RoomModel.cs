@@ -12,7 +12,7 @@ namespace HotelManagementSystem.Data.Models.Room
     {
         public string? RoomNo { get; set; }
 
-        public string? RoomStatus { get; set; }
+        public bool RoomStatus { get; set; }
 
         public int? GuestLimit { get; set; }
 

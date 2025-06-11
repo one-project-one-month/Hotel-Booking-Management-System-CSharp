@@ -26,7 +26,8 @@ namespace HotelManagementSystem.Service
         }
 
         public static string ToByteArray(this string str)
-        {   if(str != null)
+        {
+            if (str != null)
             {
                 var dataParts = str.Split(',');
                 var mimeTypePart = dataParts[0];
@@ -37,6 +38,22 @@ namespace HotelManagementSystem.Service
                 return mimeType;
             }
             return null;
+        }
+
+        public static bool IsRoomAvailable(this string roomStatus)
+        {
+            if (roomStatus == "Available")
+            {
+                return true;
+            }
+            else if (roomStatus == "Occupied")
+            {
+                return false;
+            }
+            else
+            {
+                throw new ArgumentException("Invalid room status");
+            }
         }
     }
 }
