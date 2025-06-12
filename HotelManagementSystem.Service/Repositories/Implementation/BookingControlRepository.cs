@@ -177,7 +177,7 @@ public class BookingControlRepository : IBookingControlRepository
                 CheckInTime = dto.CheckInTime,
                 CheckOutTime = dto.CheckOutTime,
                 DepositAmount = dto.DepositAmount,
-                BookingStatus = "Booked",
+                BookingStatus = dto.BookingStatus,
                 TotalAmount = dto.TotalAmount,
                 PaymentType = dto.PaymentType,
                 CreatedAt = DateTime.UtcNow

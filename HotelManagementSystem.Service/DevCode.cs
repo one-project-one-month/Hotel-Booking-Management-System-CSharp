@@ -46,7 +46,7 @@ namespace HotelManagementSystem.Service
             {
                 return true;
             }
-            else if (roomStatus == "Occupied")
+            else if (roomStatus == "Occupied" || roomStatus == "Maintenance")
             {
                 return false;
             }
