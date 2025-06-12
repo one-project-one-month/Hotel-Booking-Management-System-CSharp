@@ -224,6 +224,16 @@ public class BookingControlRepository : IBookingControlRepository
                 await _hotelDbContext.SaveChangesAsync();
             }
 
+            var checkInOut = new CheckInOut
+            {
+                GuestId = guest.GuestId,
+                CheckInTime = DateTime.UtcNow,
+                Status = "In"
+            };
+
+            await _hotelDbContext.CheckInOuts.AddAsync(checkInOut);
+            await _hotelDbContext.SaveChangesAsync();
+
             await transaction.CommitAsync();
 
             var response = new CreateBookingByAdminResponseDto

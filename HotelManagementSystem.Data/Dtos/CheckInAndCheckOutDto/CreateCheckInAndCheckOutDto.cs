@@ -27,8 +27,6 @@ public class CreateCheckInAndCheckOutRequestDto
 
 public class CreateCheckInAndCheckOutResponseDto : BasedResponseModel
 {
-    //public virtual TblGuest Guest { get; set; } = null!;
-
     public string GuestNRC { get; set; } = null!;
     public string GuestPhone { get; set; } = null!;
 
