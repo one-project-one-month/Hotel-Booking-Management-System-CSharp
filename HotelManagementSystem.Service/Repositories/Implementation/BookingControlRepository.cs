@@ -154,6 +154,23 @@ public class BookingControlRepository : IBookingControlRepository
 
     public async Task<CustomEntityResult<CreateBookingByAdminResponseDto>> CreateBookingByAdmin(CreateBookingByAdminRequestDto dto)
     {
+        if (dto.Rooms != null && dto.Rooms.Any())
+        {
+            var rooms = await _hotelDbContext.TblRooms
+                .Where(r => dto.Rooms.Contains(r.RoomId))
+                .ToListAsync();
+
+            foreach (var room in rooms)
+            {
+                if (room.RoomStatus == "Occupied" || room.RoomStatus == "Maintenance")
+                {
+                    return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateFailEntityResult(
+                        ResponseMessageConstants.RESPONSE_CODE_BADREQUEST,
+                        $"Room {room.RoomNo} is already booked or under maintenance.");
+                }
+            }
+        }
+
         await using var transaction = await _hotelDbContext.Database.BeginTransactionAsync();
         try
         {
@@ -165,14 +182,13 @@ public class BookingControlRepository : IBookingControlRepository
                 PhoneNo = dto.PhoneNo,
                 CreatedAt = DateTime.UtcNow
             };
+
             await _hotelDbContext.TblGuests.AddAsync(guest);
             await _hotelDbContext.SaveChangesAsync();
-
-            var GuestId = guest.GuestId;
-            var createBookingRequest = new TblBooking
+            var booking = new TblBooking
             {
                 UserId = dto.UserId,
-                GuestId = GuestId,
+                GuestId = guest.GuestId,
                 GuestCount = dto.GuestCount,
                 CheckInTime = dto.CheckInTime,
                 CheckOutTime = dto.CheckOutTime,
@@ -183,7 +199,7 @@ public class BookingControlRepository : IBookingControlRepository
                 CreatedAt = DateTime.UtcNow
             };
 
-            var createBooking = await _hotelDbContext.TblBookings.AddAsync(createBookingRequest);
+            await _hotelDbContext.TblBookings.AddAsync(booking);
             await _hotelDbContext.SaveChangesAsync();
 
             if (dto.Rooms != null && dto.Rooms.Any())
@@ -191,21 +207,31 @@ public class BookingControlRepository : IBookingControlRepository
                 var roomBookings = dto.Rooms.Select(roomId => new TblRoomBooking
                 {
                     RoomId = roomId,
-                    BookingId = createBooking.Entity.BookingId
+                    BookingId = booking.BookingId
                 });
 
                 await _hotelDbContext.TblRoomBookings.AddRangeAsync(roomBookings);
+
+                var roomsToUpdate = await _hotelDbContext.TblRooms
+                    .Where(r => dto.Rooms.Contains(r.RoomId))
+                    .ToListAsync();
+
+                foreach (var room in roomsToUpdate)
+                {
+                    room.RoomStatus = "Occupied";
+                }
+
                 await _hotelDbContext.SaveChangesAsync();
             }
 
             await transaction.CommitAsync();
 
-            var creteBookingResponse = new CreateBookingByAdminResponseDto
+            var response = new CreateBookingByAdminResponseDto
             {
-                BookingId = createBooking.Entity.BookingId
+                BookingId = booking.BookingId
             };
 
-            return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateSuccessEntityResult(creteBookingResponse);
+            return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateSuccessEntityResult(response);
         }
         catch (Exception ex)
         {
@@ -213,7 +239,7 @@ public class BookingControlRepository : IBookingControlRepository
 
             return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateFailEntityResult(
                 ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
-                $"Failed to create user profile: {ex.Message} {(ex.InnerException?.Message ?? "")}");
+                $"Failed to create booking: {ex.Message} {(ex.InnerException?.Message ?? "")}");
         }
     }
 }

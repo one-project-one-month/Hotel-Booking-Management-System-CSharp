@@ -42,7 +42,6 @@ public class CheckInAndCheckoutRepository: ICheckInAndCheckoutRepository
 
             await _hotelDbContext.AddAsync(checkInOut);
             await _hotelDbContext.SaveChangesAsync();
-
             var checkInOutResponse = new CreateCheckInAndCheckOutResponseDto()
             {
                 GuestNRC = guest!.Nrc,
