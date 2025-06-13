@@ -30,9 +30,9 @@ public class BookingControlService : IBookingControlService
                 UserId = b.UserId,
                 GuestId = b.GuestId,
                 GuestCount = b.GuestCount,
-                CheckIn_Time = b.CheckInTime,
-                CheckOut_Time = b.CheckOutTime,
-                Deposit_Amount = b.DepositAmount,
+                CheckInTime = b.CheckInTime,
+                CheckOutTime = b.CheckOutTime,
+                DepositAmount = b.DepositAmount,
                 BookingStatus = b.BookingStatus,
                 TotalAmount = b.TotalAmount,
                 CreatedAt = b.CreatedAt,
@@ -40,7 +40,7 @@ public class BookingControlService : IBookingControlService
                 GuestNrc = b.GuestNrc,
                 GuestPhoneNo = b.GuestPhoneNo,
                 UserName = b.UserName,
-                GuestNamme = b.GuestName,
+                GuestName = b.GuestName,
                 RoomNo = b.RoomNo
             }).ToList()
         };
