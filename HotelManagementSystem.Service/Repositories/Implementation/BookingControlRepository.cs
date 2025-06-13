@@ -44,7 +44,6 @@ public class BookingControlRepository : IBookingControlRepository
         .OrderByDescending(b => b.CreatedAt)                 
         .ToListAsync();
 
-
         var getBookingsResponse = new GetBookingsResponseDto
         {
             Bookings = bookingDtos
