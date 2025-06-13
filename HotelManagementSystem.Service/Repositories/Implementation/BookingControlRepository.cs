@@ -15,41 +15,39 @@ public class BookingControlRepository : IBookingControlRepository
 
     public async Task<CustomEntityResult<GetBookingsResponseDto>> GetBookings()
     {
-        var bookings = await _hotelDbContext.TblBookings
-            .AsNoTracking()
-            .Include(g => g.Guest)
-            .Include(u => u.User)
-            .Include(rb => rb.TblRoomBookings)
-                .ThenInclude(rb => rb.Room)
-            .ToListAsync();
-
-        var getBookingResponse = bookings.Select(b => new GetBookingResponseDto
+        var bookingDtos = await _hotelDbContext.TblBookings
+        .AsNoTracking()
+        .Select(b => new GetBookingResponseDto
         {
             BookingId = b.BookingId,
             UserId = b.UserId,
             GuestId = b.GuestId,
             GuestCount = b.GuestCount,
-            CheckIn_Time = b.CheckInTime,
-            CheckOut_Time = b.CheckOutTime,
-            Deposit_Amount = b.DepositAmount,
+            CheckInTime = b.CheckInTime,
+            CheckOutTime = b.CheckOutTime,
+            DepositAmount = b.DepositAmount,
             BookingStatus = b.BookingStatus,
             TotalAmount = b.TotalAmount,
             CreatedAt = b.CreatedAt,
             PaymentType = b.PaymentType,
+
+            UserName = b.User!.UserName,              
+            GuestName = b.Guest!.Name,
             GuestNrc = b.Guest!.Nrc,
             GuestPhoneNo = b.Guest!.PhoneNo,
-            UserName = b.User!.UserName,
-            GuestName = b.Guest.Name,
 
             RoomNo = b.TblRoomBookings
-                .Where(rb => rb.Room != null)
-                .Select(rb => rb.Room.RoomNo.ToString())
-                .ToList()
-        }).ToList();
+                      .Where(rb => rb.Room != null)
+                      .Select(rb => rb.Room.RoomNo)          
+                      .ToList()
+        })
+        .OrderByDescending(b => b.CreatedAt)                 
+        .ToListAsync();
+
 
         var getBookingsResponse = new GetBookingsResponseDto
         {
-            Bookings = getBookingResponse
+            Bookings = bookingDtos
         };
 
         return CustomEntityResult<GetBookingsResponseDto>.GenerateSuccessEntityResult(getBookingsResponse);
