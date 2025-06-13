@@ -238,7 +238,8 @@ public class BookingControlRepository : IBookingControlRepository
 
             var response = new CreateBookingByAdminResponseDto
             {
-                BookingId = booking.BookingId
+                BookingId = booking.BookingId,
+                GuestId = guest.GuestId
             };
 
             return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateSuccessEntityResult(response);

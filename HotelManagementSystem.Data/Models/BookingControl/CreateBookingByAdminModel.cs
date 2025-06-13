@@ -36,5 +36,6 @@ namespace HotelManagementSystem.Data.Models.Booking
     public class CreateBookingByAdminResponseModel : BasedResponseModel
     {
         public Guid BookingId { get; set; }
+        public Guid GuestId { get; set; }
     }
 }

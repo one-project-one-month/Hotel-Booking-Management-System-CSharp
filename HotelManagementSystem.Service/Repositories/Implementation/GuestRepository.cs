@@ -52,6 +52,13 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                 {
                     Guests = guestList.Select(b => new GetAllGuestListDto
                     {
+                        UserId = b.UserId,
+                        GuestId = b.GuestId,
+                        Name = b.Name,
+                        Nrc = b.Nrc,
+                        PhoneNo = b.PhoneNo,
+                        Email = b.Email,
+                        CreatedAt = b.CreatedAt,
                     }).ToList()
                 };
 

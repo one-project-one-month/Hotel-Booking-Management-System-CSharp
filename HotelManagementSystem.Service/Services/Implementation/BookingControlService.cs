@@ -119,7 +119,8 @@ public class BookingControlService : IBookingControlService
             }
             var createBookingResponse = new CreateBookingByAdminResponseModel()
             {
-                BookingId = createBooking.Result.BookingId
+                BookingId = createBooking.Result.BookingId,
+                GuestId = createBooking.Result.GuestId,
             };
             return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateSuccessEntityResult(createBookingResponse);
         }
