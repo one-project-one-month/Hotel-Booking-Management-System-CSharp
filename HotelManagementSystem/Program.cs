@@ -5,15 +5,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy  =>
-        {
-            policy.WithOrigins("https://localhost:7144",
-                "http://localhost:5053").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
-        });
-});
+
 // Add services to the container.
 builder.AddServices();
 builder.Services.AddControllers();
