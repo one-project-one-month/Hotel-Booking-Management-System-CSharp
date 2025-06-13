@@ -72,6 +72,15 @@ public static class ServiceInjectionFactory
                     .AllowAnyMethod();
             });
         });
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowBlazorFrontend", policy =>
+            {
+                policy.WithOrigins("http://localhost:5247")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
         builder.Services.AddTransient<IBookingControlRepository, BookingControlRepository>();
         builder.Services.AddTransient<ICheckInAndCheckoutRepository, CheckInAndCheckoutRepository>();
 
