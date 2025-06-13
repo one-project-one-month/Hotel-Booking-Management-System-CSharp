@@ -27,6 +27,7 @@ public class RoomService : IRoomService
             IsFeatured = x.IsFeatured,
             RoomType = x.RoomType != null ? new RoomTypeModel
             {
+                RoomTypeId = x.RoomType.RoomTypeId,
                 RoomTypeName = x.RoomType.RoomTypeName,
                 RoomImg = x.RoomType.RoomImg != null ? Convert.ToBase64String(x.RoomType.RoomImg) : null,
                 RoomImgMimeType = x.RoomType.RoomImgMimeType != null ? x.RoomType.RoomImgMimeType : null,

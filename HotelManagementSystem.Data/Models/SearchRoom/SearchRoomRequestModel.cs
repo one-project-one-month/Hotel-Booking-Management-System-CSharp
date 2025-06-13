@@ -8,12 +8,12 @@ namespace HotelManagementSystem.Data.Models.SearchRoom
 {
     public class SearchRoomRequestModel:BasedRequestModel
     {
-        public string ? RoomType { get; set; }
+        public Guid? RoomTypeId { get; set; }
 
-        public decimal ? Price { get; set; }
-        public int ?  GuestLimit { get; set; }
+        public DateTime? CheckInDate { get; set; }
 
-        public DateOnly CheckInDate { get; set; }
-        public DateOnly CheckOutDate { get; set; }
+        public DateTime? CheckOutDate { get; set; }
+
+        public int? GuestLimit { get; set; }
     }
 }

@@ -22,6 +22,7 @@ public class RoomRepository : IRoomRepository
                 IsFeatured = x.IsFeatured,
                 RoomType = new RoomTypeDto()
                 {
+                    RoomTypeId = x.RoomType.RoomTypeId,
                     RoomTypeName = x.RoomType.RoomTypeName,
                     Description = x.RoomType.Description,
                     RoomImg = x.RoomType.TblRoomTypeImage!=null?  x.RoomType.TblRoomTypeImage.RoomImg: null,

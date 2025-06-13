@@ -7,14 +7,13 @@ namespace HotelManagementSystem.Data.Dtos.SearchRoom
     }
     public class SearchRoomRequestDto
     {
-        public string? RoomType { get; set; }
+        public Guid? RoomTypeId { get; set; }
+     
+        public DateTime? CheckInDate { get; set; }
 
-        public decimal? Price { get; set; }
+        public DateTime? CheckOutDate { get; set; }
+
         public int? GuestLimit { get; set; }
-
-        public DateOnly? CheckInDate { get; set; }
-
-        public DateOnly? CheckOutDate { get; set; }
     }
 
     public class SearchRoomResponseDto : BasedResponseModel
@@ -25,8 +24,8 @@ namespace HotelManagementSystem.Data.Dtos.SearchRoom
 
     public class RoomSearchDto: BasedResponseModel
     {
-        public Guid RoomId { get; set; }
-        public string? RoomType { get; set; }
+        public Guid RoomTypeId { get; set; }
+        public string? RoomTypeName { get; set; }
         public decimal? Price { get; set; }
         public int? GuestLimit { get; set; }
         public string? RoomNumber { get; set; }

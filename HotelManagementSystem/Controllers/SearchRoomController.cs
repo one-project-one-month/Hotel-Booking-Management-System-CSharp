@@ -22,13 +22,16 @@ namespace HotelManagementSystem.Controllers
             {
                 return BadRequest(ModelState);
             }
-            if (model.RoomType!.isNullOrEmptyCustom() && model.GuestLimit <=0 && model.Price <= 0)
+
+            if (model.RoomTypeId is null && model.GuestLimit <=0 && model.CheckInDate is null && model.CheckOutDate is null)
             {
                 return BadRequest();
             }
             try
             {
                 var result = await _service.SearchRoom(model);
+
+
 
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
