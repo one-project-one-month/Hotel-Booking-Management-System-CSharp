@@ -37,7 +37,7 @@ public class BookingControlRepository : IBookingControlRepository
             CreatedAt = b.CreatedAt,
             PaymentType = b.PaymentType,
             GuestNrc = b.Guest!.Nrc,
-            GuestPhoneNo = b.Guest!.PhoneNo, 
+            GuestPhoneNo = b.Guest!.PhoneNo,
             UserName = b.User!.UserName,
             GuestName = b.Guest.Name,
 
@@ -70,10 +70,10 @@ public class BookingControlRepository : IBookingControlRepository
             }
             var existingRoomBookings = booking.TblRoomBookings.ToList();
 
-            foreach(var existingRoomBooking in existingRoomBookings)
+            foreach (var existingRoomBooking in existingRoomBookings)
             {
                 _hotelDbContext.TblRoomBookings.Remove(existingRoomBooking);
-            }   
+            }
 
             _hotelDbContext.TblBookings.Remove(booking);
             var result = await _hotelDbContext.SaveChangesAsync();
@@ -83,7 +83,7 @@ public class BookingControlRepository : IBookingControlRepository
         catch (Exception ex)
         {
             return CustomEntityResult<GetBookingsResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
-        }        
+        }
     }
 
     public async Task<CustomEntityResult<UpdateBookingResponseDto>> UpdateBooking(UpdateBookingRequestDto dto)

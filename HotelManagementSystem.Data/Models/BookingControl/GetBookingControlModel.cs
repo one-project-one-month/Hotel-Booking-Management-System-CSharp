@@ -20,11 +20,11 @@ public class GetBookingRequestModel
 public class GetBookingResponseModel
 {
     public string? UserName { get; set; }
-    public string? GuestNamme { get; set; } 
+    public string? GuestNamme { get; set; }
     public string GuestNrc { get; set; } = null!;
 
     public string GuestPhoneNo { get; set; } = null!;
-    
+
     public List<string> RoomNo { get; set; } = new();
     public int? GuestCount { get; set; }
     public DateOnly? CheckIn_Time { get; set; }
@@ -42,10 +42,10 @@ public class GetBookingResponseModel
 
     public Guid? UserId { get; set; }
 
-    public Guid? GuestId { get; set; }   
+    public Guid? GuestId { get; set; }
 
     public DateTime? CreatedAt { get; set; }
-        
+
 }
 public class GetBookingsResponseModel : BasedResponseModel
 {

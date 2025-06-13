@@ -22,7 +22,6 @@ public class BookingControlService : IBookingControlService
         {
             return CustomEntityResult<GetBookingsResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
         }
-
         var getBookingResponse = new GetBookingsResponseModel()
         {
             Bookings = result.Result.Bookings.Select(b => new GetBookingResponseModel
