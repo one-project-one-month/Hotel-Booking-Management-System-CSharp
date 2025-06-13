@@ -32,7 +32,7 @@ public class CheckInAndCheckOutController : ControllerBase
     }
 
     [HttpPost]
-    [Route("admin/checkout")]
+    [Route("checkout")]
     public async Task<ActionResult<CheckOutResponseModel>> CheckOutAsync(CheckOutRequestModel model)
     {
         if (!ModelState.IsValid)
