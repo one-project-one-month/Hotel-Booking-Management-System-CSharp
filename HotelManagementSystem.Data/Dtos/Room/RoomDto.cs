@@ -9,19 +9,20 @@ using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Data.Dtos.Room
 {
-    public class RoomDto
+    public class RoomDto 
     {
+        public Guid RoomId { get; set; }
         public string? RoomNo { get; set; }
 
         public string? RoomStatus { get; set; }
 
         public int? GuestLimit { get; set; }
 
-        //public Guid RoomTypeId { get; set; }
+        public Guid RoomTypeId { get; set; }
 
         public bool IsFeatured { get; set; }
 
-        public RoomTypeDto? RoomType { get; set; }
+        //public RoomTypeDto? RoomType { get; set; }
      
     }
 

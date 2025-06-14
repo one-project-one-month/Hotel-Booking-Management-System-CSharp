@@ -17,29 +17,33 @@ public class RoomService : IRoomService
 
     public async Task<CustomEntityResult<RoomListResponseModel>> GetRooms()
     {
-        var rooms = await _roomRepository.GetRooms();
-        
-        var roomlists =  rooms.Result.RoomList.Select(x=> new RoomModel
+        try
         {
-            RoomNo = x.RoomNo,
-            GuestLimit = x.GuestLimit,
-            RoomStatus = x.RoomStatus.IsRoomAvailable(),
-            IsFeatured = x.IsFeatured,
-            RoomType = x.RoomType != null ? new RoomTypeModel
+            var result = await _roomRepository.GetRooms();
+            if (result.IsError)
             {
-                RoomTypeName = x.RoomType.RoomTypeName,
-                RoomImg = x.RoomType.RoomImg != null ? Convert.ToBase64String(x.RoomType.RoomImg) : null,
-                RoomImgMimeType = x.RoomType.RoomImgMimeType != null ? x.RoomType.RoomImgMimeType : null,
-                Description = x.RoomType.Description,
-                Price = x.RoomType.Price,
-            } : null, 
-        }).ToList();
+                return CustomEntityResult<RoomListResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
+            }
 
-        RoomListResponseModel roomList = new RoomListResponseModel()
+            var repsonse = new RoomListResponseModel()
+            {
+                RoomList = result.Result.RoomList.Select(room => new RoomModel
+                {
+                    RoomId = room.RoomId,
+                    RoomNo = room.RoomNo,
+                    GuestLimit = room.GuestLimit,
+                    RoomStatus = room.RoomStatus.IsRoomAvailable(),
+                    IsFeatured = room.IsFeatured,
+                    RoomTypeId = room.RoomTypeId
+                }).ToList()
+            };
+
+            return CustomEntityResult<RoomListResponseModel>.GenerateSuccessEntityResult(repsonse);
+        }
+        catch (Exception ex)
         {
-            RoomList = roomlists
-        };
-        return CustomEntityResult<RoomListResponseModel>.GenerateSuccessEntityResult(roomList);
+            return CustomEntityResult<RoomListResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+        }
     }
 
     public async Task<CustomEntityResult<RoomResponseModel>>GetRoomById(Guid id)
@@ -53,18 +57,12 @@ public class RoomService : IRoomService
         {
             Room = new RoomModel
             {
+                RoomId = room.Result.Room.RoomId,
                 RoomNo = room.Result.Room.RoomNo,
                 GuestLimit = room.Result.Room.GuestLimit,
                 RoomStatus = room.Result.Room.RoomStatus.IsRoomAvailable(),
                 IsFeatured = room.Result.Room.IsFeatured,
-                RoomType = room.Result.Room.RoomType != null ? new RoomTypeModel
-                {
-                    RoomTypeName = room.Result.Room.RoomType.RoomTypeName,
-                    RoomImg = room.Result.Room.RoomType.RoomImg != null ? Convert.ToBase64String(room.Result.Room.RoomType.RoomImg) : null,
-                    RoomImgMimeType = room.Result.Room.RoomType.RoomImgMimeType != null ? room.Result.Room.RoomType.RoomImgMimeType : null,
-                    Description = room.Result.Room.RoomType.Description,
-                    Price = room.Result.Room.RoomType.Price,
-                } : null,
+                RoomTypeId = room.Result.Room.RoomTypeId,
             }
         };
         return CustomEntityResult<RoomResponseModel>.GenerateSuccessEntityResult(roomResponse);
