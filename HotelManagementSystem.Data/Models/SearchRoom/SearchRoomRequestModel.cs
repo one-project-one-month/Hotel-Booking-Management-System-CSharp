@@ -14,6 +14,6 @@ namespace HotelManagementSystem.Data.Models.SearchRoom
 
         public DateTime? CheckOutDate { get; set; }
 
-        public int? GuestLimit { get; set; }
+        public int? GuestLimit { get; set; } = 1;
     }
 }
