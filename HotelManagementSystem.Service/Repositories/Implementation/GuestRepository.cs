@@ -19,7 +19,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     UserId = model.UserId,
                     Nrc = model.Nrc,
                     PhoneNo = model.PhoneNo,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime()
                 };
                 await _context.TblGuests.AddAsync(guest);
                 await _context.SaveChangesAsync();

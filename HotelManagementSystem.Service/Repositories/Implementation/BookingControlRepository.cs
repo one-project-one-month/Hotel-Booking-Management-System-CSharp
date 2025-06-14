@@ -177,7 +177,7 @@ public class BookingControlRepository : IBookingControlRepository
                 Name = dto.Name,
                 Nrc = dto.Nrc,
                 PhoneNo = dto.PhoneNo,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime()
             };
 
             await _hotelDbContext.TblGuests.AddAsync(guest);
@@ -193,7 +193,7 @@ public class BookingControlRepository : IBookingControlRepository
                 BookingStatus = dto.BookingStatus,
                 TotalAmount = dto.TotalAmount,
                 PaymentType = dto.PaymentType,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime()
             };
 
             await _hotelDbContext.TblBookings.AddAsync(booking);
@@ -224,7 +224,7 @@ public class BookingControlRepository : IBookingControlRepository
             var checkInOut = new CheckInOut
             {
                 GuestId = guest.GuestId,
-                CheckInTime = DateTime.UtcNow,
+                CheckInTime = EntityConstantsHelper.GetMyanmarLocalTime(),
                 Status = "In"
             };
 

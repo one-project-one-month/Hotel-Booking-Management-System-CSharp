@@ -25,7 +25,9 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     DepositAmount = dto.Deposit_Amount,
                     BookingStatus = dto.Booking_Status,
                     TotalAmount = dto.Total_Amount,
-                    PaymentType = dto.PaymentType
+                    PaymentType = dto.PaymentType,
+                    GuestCount = dto.Guest_Count,
+                    CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime(),
                 };
                 var createBooking = await _context.TblBookings.AddAsync(createBookingRequest);
                 await _context.SaveChangesAsync();
