@@ -52,6 +52,7 @@ public class RoomRepository : IRoomRepository
         {
             Room = new RoomDto()
             {
+                RoomId = room.RoomId,
                 RoomNo = room.RoomNo,
                 GuestLimit = room.GuestLimit,
                 RoomStatus = room.RoomStatus,
