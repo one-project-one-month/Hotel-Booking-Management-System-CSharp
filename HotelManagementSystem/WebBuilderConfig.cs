@@ -17,6 +17,15 @@ public static class ServiceInjectionFactory
 {
     public static void AddServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("_myAllowSpecificOrigins", policy =>
+            {
+                policy.WithOrigins("https://localhost:7144","http://localhost:5247")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
         builder.Services.AddDbContext<HotelDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -61,26 +70,6 @@ public static class ServiceInjectionFactory
 
         //License
         QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-
-        // Add CORS policy
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowBlazorFrontend", policy =>
-            {
-                policy.WithOrigins("https://localhost:7144")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowBlazorFrontend", policy =>
-            {
-                policy.WithOrigins("http://localhost:5247")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
         builder.Services.AddTransient<IBookingControlRepository, BookingControlRepository>();
         builder.Services.AddTransient<ICheckInAndCheckoutRepository, CheckInAndCheckoutRepository>();
 

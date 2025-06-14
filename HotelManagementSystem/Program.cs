@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 
 // Add services to the container.
 builder.AddServices();
@@ -36,9 +36,8 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseCors("AllowBlazorFrontend");
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors("_myAllowSpecificOrigins");
 app.UseMiddleware<JwtAutoRefreshMiddleware>();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
