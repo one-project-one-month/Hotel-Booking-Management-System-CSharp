@@ -1,6 +1,8 @@
 ﻿using HotelManagementSystem.Data.Dtos.BookingControl;
+using HotelManagementSystem.Data.Dtos.CheckInAndCheckOutDto;
 using HotelManagementSystem.Data.Models.CheckInAndCheckOutDto;
 using HotelManagementSystem.Data.Models.CheckInAndCheckOutModel;
+using HotelManagementSystem.Data.Models.Room;
 using HotelManagementSystem.Service.Repositories.Implementation;
 using HotelManagementSystem.Service.Services.Interface;
 using System;
@@ -47,5 +49,38 @@ public class CheckInAndCheckoutService : ICheckInAndCheckoutService
             Status = result.Result.Status
         };
         return CustomEntityResult<CreateCheckInAndCheckOutResponseModel>.GenerateSuccessEntityResult(responseModle);
+    }
+
+    public async Task<CustomEntityResult<CheckOutResponseModel>> CheckOutAsync(CheckOutRequestModel model)
+    {
+        try
+        {
+            var resquest = new CheckOutRequestDto
+            {
+                GuestId = model.GuestId,
+            };
+
+            var checkOut = await _checkInAndCheckoutRepository.CheckOutAsync(resquest);
+            if(checkOut.IsError)
+            {
+                return CustomEntityResult<CheckOutResponseModel>.GenerateFailEntityResult(checkOut.Result.RespCode, checkOut.Result.RespDescription);
+            }
+            var response = new CheckOutResponseModel
+            {
+                InvoiceId = checkOut.Result.InvoiceId,
+                GuestId = checkOut.Result.GuestId,
+                CheckInTime = checkOut.Result.CheckInTime,
+                CheckOutTime = checkOut.Result.CheckOutTime,
+                Extracharges = checkOut.Result.Extracharges,
+                DepositeAmount = checkOut.Result.DepositeAmount,
+                TotalAmount = checkOut.Result.TotalAmount,
+                PaymentType = checkOut.Result.PaymentType,
+            };
+            return CustomEntityResult<CheckOutResponseModel>.GenerateSuccessEntityResult(response);
+        }
+        catch (Exception ex)
+        {
+            return CustomEntityResult<CheckOutResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
+        }
     }
 }

@@ -8,19 +8,20 @@ using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Data.Models.Room
 {
-    public class RoomModel
+    public class RoomModel 
     {
+        public Guid RoomId { get; set; }
         public string? RoomNo { get; set; }
 
         public bool RoomStatus { get; set; }
 
         public int? GuestLimit { get; set; }
 
-        //public Guid RoomTypeId { get; set; }
+        public Guid RoomTypeId { get; set; }
 
         public bool IsFeatured { get; set; }
 
-        public RoomTypeModel? RoomType { get; set; }
+        //public RoomTypeModel? RoomType { get; set; }
     }
 
     public class RoomResponseModel : BasedResponseModel
@@ -42,6 +43,6 @@ namespace HotelManagementSystem.Data.Models.Room
 
     public class RoomListResponseModel : BasedResponseModel
     {
-        public List<RoomModel> RoomList { get; set; }
+        public List<RoomModel>? RoomList { get; set; }
     }
 }

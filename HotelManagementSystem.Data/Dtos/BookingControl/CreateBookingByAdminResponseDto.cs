@@ -5,6 +5,7 @@ namespace HotelManagementSystem.Data.Dtos.Booking
     public class CreateBookingByAdminResponseDto : BasedResponseModel
     {
         public Guid BookingId { get; set; }
+        public Guid GuestId { get; set; }
     }
     public class CreateBookingByAdminRequestDto
     {

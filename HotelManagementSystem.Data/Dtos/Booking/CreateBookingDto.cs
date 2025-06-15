@@ -28,6 +28,7 @@ namespace HotelManagementSystem.Data.Dtos.Booking
         public DateOnly CheckOutDate { get; set; }
         public string? PaymentType { get; set; }
         public decimal? Deposit_Amount { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
     public class CreateBookingResponseDto : BasedResponseModel
     {

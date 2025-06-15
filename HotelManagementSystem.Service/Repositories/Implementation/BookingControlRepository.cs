@@ -15,41 +15,38 @@ public class BookingControlRepository : IBookingControlRepository
 
     public async Task<CustomEntityResult<GetBookingsResponseDto>> GetBookings()
     {
-        var bookings = await _hotelDbContext.TblBookings
-            .AsNoTracking()
-            .Include(g => g.Guest)
-            .Include(u => u.User)
-            .Include(rb => rb.TblRoomBookings)
-                .ThenInclude(rb => rb.Room)
-            .ToListAsync();
-
-        var getBookingResponse = bookings.Select(b => new GetBookingResponseDto
+        var bookingDtos = await _hotelDbContext.TblBookings
+        .AsNoTracking()
+        .Select(b => new GetBookingResponseDto
         {
             BookingId = b.BookingId,
             UserId = b.UserId,
             GuestId = b.GuestId,
             GuestCount = b.GuestCount,
-            CheckIn_Time = b.CheckInTime,
-            CheckOut_Time = b.CheckOutTime,
-            Deposit_Amount = b.DepositAmount,
+            CheckInTime = b.CheckInTime,
+            CheckOutTime = b.CheckOutTime,
+            DepositAmount = b.DepositAmount,
             BookingStatus = b.BookingStatus,
             TotalAmount = b.TotalAmount,
             CreatedAt = b.CreatedAt,
             PaymentType = b.PaymentType,
+
+            UserName = b.User!.UserName,              
+            GuestName = b.Guest!.Name,
             GuestNrc = b.Guest!.Nrc,
-            GuestPhoneNo = b.Guest!.PhoneNo, 
-            UserName = b.User!.UserName,
-            GuestName = b.Guest.Name,
+            GuestPhoneNo = b.Guest!.PhoneNo,
 
             RoomNo = b.TblRoomBookings
-                .Where(rb => rb.Room != null)
-                .Select(rb => rb.Room.RoomNo.ToString())
-                .ToList()
-        }).ToList();
+                      .Where(rb => rb.Room != null)
+                      .Select(rb => rb.Room.RoomNo)          
+                      .ToList()
+        })
+        .OrderByDescending(b => b.CreatedAt)                 
+        .ToListAsync();
 
         var getBookingsResponse = new GetBookingsResponseDto
         {
-            Bookings = getBookingResponse
+            Bookings = bookingDtos
         };
 
         return CustomEntityResult<GetBookingsResponseDto>.GenerateSuccessEntityResult(getBookingsResponse);
@@ -70,10 +67,10 @@ public class BookingControlRepository : IBookingControlRepository
             }
             var existingRoomBookings = booking.TblRoomBookings.ToList();
 
-            foreach(var existingRoomBooking in existingRoomBookings)
+            foreach (var existingRoomBooking in existingRoomBookings)
             {
                 _hotelDbContext.TblRoomBookings.Remove(existingRoomBooking);
-            }   
+            }
 
             _hotelDbContext.TblBookings.Remove(booking);
             var result = await _hotelDbContext.SaveChangesAsync();
@@ -83,7 +80,7 @@ public class BookingControlRepository : IBookingControlRepository
         catch (Exception ex)
         {
             return CustomEntityResult<GetBookingsResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
-        }        
+        }
     }
 
     public async Task<CustomEntityResult<UpdateBookingResponseDto>> UpdateBooking(UpdateBookingRequestDto dto)
@@ -154,6 +151,23 @@ public class BookingControlRepository : IBookingControlRepository
 
     public async Task<CustomEntityResult<CreateBookingByAdminResponseDto>> CreateBookingByAdmin(CreateBookingByAdminRequestDto dto)
     {
+        if (dto.Rooms != null && dto.Rooms.Any())
+        {
+            var rooms = await _hotelDbContext.TblRooms
+                .Where(r => dto.Rooms.Contains(r.RoomId))
+                .ToListAsync();
+
+            foreach (var room in rooms)
+            {
+                if (room.RoomStatus == "Occupied" || room.RoomStatus == "Maintenance")
+                {
+                    return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateFailEntityResult(
+                        ResponseMessageConstants.RESPONSE_CODE_BADREQUEST,
+                        $"Room {room.RoomNo} is already booked or under maintenance.");
+                }
+            }
+        }
+
         await using var transaction = await _hotelDbContext.Database.BeginTransactionAsync();
         try
         {
@@ -163,27 +177,26 @@ public class BookingControlRepository : IBookingControlRepository
                 Name = dto.Name,
                 Nrc = dto.Nrc,
                 PhoneNo = dto.PhoneNo,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime()
             };
+
             await _hotelDbContext.TblGuests.AddAsync(guest);
             await _hotelDbContext.SaveChangesAsync();
-
-            var GuestId = guest.GuestId;
-            var createBookingRequest = new TblBooking
+            var booking = new TblBooking
             {
                 UserId = dto.UserId,
-                GuestId = GuestId,
+                GuestId = guest.GuestId,
                 GuestCount = dto.GuestCount,
                 CheckInTime = dto.CheckInTime,
                 CheckOutTime = dto.CheckOutTime,
                 DepositAmount = dto.DepositAmount,
-                BookingStatus = "Booked",
+                BookingStatus = dto.BookingStatus,
                 TotalAmount = dto.TotalAmount,
                 PaymentType = dto.PaymentType,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime()
             };
 
-            var createBooking = await _hotelDbContext.TblBookings.AddAsync(createBookingRequest);
+            await _hotelDbContext.TblBookings.AddAsync(booking);
             await _hotelDbContext.SaveChangesAsync();
 
             if (dto.Rooms != null && dto.Rooms.Any())
@@ -191,21 +204,42 @@ public class BookingControlRepository : IBookingControlRepository
                 var roomBookings = dto.Rooms.Select(roomId => new TblRoomBooking
                 {
                     RoomId = roomId,
-                    BookingId = createBooking.Entity.BookingId
+                    BookingId = booking.BookingId
                 });
 
                 await _hotelDbContext.TblRoomBookings.AddRangeAsync(roomBookings);
+
+                var roomsToUpdate = await _hotelDbContext.TblRooms
+                    .Where(r => dto.Rooms.Contains(r.RoomId))
+                    .ToListAsync();
+
+                foreach (var room in roomsToUpdate)
+                {
+                    room.RoomStatus = "Occupied";
+                }
+
                 await _hotelDbContext.SaveChangesAsync();
             }
 
-            await transaction.CommitAsync();
-
-            var creteBookingResponse = new CreateBookingByAdminResponseDto
+            var checkInOut = new CheckInOut
             {
-                BookingId = createBooking.Entity.BookingId
+                GuestId = guest.GuestId,
+                CheckInTime = EntityConstantsHelper.GetMyanmarLocalTime(),
+                Status = "In"
             };
 
-            return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateSuccessEntityResult(creteBookingResponse);
+            await _hotelDbContext.CheckInOuts.AddAsync(checkInOut);
+            await _hotelDbContext.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            var response = new CreateBookingByAdminResponseDto
+            {
+                BookingId = booking.BookingId,
+                GuestId = guest.GuestId
+            };
+
+            return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateSuccessEntityResult(response);
         }
         catch (Exception ex)
         {
@@ -213,7 +247,7 @@ public class BookingControlRepository : IBookingControlRepository
 
             return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateFailEntityResult(
                 ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
-                $"Failed to create user profile: {ex.Message} {(ex.InnerException?.Message ?? "")}");
+                $"Failed to create booking: {ex.Message} {(ex.InnerException?.Message ?? "")}");
         }
     }
 }

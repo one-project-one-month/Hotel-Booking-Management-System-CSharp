@@ -22,7 +22,6 @@ public class BookingControlService : IBookingControlService
         {
             return CustomEntityResult<GetBookingsResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
         }
-
         var getBookingResponse = new GetBookingsResponseModel()
         {
             Bookings = result.Result.Bookings.Select(b => new GetBookingResponseModel
@@ -31,9 +30,9 @@ public class BookingControlService : IBookingControlService
                 UserId = b.UserId,
                 GuestId = b.GuestId,
                 GuestCount = b.GuestCount,
-                CheckIn_Time = b.CheckIn_Time,
-                CheckOut_Time = b.CheckOut_Time,
-                Deposit_Amount = b.Deposit_Amount,
+                CheckInTime = b.CheckInTime,
+                CheckOutTime = b.CheckOutTime,
+                DepositAmount = b.DepositAmount,
                 BookingStatus = b.BookingStatus,
                 TotalAmount = b.TotalAmount,
                 CreatedAt = b.CreatedAt,
@@ -41,7 +40,7 @@ public class BookingControlService : IBookingControlService
                 GuestNrc = b.GuestNrc,
                 GuestPhoneNo = b.GuestPhoneNo,
                 UserName = b.UserName,
-                GuestNamme = b.GuestName,
+                GuestName = b.GuestName,
                 RoomNo = b.RoomNo
             }).ToList()
         };
@@ -119,7 +118,8 @@ public class BookingControlService : IBookingControlService
             }
             var createBookingResponse = new CreateBookingByAdminResponseModel()
             {
-                BookingId = createBooking.Result.BookingId
+                BookingId = createBooking.Result.BookingId,
+                GuestId = createBooking.Result.GuestId,
             };
             return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateSuccessEntityResult(createBookingResponse);
         }

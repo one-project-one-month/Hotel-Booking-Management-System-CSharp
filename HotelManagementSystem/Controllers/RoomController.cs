@@ -52,12 +52,6 @@ public class RoomController : ControllerBase
 
         #endregion
 
-        #region check format
-
-
-
-        #endregion
-
         try
         {
             var result = await _service.CreateRoom(requestModel);

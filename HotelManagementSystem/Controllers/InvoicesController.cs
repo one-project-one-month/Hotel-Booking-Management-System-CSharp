@@ -83,6 +83,4 @@ public class InvoicesController : ControllerBase
             return StatusCode(500, $"Error retrieving invoices: {ex.Message}");
         }
     }
-
-
 }

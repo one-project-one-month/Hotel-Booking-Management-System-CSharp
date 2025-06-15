@@ -19,7 +19,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     UserId = model.UserId,
                     Nrc = model.Nrc,
                     PhoneNo = model.PhoneNo,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime()
                 };
                 await _context.TblGuests.AddAsync(guest);
                 await _context.SaveChangesAsync();
@@ -52,6 +52,13 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                 {
                     Guests = guestList.Select(b => new GetAllGuestListDto
                     {
+                        UserId = b.UserId,
+                        GuestId = b.GuestId,
+                        Name = b.Name,
+                        Nrc = b.Nrc,
+                        PhoneNo = b.PhoneNo,
+                        Email = b.Email,
+                        CreatedAt = b.CreatedAt,
                     }).ToList()
                 };
 
