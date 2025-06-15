@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelManagementSystem_Web", "HotelManagementSystem_Web\HotelManagementSystem_Web.csproj", "{F700B527-F741-4ED6-8F4F-127C2BA4C5EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{26F52AB9-398C-4499-BEAE-C487D2E97DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{26F52AB9-398C-4499-BEAE-C487D2E97DA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{26F52AB9-398C-4499-BEAE-C487D2E97DA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F700B527-F741-4ED6-8F4F-127C2BA4C5EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F700B527-F741-4ED6-8F4F-127C2BA4C5EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F700B527-F741-4ED6-8F4F-127C2BA4C5EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F700B527-F741-4ED6-8F4F-127C2BA4C5EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
