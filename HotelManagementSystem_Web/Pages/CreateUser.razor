@@ -1,0 +1,27 @@
+@page "/create-user"
+@inject UserService UserService
+@using System.Net.Http
+
+<h3>Create User</h3>
+
+<EditForm Model="user" OnValidSubmit="HandleValidSubmit">
+    <InputText @bind-Value="user.Name" placeholder="Name"/>
+    <InputText @bind-Value="user.Email" placeholder="Email"/>
+    <button type="submit">Create</button>
+</EditForm>
+
+@if (success != null)
+{
+    <p>@(success == true ? "User created successfully!" : "Failed to create user.")</p>
+}
+
+@code {
+    private global::User user = new global::User();
+    private bool? success = null;
+
+    private async Task HandleValidSubmit()
+    {
+        success = await UserService.CreateUserAsync(user);
+    }
+
+}

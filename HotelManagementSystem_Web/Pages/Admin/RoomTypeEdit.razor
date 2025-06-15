@@ -1,0 +1,124 @@
+@page "/room-type-edit{RoomTypeId}"
+@using HotelManagementSystem_Web.Layout.AdminLayout
+@using HotelManagementSystem_Web.Layout.Compoments
+@layout AdminLayout
+@inject HttpClient _httpclient
+@inject NavigationManager _nav
+@inject IJSRuntime JS
+
+<h3>RoomTypeEdit</h3>
+@if (isLoading)
+{
+    <div class="mt-5 align-items-center d-flex flex-column justify-content-center">
+        <div class="spinner-grow text-danger" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <p class="text-danger fs-6 mt-3">Loading...</p>
+    </div>
+}
+else
+    
+{
+    <!-- Hotel Room Detail -->
+    <div class="container mt-5" id="roomDetail">
+        <div class="card shadow p-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="@(!string.IsNullOrEmpty(Model.RoomImg)
+                                  ? $"data:{Model.RoomImgMimeType};base64,{Model.RoomImg}"
+                                  : "./images/image1.jpg")" alt="Room Image" class="room-image mb-3">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="room-title"><i class="fas fa-bed me-2"></i>@Model.RoomTypeName</h2>
+                    <p class="text-muted mt-3">
+                        <i class="fas fa-align-left me-2"></i>
+                        Enjoy your stay in this luxurious king suite featuring a spacious room, private balcony,
+                        high-speed Wi-Fi,
+                        and elegant décor. Perfect for couples or business travelers.
+                    </p>
+                    <p>@Model.Description</p>
+                    <p class="room-price"><i class="fas fa-dollar-sign me-1"></i> @Model.Price / night</p>
+
+
+                    <div class="d-flex justify-content-end p-xl-2 mb-3">
+                        <button class="btn btn-outline-danger ms-3"
+                                data-bs-toggle="modal"
+                                data-bs-target="#addRoomTypeModal">
+                            <i class="bi bi-edit"></i> Edit Room Type
+                        </button>
+                        
+                        <button class="btn btn-danger ms-3"
+                                @onclick="() => { _roomTypeId = Model.RoomTypeId; Modal.Show(); }">
+                            <i class="fas fa-trash fa-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Room Type -->
+    <div class="modal fade" id="addRoomTypeModal" tabindex="-1" aria-labelledby="addRoomTypeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Room Type</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@EditedModel" OnValidSubmit="HandleUpdateRoomType">
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary/>
+
+                        <div class="mb-3">
+                            <label class="form-label">Room Type</label>
+                            <InputText class="form-control" @bind-Value="EditedModel.RoomTypeName"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputText class="form-control" @bind-Value="EditedModel.Description"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price</label>
+                            <InputNumber class="form-control" @bind-Value="EditedModel.Price"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image</label>
+                            <InputFile OnChange="HandleUpdateImage" accept="image/png, image/jpeg"/>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(EditedModel.RoomImg))
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">Image Preview</label>
+                                <div class="border rounded p-2" style="max-width: 300px;">
+                                    <img src="data:@EditedModel.RoomImgMimeType;base64,@EditedModel.RoomImg"
+                                         class="img-fluid rounded"
+                                         alt="Room Image Preview"/>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">Save</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <AppModal @ref="Modal">
+        <Title>Delete Notification</Title>
+        <ChildContent>
+            Are you sure to remove this Room Type?
+        </ChildContent>
+        <Footer>
+            <button class="btn btn-secondary btn-sm" @onclick="() => Modal.Hide()">Cancel</button>
+            <button class="btn btn-danger btn-sm" @onclick="HandleDeleteRoomType">Delete</button>
+        </Footer>
+    </AppModal>
+}
+
+

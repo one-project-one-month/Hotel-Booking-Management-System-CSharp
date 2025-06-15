@@ -1,0 +1,125 @@
+﻿@page "/admin/room"
+@using HotelManagementSystem_Web.Layout.AdminLayout
+@layout AdminLayout
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@inject HttpClient _httpClient
+@inject NavigationManager _navigation
+
+<h2 class="text-center my-4 text-danger">Room Management</h2>
+
+<!-- Filter Form -->
+<div class="d-flex justify-content-center mb-4">
+    <form class="row row-cols-lg-auto g-3 align-items-center w-75" @onsubmit="HandleFilter">
+        <div class="col-12">
+            <input class="form-control" placeholder="Room No" @bind="searchRoomNo" />
+        </div>
+        <div class="col-12">
+            <input class="form-control" placeholder="Room Type" @bind="searchRoomType" />
+        </div>
+        <div class="col-12">
+            <select class="form-select" @bind="searchRoomStatus">
+                <option value="">All Status</option>
+                <option value="Available">Available</option>
+                <option value="Occupied">Occupied</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-danger btn-sm">Filter</button>
+        </div>
+    </form>
+</div>
+
+<!-- Buttons -->
+<div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-outline-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+        <i class="bi bi-plus"></i> Add Room
+    </button>
+</div>
+
+<!-- Add Room Modal -->
+<div class="modal fade" id="addRoomModal" tabindex="-1" aria-labelledby="addRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Room </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <EditForm Model="@_model" OnValidSubmit="HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="mb-3">
+                        <label class="form-label">Room Number</label>
+                        <InputText class="form-control" @bind-Value="_model.RoomNo" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Room Status</label>
+                        <select class="form-select" @bind="_model.RoomStatus">
+                            <option value="">All Status</option>
+                            <option value="Available">Available</option>
+                            <option value="Occupied">Occupied</option>
+                        </select>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Add Room Type</label>
+                        <select class="form-select" @bind="_model.RoomTypeId">
+                            <option value="">Choose One </option>
+                            @foreach (var roomType in roomTypes)
+                            {
+                                <option value="@roomType.RoomTypeId">@roomType.RoomTypeName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Guest Limit</label>
+                        <InputNumber class="form-control" @bind-Value="_model.GuestLimit" />
+                    </div>
+                    <div class="mb-3 form-check">
+                        <InputCheckbox class="form-check-input" id="isFeatured" @bind-Value="_model.IsFeatured" />
+                        <label class="form-check-label" for="isFeatured">Feature</label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Save</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Room Table -->
+<table class="table table-sm table-bordered align-middle">
+    <thead class="table-danger">
+        <tr>
+            <th>Room No</th>
+            <th>Room Status</th>
+            <th>Guest Limit</th>
+            <th>Feature</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in PaginatedRooms())
+        {
+            <tr>
+                <td>@room.RoomNo</td>
+                <td>@room.RoomStatus</td>
+                <td>@room.GuestLimit</td>
+                <td class="text-center">
+                    @(room.IsFeatured ? "★" : "☆")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Pagination Controls -->
+<div class="d-flex justify-content-center my-3">
+    <button class="btn btn-outline-danger btn-sm me-2" @onclick="PreviousPage"
+        disabled="@(!CanGoPrevious)">Previous</button>
+    <span>Page @currentPage of @totalPages</span>
+    <button class="btn btn-outline-danger btn-sm ms-2" @onclick="NextPage" disabled="@(!CanGoNext)">Next</button>
+</div>
