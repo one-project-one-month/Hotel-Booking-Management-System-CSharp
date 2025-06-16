@@ -1,8 +1,9 @@
 ﻿@page "/userprofile/admin-profile"
+@using System.Text
 @using HotelManagementSystem_Web.Layout.AdminLayout
 @using HotelManagementSystem_Web.Models
+@using HotelManagementSystem_Web.Models.UserProfile
 @using Newtonsoft.Json
-@using System.Text
 @using static System.Net.Mime.MediaTypeNames
 @layout AdminLayout
 @inject IJSRuntime JSRuntime
@@ -58,10 +59,6 @@
                             <ValidationMessage For="@(() => userProfile.Email)" />
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Phone No</label>
-                            <InputText class="form-control" @bind-Value="@userProfile.PhoneNumber" />
-                        </div>
                         <div class="mb-3">
                             <label class="form-label">Password</label>
                             <InputText type="password" class="form-control" @bind-Value="@userProfile.Password" />
@@ -121,7 +118,7 @@
 </div>
 
 @code {
-    private UserProfile userProfile = new UserProfile();
+    private CreateUserProfileReqModel userProfile = new CreateUserProfileReqModel();
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
@@ -136,26 +133,25 @@
     private async Task HandleValidSubmit()
     {
         await SaveUserProfile();
-
         Console.WriteLine("User created!");
     }
 
     private async Task SaveUserProfile()
-    {       
-        var resp = await httpClient.PostAsJsonAsync("api/User/CreateUserProfileByAdminAsync", userProfile);        
-
-        if (resp.IsSuccessStatusCode)
+    {
+        try
         {
+            var resp = await httpClient.PostAsJsonAsync("/admin/createprofile", userProfile);
             var jsonStr = await resp.Content.ReadAsStringAsync();
-            Console.WriteLine(jsonStr);
-
-            await ShowSuccessModal();
-            nav.NavigateTo("/user-home");
+            var respModel = JsonConvert.DeserializeObject<BaseResponseModel>(jsonStr);
+            if (respModel.respCode == "200")
+            {
+                Console.WriteLine("Success");
+                nav.NavigateTo("/admin-user");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var error = await resp.Content.ReadAsStringAsync();
-            Console.Error.WriteLine("Error saving profile: " + error);
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -166,6 +162,6 @@
 
     private void ClearForm()
     {
-        userProfile = new UserProfile();
+        userProfile = new CreateUserProfileReqModel();
     }
 }

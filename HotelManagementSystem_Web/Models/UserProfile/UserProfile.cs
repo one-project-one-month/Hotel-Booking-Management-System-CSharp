@@ -1,4 +1,4 @@
-﻿namespace HotelManagementSystem_Web.Models
+﻿namespace HotelManagementSystem_Web.Models.UserProfile
 {   
     public class UserProfile
     {
