@@ -1,0 +1,53 @@
+﻿@page "/admin/guest"
+@inject IJSRuntime JS
+@using HotelManagementSystem_Web.Layout.AdminLayout
+@using System.ComponentModel.DataAnnotations
+@layout AdminLayout
+@inject HttpClient _httpClient
+
+<h3 class="text-center mb-4" style="color: #e60000;">Guests Management</h3>
+
+<!-- Search Boxes -->
+<div class="d-flex  mb-3 w-75 mx-15">
+    <input type="text" class="form-control" placeholder="Search by Name , Phone Number ....." @bind="Search"/>
+    <button class="btn btn-danger">Filter</button>
+
+</div> 
+
+<!-- Guest Table -->
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-danger">
+        <tr>
+            <td>UserId</td>
+            <td>Name</td>
+            <td>Email</td>
+            <td>Nrc</td>
+            <td>Name</td>
+            <td>Email</td>
+            <td>PhoneNo</td>
+            <td>CreatedAt</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var guest in guestList)
+        {
+            <tr>
+                <td>@guest.UserId</td>
+                <td>@guest.Name</td>
+                <td>@guest.Email</td>
+                <td>@guest.Nrc</td>
+                <td>@guest.Name</td>
+                <td>@guest.Email</td>
+                <td>@guest.PhoneNo</td>
+                <td>@guest.CreatedAt</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* <!-- Previous and Next Pages --> *@
+@* <div class="d-flex justify-content-between align-items-center mt-3"> *@
+@*     <button class="btn btn-light" @onclick="PreviousPage" disabled="@(!CanGoBack)">Previous</button> *@
+@*     <span>Page @currentPage of @totalPages</span> *@
+@*     <button class="btn btn-light" @onclick="NextPage" disabled="@(!CanGoForward)">Next</button> *@
+@* </div> *@

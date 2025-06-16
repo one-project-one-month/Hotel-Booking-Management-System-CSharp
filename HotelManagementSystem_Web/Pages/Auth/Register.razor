@@ -1,0 +1,30 @@
+@page "/register"
+@using HotelManagementSystem_Web.Layout.AuthLayout
+@layout AuthLayout
+@inject HttpClient _httpClient
+@inject NavigationManager _navigation
+
+<div class="card shadow-lg p-4" style="width : 80% ; max-width:500px">
+        <div class="card-body">
+            <h4 class="text-center mb-4">Register</h4>
+            <EditForm Model="@_model" OnValidSubmit="HandleRegister">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <InputText class="form-control" @bind-Value="_model.Username" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <InputText class="form-control" @bind-Value="_model.Email" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <InputText class="form-control" type="password" @bind-Value="_model.Password" />
+                </div>
+                <button type="submit" class="btn btn-danger w-100">
+                    Sign Up </button>
+            </EditForm>
+        </div>
+    </div>
+    

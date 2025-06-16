@@ -10,6 +10,7 @@ using HotelManagementSystem.Service.Services;
 using HotelManagementSystem.Service.Services.Implementation;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Infrastructure;
+using static System.Net.WebRequestMethods;
 
 namespace HotelManagementSystem;
 
@@ -17,11 +18,11 @@ public static class ServiceInjectionFactory
 {
     public static void AddServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddCors(options =>
+        builder.Services.AddCors(options => 
         {
             options.AddPolicy("_myAllowSpecificOrigins", policy =>
             {
-                policy.WithOrigins("https://localhost:7144","http://localhost:5247")
+                policy.WithOrigins("https://localhost:7100", "http://localhost:5150")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
@@ -31,7 +32,7 @@ public static class ServiceInjectionFactory
 
         var env = builder.Environment.EnvironmentName.ToLower();
         var envFile = $".env.{env}";
-        if (File.Exists(envFile))
+        if (System.IO.File.Exists(envFile)) // we change system.io.file in here
         {
             DotNetEnv.Env.Load(envFile);
         }
