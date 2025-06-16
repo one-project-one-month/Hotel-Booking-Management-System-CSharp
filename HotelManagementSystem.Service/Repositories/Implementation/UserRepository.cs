@@ -395,7 +395,7 @@ public class UserRepository : IUserRepository
                 {
                     UserId = newUser.UserId,
                     ProfileImg = dto.ProfileImg,
-                  //  ProfileImgMimeType = dto.ProfileImgMimeType
+                    ProfileImgMimeType = dto.ProfileImgMimeType
                 };
 
                 await _context.TblUserProfileImages.AddAsync(userImage);

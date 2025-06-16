@@ -234,7 +234,7 @@ public class UserController : BaseController
         }
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpPatch]
     public async Task<ActionResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(
         UpdateUserProfileByIdRequestModel model)

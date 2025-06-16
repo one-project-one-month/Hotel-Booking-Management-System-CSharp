@@ -18,5 +18,7 @@ namespace HotelManagementSystem.Data.Models.User
         public DateOnly? DateOfBirth { get; set; }
         public string? Gender { get; set; }
         public string? ProfileImg { get; set; }
+
+        public string? ProfileImgMimeType { get; set; }
     }
 }

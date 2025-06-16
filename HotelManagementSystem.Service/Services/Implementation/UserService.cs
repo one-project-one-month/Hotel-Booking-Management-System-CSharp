@@ -233,14 +233,12 @@ public class UserService : IUserService
         try
         {
             byte[]? imgBytes = null;
-           // string? imgMimeType = null;
 
             if (!string.IsNullOrWhiteSpace(model.ProfileImg))
             {
                 try
                 {
                     imgBytes = Convert.FromBase64String(model.ProfileImg);
-                  //  imgMimeType = model.ProfileImg.ToByteArray();
                 }
                 catch (FormatException ex)
                 {
@@ -260,7 +258,7 @@ public class UserService : IUserService
                 Gender = model.Gender,
                 DateOfBirth = model.DateOfBirth,
                 ProfileImg = imgBytes,
-              //  ProfileImgMimeType = imgMimeType
+                ProfileImgMimeType = model.ProfileImgMimeType,
             };
             var result = await _userRepo.CreateUserProfileByAdminAsync(dto);
             if (result.IsError)
