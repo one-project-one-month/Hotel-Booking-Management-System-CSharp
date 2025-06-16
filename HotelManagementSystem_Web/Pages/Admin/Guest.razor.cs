@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Json;
-using HotelManagementSystem_Web.Models;
-using HotelManagementSystem_Web.Models.Guest;
+﻿using HotelManagementSystem_Web.Models.Guest;
 using Newtonsoft.Json;
 
 namespace HotelManagementSystem_Web.Pages.Admin
