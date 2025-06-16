@@ -7,18 +7,27 @@ namespace HotelManagementSystem_Web.Pages.Admin
 {
     public partial class Guest
     {
-        GuestReqModel _model = new GuestReqModel();
+        //GuestReqModel _model = new GuestReqModel();
 
+        private List<GuestReqModel> guestList = new();
+        private List<GuestReqModel> filterguestList = new();
         private async Task GuestList()
         {
             try
             {
-                var res = await _httpClient.GetAsync("/api/Guest/GetGuestList");
+                var res = await _httpClient.GetAsync("api/Guest/GetGuestList");
                 var jsonStr = await res.Content.ReadAsStringAsync();
-                var respModel = JsonConvert.DeserializeObject<GuestListReqModel>(jsonStr);
-                if (respModel.respCode == "200")
+                var dto = JsonConvert.DeserializeObject<GuestListReqModel>(jsonStr);
+                if (dto?.respCode == "200")
                 {
-                    guestList = respModel.guestList;
+                    guestList = dto.guestList;
+                    filterguestList = guestList.ToList();
+                }
+                else
+                {
+                    Console.WriteLine("Bad payload:\n" + jsonStr);
+                    guestList = new();
+                    filterguestList = new();
                 }
             }
             catch (Exception ex)
@@ -30,52 +39,69 @@ namespace HotelManagementSystem_Web.Pages.Admin
 
         protected override async Task OnInitializedAsync()
         {
-           await GuestList();
+           await Task.WhenAll(GuestList());
         } 
-
-        private async Task ShowModal()
+      
+        private string? _searchTerm;
+        private string? SearchTerm
         {
-            throw new NotImplementedException();
+            get => _searchTerm;
+            set
+            {
+                if (_searchTerm == value) return;
+                _searchTerm = value;
+                FilterGuest();          
+            }
+        }
+        private int currentPage = 1;
+        private int pageSize = 5;
+
+        private int totalPages => (int)Math.Ceiling((double)(filterguestList?.Count ?? 0) / pageSize);
+        private bool CanGoNext => currentPage < totalPages;
+        private bool CanGoPrevious => currentPage > 1;
+
+        private void HandleFilter()
+        {
+            
         }
 
-        private bool showActionColumn = false;
-        private List<GuestReqModel> guestList = new();
-        // private List<GuestReqModel> filteredGuests = new();
-        private string selectedStatus = "";
+        private void FilterGuest()
+        {
+            if (guestList.Count == 0)
+                return;
+            if (string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                filterguestList = guestList.ToList();    
+            }
+            else
+            {
+                var term = SearchTerm.Trim();              
+                filterguestList = guestList
+                    .Where(g =>
+                        (g.name ?? string.Empty).Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                        (g.phoneNo ?? string.Empty).Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                        (g.email ?? string.Empty).Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                        (g.nrc ?? string.Empty).Contains(term, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+            currentPage = 1;
+        }
 
-        private string Search = "";
-        private int currentPage = 1;
-        private int pageSize = 10;
+        private void ClearSearch()
+        {
+            SearchTerm = string.Empty;      // erase text
+            filterguestList = guestList.ToList(); // restore full list
+            currentPage = 1;
+        }
 
-        // private int totalPages => (int)Math.Ceiling((double)(filteredGuests?.Count ?? 0) / pageSize);
-        private bool CanGoBack => currentPage > 1;
-        // private bool CanGoForward => currentPage < totalPages;
-
-        // private void NextPage()
-        // {
-        //     if (CanGoForward) currentPage++;
-        //     StateHasChanged();
-        // }
+        private void NextPage()
+        {
+            if (CanGoNext) currentPage++;
+        }
 
         private void PreviousPage()
         {
-            if (CanGoBack) currentPage--;
-            StateHasChanged();
-        }
-
-        // public void ApplyFilter(string selectedStatus)
-        // {
-        //     if (string.IsNullOrEmpty(selectedStatus))
-        //     {
-        //         filteredGuests = guests;
-        //     }
-        //     else
-        //     {
-        //         filteredGuests = guests.Where(g => g.Name.Contains(selectedStatus, StringComparison.OrdinalIgnoreCase))
-        //             .ToList();
-        //     }
-            //
-            // currentPage = 1;
-            // StateHasChanged();
+            if (CanGoPrevious) currentPage--;
         }
     }
+}

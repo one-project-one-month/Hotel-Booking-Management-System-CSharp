@@ -105,11 +105,18 @@
         @foreach (var room in PaginatedRooms())
         {
             <tr>
-                <td>@room.RoomNo</td>
-                <td>@room.RoomStatus</td>
-                <td>@room.GuestLimit</td>
+                <td>@room.roomNo</td>
                 <td class="text-center">
-                    @(room.IsFeatured ? "★" : "☆")
+                    @(room.roomStatus ? "✔️" : "✖️")
+                </td>
+                <td>@room.guestlimit</td>
+                <td class="text-center">
+                    <button class="btn btn-link text-warning p-0"
+                            title="Toggle featured"
+                            @onclick="() => ToggleFeatureAsync(room)"
+                            disabled="@room.IsBusy">
+                        @(room.isFeatured ? "★" : "☆")
+                    </button>
                 </td>
             </tr>
         }

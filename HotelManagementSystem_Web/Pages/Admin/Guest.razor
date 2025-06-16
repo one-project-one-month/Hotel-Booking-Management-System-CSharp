@@ -7,19 +7,43 @@
 
 <h3 class="text-center mb-4" style="color: #e60000;">Guests Management</h3>
 
-<!-- Search Boxes -->
-<div class="d-flex  mb-3 w-75 mx-15">
-    <input type="text" class="form-control" placeholder="Search by Name , Phone Number ....." @bind="Search"/>
-    <button class="btn btn-danger">Filter</button>
+<!-- Search box -->
+<div class="d-flex justify-content-center mb-4">
+    <form class="row g-3 align-items-center w-75" @onsubmit="HandleFilter">
+        <div class="input-group flex-grow-1">
 
-</div> 
+            <!-- text input -->
+            <input type="text"
+                   class="form-control"
+                   placeholder="Search by name, phone, email, or NRC…"
+                   @bind="SearchTerm"
+                   @bind:event="oninput"      
+                   />
+
+            <!-- clear (×) button appears only when there is text -->
+            @if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        title="Clear"
+                        @onclick="ClearSearch">
+                    &times;
+                </button>
+            }
+        </div>
+
+        <div class="col-auto">
+            <button type="submit" class="btn btn-danger btn-sm">Filter</button>
+        </div>
+    </form>
+</div>
 
 <!-- Guest Table -->
 <table class="table table-bordered table-hover align-middle">
     <thead class="table-danger">
         <tr>
+            <td>GuestId</td>
             <td>UserId</td>
-            <td>Name</td>
             <td>Email</td>
             <td>Nrc</td>
             <td>Name</td>
@@ -29,25 +53,36 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var guest in guestList)
+
+        @if (filterguestList.Count == 0 && guestList.Count == 0)
+        {
+            <tr><td colspan="8" class="text-center">Loading…</td></tr>
+        }
+
+        @foreach (var guest in filterguestList   // not guestList
+        .Skip((currentPage - 1) * pageSize)
+        .Take(pageSize))
         {
             <tr>
-                <td>@guest.UserId</td>
-                <td>@guest.Name</td>
-                <td>@guest.Email</td>
-                <td>@guest.Nrc</td>
-                <td>@guest.Name</td>
-                <td>@guest.Email</td>
-                <td>@guest.PhoneNo</td>
-                <td>@guest.CreatedAt</td>
+                <td>@guest.guestId</td>
+                <td>@guest.userId</td>
+                <td>@guest.name</td>
+                <td>@guest.nrc</td>
+                <td>@guest.name</td>
+                <td>@guest.email</td>
+                <td>@guest.phoneNo</td>
+                <td>@guest.createdAt</td>
             </tr>
         }
     </tbody>
 </table>
 
-@* <!-- Previous and Next Pages --> *@
-@* <div class="d-flex justify-content-between align-items-center mt-3"> *@
-@*     <button class="btn btn-light" @onclick="PreviousPage" disabled="@(!CanGoBack)">Previous</button> *@
-@*     <span>Page @currentPage of @totalPages</span> *@
-@*     <button class="btn btn-light" @onclick="NextPage" disabled="@(!CanGoForward)">Next</button> *@
-@* </div> *@
+<!-- Pagination Controls -->
+<div class="d-flex justify-content-center my-3">
+    <button class="btn btn-outline-danger btn-sm me-2" @onclick="PreviousPage"
+            disabled="@(!CanGoPrevious)">
+        Previous
+    </button>
+    <span>Page @currentPage of @totalPages</span>
+    <button class="btn btn-outline-danger btn-sm ms-2" @onclick="NextPage" disabled="@(!CanGoNext)">Next</button>
+</div>

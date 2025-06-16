@@ -73,7 +73,8 @@ public class RoomController : ControllerBase
         }
         try
         {
-            var result = await _service.UpdateRoom(id,model);
+            model.RoomId = id;
+            var result = await _service.UpdateRoom(model);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
