@@ -437,6 +437,10 @@ public class UserService : IUserService
                     Email = u.Email,
                     RoleName = u.RoleName,
                     Gender = u.Gender,
+                    Image = u.Image != null 
+                        ? Convert.ToBase64String(u.Image)
+                        : null,
+                    imageMimeType = u.imageMimeType,
                     Address = u.Address,
                     DateOfBirth = u.DateOfBirth,
                     CreatedAt = u.CreatedAt,
