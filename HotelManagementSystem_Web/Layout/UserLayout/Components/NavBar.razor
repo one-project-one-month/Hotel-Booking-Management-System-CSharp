@@ -1,4 +1,62 @@
-﻿﻿<nav class="navbar position-fixed w-100 navbar-expand-lg bg-body-tertiary shadow-sm" style="height: 110px; z-index: 1000">
+﻿@using HotelManagementSystem_Web.DevCode
+@using HotelManagementSystem_Web.Models.Room
+@using HotelManagementSystem_Web.Pages.User
+@using Newtonsoft.Json
+@using static HotelManagementSystem_Web.Models.Room.SearchRoomResponseModel
+@inject HttpClient _httpClient;
+@inject SearchRoomState _state;
+@inject GetRoomTypeNamesService _roomTypeService;
+
+@code {
+    public List<RoomTypeNameModel> roomList = new List<RoomTypeNameModel>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await GetRoomTypes();
+    }
+
+
+    public async Task GetRoomTypes()
+    {
+        roomList = await _roomTypeService.GetRoomTypeNames();
+    }
+
+}
+
+
+@code {
+    public async Task SearchRooms()
+    {
+
+
+        var response = await _httpClient.PostAsJsonAsync("/api/SearchRoom/SearchRoom", _state.SharedStateRequestModel);
+
+        Console.WriteLine("Outside Post ");
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Post Success");
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            var jsonify = await response.Content.ReadFromJsonAsync<SearchRoomResponse>();
+
+            foreach (var item in jsonify.SearchedRoomList)
+            {
+                Console.WriteLine(item.RoomTypeName);
+            }
+
+            _state.SharedStateResponseModel = jsonify!;
+
+            _state.NotifyStateChanged();
+        }
+    }
+}
+
+
+
+
+﻿<nav class="navbar position-fixed w-100 navbar-expand-lg bg-body-tertiary shadow-sm" style="height: 110px; z-index: 1000">
     <div class="container-fluid">
         <div class="px-4 w-100 d-flex justify-content-between align-items-center">
             <div style="color: #FF385C">
@@ -7,23 +65,47 @@
             <div>
                 <div class="input-group shadow-sm bg-white align-items-center d-flex justify-content-between"
                      style="height: 65px; border: #c4c3be 1px solid; border-radius: 65px">
-                    <input type="text" aria-label="Where" class="form-control no-outline bg-transparent ps-4"
-                           placeholder="Location"
-                           style="height: 100%; border: none; border-top-left-radius: 60px; border-bottom-left-radius: 60px;">
+                    @* <input type="text" aria-label="Where" class="form-control no-outline bg-transparent ps-4"
+                           placeholder="Room Type"
+                           style="height: 100%; border: none; border-top-left-radius: 60px; border-bottom-left-radius: 60px;"> *@
+
+                    <select class="form-control no-outline bg-transparent ps-4 border-0" name="RoomTypeId" id="roomTypeName"
+                            @bind="_state.SharedStateRequestModel.RoomTypeId">
+                        <option value="null" selected>Room Type</option>
+
+                        @foreach (var item in roomList)
+                        {
+                            <option value="@item.RoomTypeId">@item.RoomTypeName</option>
+                        }
+
+
+                    </select>
+
+
                     <div style="height: 60%; width: 1px; background-color: #c4c3be"></div>
-                    <input type="date" aria-label="Check In" class="form-control no-outline bg-transparent ps-4"
-                           placeholder="Check In"
-                           style="height: 100%; border: none;">
+
+
+                    <InputDate aria-label="Check In" class="form-control no-outline bg-transparent ps-4"
+                               placeholder="Check In" @bind-value="_state.SharedStateRequestModel.CheckInDate"
+                               style="height: 100%; border: none;" id="checkInDate" name="CheckInDate" />
+
                     <div style="height: 60%; width: 1px; background-color: #c4c3be"></div>
-                    <input type="date" aria-label="Check Out" class="form-control no-outline bg-transparent ps-4"
-                           placeholder="Check Out"
-                           style="height: 100%; border: none;">
+
+
+                    <InputDate aria-label="Check Out" class="form-control no-outline bg-transparent ps-4"
+                               placeholder="Check Out" @bind-value="_state.SharedStateRequestModel.CheckOutDate"
+                               style="height: 100%; border: none;" id="checkOutDate" name="CheckOutDate" />
+
+
                     <div style="height: 60%; width: 1px; background-color: #c4c3be"></div>
-                    <input type="number" aria-label="Who" class="form-control no-outline bg-transparent ps-4"
-                           placeholder="Who"
-                           style="height: 100%; border: none; border-top-right-radius: 60px; border-bottom-right-radius: 60px">
-                    <div style="width: 65px; height: 100%; padding: 5px" >
-                        <button class="btn no-outline w-100 h-100 shadow-sm" type="button"
+
+                    <input type="number" aria-label="Guest Count" class="form-control no-outline bg-transparent ps-4"
+                           placeholder="Guest Count" min="1" @bind="_state.SharedStateRequestModel.GuestLimit"
+                           style="height: 100%; border: none; border-top-right-radius: 60px; border-bottom-right-radius: 60px" name="GuestLimit">
+
+
+                    <div style="width: 65px; height: 100%; padding: 5px">
+                        <button class="btn no-outline w-100 h-100 shadow-sm" type="button" @onclick="SearchRooms"
                                 style="border-radius: 65px; background-color: #FF385C">
                             <i class="fa-solid fa-magnifying-glass text-white"></i>
                         </button>
@@ -54,3 +136,27 @@
         </div>
     </div>
 </nav>
+
+
+<script>
+
+
+    function check()
+    {
+
+        var checkInDate = new Date(document.getElementById("checkInDate").value);
+        var checkOutDate = new Date(document.getElementById("checkOutDate").value);
+
+        // console.log("Check in Date < Check Out Date : " + (checkInDate < checkOutDate));
+
+        // console.log("Check in date: "+ document.getElementById("roomTypeName").value);
+
+            var selectedValue = document.getElementById("roomTypeName").value;
+            console.log(selectedValue);  // This should give you the RoomTypeId
+
+            console.log(checkInDate);
+            console.log(document.getElementById("checkOutDate").value);
+    }
+
+</script>
+
