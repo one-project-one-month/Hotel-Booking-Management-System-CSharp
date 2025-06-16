@@ -280,7 +280,7 @@ public class InvoicePdfService : IInvoicePdfService
 
                             table.Cell().Column(col =>
                             {
-                                col.Item().PaddingTop(5).Text($"Name: {"Mg Mg Lwin" ?? "N/A"}").Bold();
+                                col.Item().PaddingTop(5).Text($"Name: {invoice.Guest?.Name ?? "N/A"}").Bold();
                                 col.Item().Text($"ID/Passport: {invoice.Guest?.Nrc ?? "N/A"}");
                                 col.Item().Text($"Phone: {invoice.Guest?.PhoneNo ?? "N/A"}");
                                 col.Item().Text($"Email: {invoice.Guest?.Email ?? "guest@example.com"}");
@@ -291,7 +291,7 @@ public class InvoicePdfService : IInvoicePdfService
                                 col.Item().PaddingTop(5).Text($"Check-In: {invoice.CheckInTime:dd MMM yyyy, HH:mm}").Bold();
                                 col.Item().Text($"Check-Out: {invoice.CheckOutTime:dd MMM yyyy, HH:mm}").Bold();
                                 col.Item().Text($"Nights: {(invoice.CheckOutTime - invoice.CheckInTime).Days}");
-                                col.Item().Text($"Room Type: {invoice.RoomType ?? "Standard"}");
+                                //col.Item().Text($"Room Type: {invoice.RoomType ?? "Standard"}");
                                 col.Item().Text($"Payment Method: {invoice.PaymentType ?? "N/A"}");
                             });
                         });
@@ -315,11 +315,11 @@ public class InvoicePdfService : IInvoicePdfService
                                     table.Cell().ColumnSpan(2).Background(Colors.Blue.Lighten4)
                                         .Padding(8).Text("PRICING DETAILS").Bold().FontSize(12);
 
-                                    // Deposit
+                                    // Base (Total Amount - Extra Charge)
                                     table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
-                                        .Padding(8).Text("Deposit");
+                                        .Padding(8).Text("Base");
                                     table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
-                                        .Padding(8).AlignRight().Text($"{invoice.Deposite:C}");
+                                        .Padding(8).AlignRight().Text($"{(invoice.TotalAmount - invoice.ExtraCharges):C}");
 
                                     // Extra charges
                                     table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
@@ -327,11 +327,18 @@ public class InvoicePdfService : IInvoicePdfService
                                     table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
                                         .Padding(8).AlignRight().Text($"{(invoice.ExtraCharges ?? 0):C}");
 
-                                    // Total
+                                    // Deposit
+                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
+                                        .Padding(8).Text("Deposit").FontColor(Colors.Red.Medium);
+                                    table.Cell().BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
+                                        .Padding(8).AlignRight().Text($"{invoice.Deposite:C}")
+                                        .FontColor(Colors.Red.Medium);
+
+                                    // Final Total Amount
                                     table.Cell().Background(Colors.Grey.Lighten3)
                                         .Padding(8).Text("Total Amount").Bold();
                                     table.Cell().Background(Colors.Grey.Lighten3)
-                                        .Padding(8).AlignRight().Text($"{(invoice.Deposite + (invoice.ExtraCharges ?? 0)):C}")
+                                        .Padding(8).AlignRight().Text($"{(invoice.TotalAmount - invoice.Deposite):C}") //(invoice.Deposite + (invoice.ExtraCharges ?? 0))
                                         .Bold().FontSize(12);
                                 });
                         });

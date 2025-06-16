@@ -20,11 +20,14 @@ public class Invoice
     //Metadata for the room
     public string? RoomType { get; set; } = string.Empty;
 
+    //public RoomType? RoomType { get; set; } = null!;
+
     public GuestInfo? Guest { get; set; }
 }
 
 public class GuestInfo
 {
+    public string Name { get; set; } = string.Empty;
     public string Nrc { get; set; } = string.Empty;
     public string PhoneNo { get; set; } = string.Empty;
     public string? Email { get; set; } = string.Empty;
