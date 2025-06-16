@@ -36,8 +36,10 @@ public class InvoiceRepository : IInvoiceRepository
             PaymentType = entity.PaymentType,
             Guest = new GuestInfo
             {
+                Name = entity.Guest?.Name ?? "N/A",
                 Nrc = entity.Guest?.Nrc ?? "N/A",
-                PhoneNo = entity.Guest?.PhoneNo ?? "N/A"
+                PhoneNo = entity.Guest?.PhoneNo ?? "N/A",
+                Email = entity.Guest?.Email ?? "N/A"
             }
         };
     }
@@ -79,8 +81,10 @@ public class InvoiceRepository : IInvoiceRepository
             PaymentType = entity.PaymentType,
             Guest = new GuestInfo
             {
+                Name = entity.Guest?.Name ?? "N/A",
                 Nrc = entity.Guest?.Nrc ?? "N/A",
-                PhoneNo = entity.Guest?.PhoneNo ?? "N/A"
+                PhoneNo = entity.Guest?.PhoneNo ?? "N/A",
+                Email = entity.Guest?.Email ?? "N/A"
             }
         };
     }
@@ -111,12 +115,15 @@ public class InvoiceRepository : IInvoiceRepository
             ExtraCharges = i.ExtraCharges,
             TotalAmount = i.TotalAmount,
             PaymentType = i.PaymentType,
+            //RoomType = i.RoomType ?? "N/A", // Assuming RoomType is a string in the Invoice entity
             Guest = i.Guest == null
                 ? null
                 : new GuestInfo
                 {
+                    Name = i.Guest.Name ?? "N/A",
                     Nrc = i.Guest.Nrc ?? "N/A",
-                    PhoneNo = i.Guest.PhoneNo ?? "N/A"
+                    PhoneNo = i.Guest.PhoneNo ?? "N/A",
+                    Email = i.Guest.Email ?? "N/A"
                 }
         }).ToList();
 
