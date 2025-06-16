@@ -9,34 +9,32 @@
 
 <!-- Search box -->
 <div class="d-flex justify-content-center mb-4">
-    <form class="row g-3 align-items-center w-75" @onsubmit="HandleFilter">
-        <div class="input-group flex-grow-1">
-
-            <!-- text input -->
+    <form class="d-flex align-items-center w-75" @onsubmit="HandleFilter">
+        <!-- search + × -->
+        <div class="input-group flex-grow-1 me-2">
             <input type="text"
                    class="form-control"
                    placeholder="Search by name, phone, email, or NRC…"
                    @bind="SearchTerm"
-                   @bind:event="oninput"      
-                   />
+                   @bind:event="oninput" />
 
-            <!-- clear (×) button appears only when there is text -->
             @if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
                 <button type="button"
                         class="btn btn-outline-secondary"
-                        title="Clear"
                         @onclick="ClearSearch">
                     &times;
                 </button>
             }
         </div>
 
-        <div class="col-auto">
-            <button type="submit" class="btn btn-danger btn-sm">Filter</button>
-        </div>
+        <!-- filter button -->
+        <button type="submit" class="btn btn-danger btn-sm">
+            Filter
+        </button>
     </form>
 </div>
+
 
 <!-- Guest Table -->
 <table class="table table-bordered table-hover align-middle">
