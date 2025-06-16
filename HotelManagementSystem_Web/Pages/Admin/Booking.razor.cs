@@ -1,15 +1,20 @@
-using System.Net.Http.Json;
-using HotelManagementSystem_Web.Models.Booking;
+using HotelManagementSystem_Web.DevCode;
 using HotelManagementSystem_Web.Models;
+using HotelManagementSystem_Web.Models.Booking;
 using HotelManagementSystem_Web.Models.Room;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 
 namespace HotelManagementSystem_Web.Pages.Admin;
 
 public partial class Booking
 {
+
+    [Inject]
+    public GetRoomTypeNamesService _roomTypeNameService { get; set; }
+
     BookingReqModel _model = new BookingReqModel();
     private bool showModal = false;
     private bool showActionColumn = false;
@@ -18,7 +23,10 @@ public partial class Booking
     private string selectedStatus = "";
     private int currentPage = 1;
     private int pageSize = 10;
-    private List<RoomTypeModel> roomTypes = new();
+
+    //private List<RoomTypeModel> roomTypes = new();
+
+    private List<RoomTypeNameModel> roomTypes = new();
     private List<RoomModel> roomListRes = new();
     private int totalPages => (int)Math.Ceiling((double)(filteredBookings?.Count ?? 0) / pageSize);
     private bool CanGoBack => currentPage > 1;
@@ -58,20 +66,7 @@ public partial class Booking
 
     private async Task GetRoomTypesList()
     {
-        var res = await _httpClient.GetAsync("api/RoomType/getroomtypes");
-        if (res.IsSuccessStatusCode)
-        {
-            var resJson = await res.Content.ReadAsStringAsync();
-            var resModel = JsonConvert.DeserializeObject<RoomTypeListResModel>(resJson)!;
-            if (resModel.respCode == "200")
-            {
-                roomTypes = resModel.RoomTypeList;
-            }
-            else
-            {
-                Console.WriteLine(resJson);
-            }
-        }
+       roomTypes = await _roomTypeNameService.GetRoomTypeNames();
     }
 
     private async Task OnRoomTypeChanged(ChangeEventArgs e)
