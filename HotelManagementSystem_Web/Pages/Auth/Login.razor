@@ -1,0 +1,34 @@
+@page "/login"
+@using HotelManagementSystem_Web.Layout.AuthLayout
+@layout AuthLayout
+
+@inject HttpClient _httpClient
+@inject NavigationManager _navigation
+
+<div class="card shadow-lg p-4" style="width : 80% ; max-width:500px">
+    <div class="card-body">
+        <h4 class="text-center mb-4">Login</h4>
+        
+        <EditForm Model="@_model" OnvalidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <InputText class="form-control" @bind-Value="_model.Email" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <InputText type="password" class="form-control" @bind-Value="_model.Password" />
+            </div>
+
+            <button type="submit" class="btn btn-danger w-100 mt-3">
+                login
+            </button>
+
+
+        </EditForm>
+        
+        <NavLink href="forgot-password" class="mt-2 text-danger text-decoration-none d-flex justify-content-end align-items-center">Forgot Password</NavLink>
+    </div>
+</div>
+

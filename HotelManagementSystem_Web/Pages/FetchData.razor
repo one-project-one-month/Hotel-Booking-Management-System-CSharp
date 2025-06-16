@@ -1,0 +1,10 @@
+@inject HttpClient Http
+
+@code {
+    private Weather.WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await Http.GetFromJsonAsync<Weather.WeatherForecast[]>("https://your-api-url/api/weatherforecast");
+    }
+}

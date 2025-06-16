@@ -1,8 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Data.Dtos.Room;
-using HotelManagementSystem.Service.Repositories.Interface;
-namespace HotelManagementSystem.Service.Repositories.Implementation
+﻿namespace HotelManagementSystem.Service.Repositories.Implementation
 {
     public class FeatureRoomRepository: IFeatureRoomRepository
     {

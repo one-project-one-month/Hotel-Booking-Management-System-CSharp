@@ -1,6 +1,3 @@
-using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models;
-
 namespace HotelManagementSystem.Helpers;
 
 public class APIHelper

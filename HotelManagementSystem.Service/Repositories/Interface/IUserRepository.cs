@@ -1,7 +1,4 @@
-using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Dtos.User;
-using HotelManagementSystem.Data.Entities;
-using HotelManagementSystem.Data.Models;
 
 namespace HotelManagementSystem.Service.Repositories.Interface;
 
@@ -22,4 +19,5 @@ public interface IUserRepository
     public Task<CustomEntityResult<GetUserProfileByIdResponseDto>> GetUserProfileByIdAsync(GetUserProfileByIdRequestDto dto);
     public Task<CustomEntityResult<SeedRoleToAdminResponseDto>> SeedRoleToAdmin(SeedRoleToAdminRequestDto dto);
     public Task<CustomEntityResult<CreateUserProfileResponseDto>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestDto dto);
+    public Task<CustomEntityResult<GetAllUserInforResponseDto>> GetAllUserInfoAsync();
 }

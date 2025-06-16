@@ -1,10 +1,4 @@
-using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models;
 using HotelManagementSystem.Data.Models.Room;
-using HotelManagementSystem.Helpers;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagementSystem.Controllers;
 
@@ -21,22 +15,22 @@ public class RoomController : ControllerBase
 
     [HttpGet]
     [Route("getrooms")]
-    public async Task<ActionResult<BasedResponseModel>> GetRooms()
+    public async Task<ActionResult<RoomListResponseModel>> GetRooms()
     {
         var result = await _service.GetRooms();
         return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
     }
 
-    [HttpGet("id")]
-    public async Task<ActionResult<BasedResponseModel>> GetRoomById(Guid id)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<RoomResponseModel>> GetRoomById(Guid id)
     {
         var result = await _service.GetRoomById(id); 
         return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
     }
 
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpPost]
-    [Route("createroom")]
+    [Route("/admin/createroom")]
     public async Task<ActionResult<BasedResponseModel>> CreateRoom(CreateRoomRequestModel requestModel)
     {
         if (!ModelState.IsValid)
@@ -58,12 +52,6 @@ public class RoomController : ControllerBase
 
         #endregion
 
-        #region check format
-
-
-
-        #endregion
-
         try
         {
             var result = await _service.CreateRoom(requestModel);
@@ -76,7 +64,7 @@ public class RoomController : ControllerBase
         }
     }
 
-    [HttpPatch("updateroom/{id}")]
+    [HttpPatch("/admin/updateroom/{id}")]
     public async Task<ActionResult<BasedResponseModel>> UpdateRoom(Guid id, UpdateRoomRequestModel model)
     {
         if (!ModelState.IsValid)
@@ -85,7 +73,8 @@ public class RoomController : ControllerBase
         }
         try
         {
-            var result = await _service.UpdateRoom(id,model);
+            model.RoomId = id;
+            var result = await _service.UpdateRoom(model);
             return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
         }
         catch (Exception ex)
@@ -95,10 +84,18 @@ public class RoomController : ControllerBase
         }
     }
 
-    [HttpDelete("deleteroom/{id}")]
+    [HttpDelete("/admin/deleteroom/{id}")]
     public async Task<ActionResult<BasedResponseModel>> DeleteRoom(Guid id)
     {
-        var result = await _service.DeleteRoom(id);
-        return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        try
+        {
+            var result = await _service.DeleteRoom(id);
+            return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch(Exception ex)
+        {
+            var message = ex.Message;
+            return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
+        }
     }
 }

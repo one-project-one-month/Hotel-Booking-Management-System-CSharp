@@ -20,6 +20,7 @@ namespace HotelManagementSystem.Data.Dtos.Booking
     {
         public Guid? UserId { get; set; }
         public Guid? GuestId { get; set; }
+        public List<Guid>? Rooms { get; set; }
         public int Guest_Count { get; set; }
         public string? Booking_Status { get; set; }
         public decimal Total_Amount { get; set; }
@@ -27,6 +28,7 @@ namespace HotelManagementSystem.Data.Dtos.Booking
         public DateOnly CheckOutDate { get; set; }
         public string? PaymentType { get; set; }
         public decimal? Deposit_Amount { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
     public class CreateBookingResponseDto : BasedResponseModel
     {

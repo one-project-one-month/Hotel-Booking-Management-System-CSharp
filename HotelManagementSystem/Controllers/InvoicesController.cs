@@ -1,10 +1,6 @@
 ﻿using HotelManagementSystem.Data.Models.Invoices;
-using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Repositories.Interface;
 using HotelManagementSystem.Service.Services.Implementation;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagementSystem.Controllers;
 
@@ -87,6 +83,4 @@ public class InvoicesController : ControllerBase
             return StatusCode(500, $"Error retrieving invoices: {ex.Message}");
         }
     }
-
-
 }

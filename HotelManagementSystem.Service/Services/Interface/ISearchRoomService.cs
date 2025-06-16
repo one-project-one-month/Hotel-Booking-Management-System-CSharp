@@ -1,5 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models.SearchRoom;
+﻿using HotelManagementSystem.Data.Models.SearchRoom;
 
 namespace HotelManagementSystem.Service.Services.Interface
 {

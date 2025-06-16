@@ -1,0 +1,25 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Nav
+<div class="page">
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        var userRole = "User";
+        if (userRole == "Admin")
+        {
+            Nav.NavigateTo("/admin-home");
+        }
+        else if (userRole == "User")
+        {
+            Nav.NavigateTo("/user-home");
+        }
+    }
+}

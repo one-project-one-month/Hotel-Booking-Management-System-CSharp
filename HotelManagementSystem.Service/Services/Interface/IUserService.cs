@@ -1,5 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models.User;
+﻿using HotelManagementSystem.Data.Models.User;
 
 namespace HotelManagementSystem.Service.Services.Interface
 {
@@ -10,10 +9,10 @@ namespace HotelManagementSystem.Service.Services.Interface
         public Task<CustomEntityResult<SeedRoleResponseModel>> SeedRole();
         public Task<CustomEntityResult<ForgotPasswordResponseModel>> ForgotPasswordAsync(ForgetPasswordRequestModel model);
         public Task<CustomEntityResult<ResetPasswordResponseModel>> ResetPasswordAsync(ResetPasswordRequestModel model);
-        public Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileAsync(string userId, CreateUserProfileRequestModel model);
-        public Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string userId, CreateUserProfileRequestModel model);
+        public Task<CustomEntityResult<UpdateUserProfileByIdResponseModel>> UpdateUserProfileByIdAsync(string Id, UpdateUserProfileByIdRequestModel model);
         public Task<CustomEntityResult<GetUserProfileByIdResponseModel>> GetUserProfileByIdAsync(string Id);
         public Task<CustomEntityResult<SeedRoleToAdminResponseModel>> SeedRoleToAdmin(SeedRoleToAdminRequestModel model);
         public Task<CustomEntityResult<CreateUserResponseModel>> CreateUserProfileByAdminAsync(CreateUserProfileByAdminRequestModel model);
+        public Task<CustomEntityResult<GetAllUserInfoResponseModel>> GetAllUserInfoAsync();
     }
 }

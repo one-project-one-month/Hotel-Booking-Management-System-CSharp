@@ -1,7 +1,4 @@
 ﻿using HotelManagementSystem.Data.Models.Guest;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagementSystem.Controllers
 {
@@ -28,6 +25,50 @@ namespace HotelManagementSystem.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, result.Result.RespDescription);
             }
             return Ok(result.Result);
+        }
+
+        [HttpGet]
+        [Route("GetGuestList")]
+        public async Task<ActionResult<GetAllGuestListResponseModel>> GetGuestList()
+        {
+            try
+            {
+                var result = await _service.GetAllGuestList();
+                if (result.IsError)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, result.Result.RespDescription);
+                }
+                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetGuestById/{id}")]
+        public async Task<IActionResult> GetGuestById([FromQuery] Guid id)
+        {
+            try
+            {
+                var requestModel = new GetGuestByIdRequestModel
+                {
+                    GuestId = id
+                };
+
+                var result = await _service.GetGuestById(requestModel);
+                if (result.IsError)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, result.Result.RespDescription);
+                }
+                return Ok(result.Result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }

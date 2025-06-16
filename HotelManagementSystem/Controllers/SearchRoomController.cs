@@ -1,9 +1,5 @@
-﻿using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Data.Models.SearchRoom;
-using HotelManagementSystem.Helpers;
+﻿using HotelManagementSystem.Data.Models.SearchRoom;
 using HotelManagementSystem.Service;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagementSystem.Controllers
 {
@@ -27,27 +23,15 @@ namespace HotelManagementSystem.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (model.RoomType!.isNullOrEmptyCustom() && model.GuestLimit <=0 && model.Price <= 0)
+            if (model.RoomTypeId is null && model.GuestLimit <=0 && model.CheckInDate is null && model.CheckOutDate is null)
             {
                 return BadRequest();
             }
             try
             {
-                #region CheckRequiredField
-                // if (String.IsNullOrEmpty(model.UserId))
-                // {
-                //     return APIHelper.GenerateResponseForRequiredField(nameof(model.UserId), _sharedLocalizer);
-                // }
-                #endregion
-
-                #region Check Format
-                // if(model.UserType != EntitiesConstant.USER_TYPE.USER.GetHashCode())
-                // {
-                //     return BadRequest(ErrorMessageConstant.EM_UserTypeNotAcceptable); ///Not Acceptable
-                // }
-                #endregion
-
                 var result = await _service.SearchRoom(model);
+
+
 
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }

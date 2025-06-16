@@ -1,10 +1,4 @@
 ﻿using HotelManagementSystem.Data.Models;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Data.Dtos.User
 {
@@ -22,6 +16,5 @@ namespace HotelManagementSystem.Data.Dtos.User
         public DateOnly? DateOfBirth { get; set; }
         public string? Gender { get; set; }
         public byte[]? ProfileImg { get; set; }
-        public string? ProfileImgMimeType { get; set; }
     }
 }

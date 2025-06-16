@@ -5,15 +5,6 @@ namespace HotelManagementSystem.Data.Models.User
     public class CreateUserProfileModel
     {
     }
-    public class CreateUserProfileRequestModel
-    {
-        public string? UserName { get; set; }
-        public string? Address { get; set; }
-        public DateOnly? DateOfBirth { get; set; }
-        public string? Gender { get; set; }
-        public IFormFile? ProfileImg { get; set; }
-        public string? ProfileImgMimeType { get; set; }
-    }
     public class  CreateUserResponseModel : BasedResponseModel
     {
         
@@ -26,7 +17,8 @@ namespace HotelManagementSystem.Data.Models.User
         public string? Address { get; set; }
         public DateOnly? DateOfBirth { get; set; }
         public string? Gender { get; set; }
-        public IFormFile? ProfileImg { get; set; }
+        public string? ProfileImg { get; set; }
+
         public string? ProfileImgMimeType { get; set; }
     }
 }

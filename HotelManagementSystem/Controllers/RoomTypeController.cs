@@ -1,12 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Data.Models.RoomType;
-using HotelManagementSystem.Helpers;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace HotelManagementSystem.Controllers
+﻿namespace HotelManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -45,10 +37,9 @@ namespace HotelManagementSystem.Controllers
                 return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
             }
         }
-
-        [Authorize(Roles ="Admin")]
+        
         [HttpPost]
-        [Route("createroomtype")]
+        [Route("/admin/createroomtype")]
         public async Task<ActionResult<BasedResponseModel>> CreateRoomType(CreateRoomTypeRequestModel requestModel)
         {
             if (!ModelState.IsValid)
@@ -77,9 +68,8 @@ namespace HotelManagementSystem.Controllers
                 return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
             }          
         }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPatch("updateroomtype/{id}")]
+        
+        [HttpPatch("/admin/updateroomtype/{id}")]
         public async Task<ActionResult<BasedResponseModel>> UpdateRoomType (Guid id, UpdateRoomTypeRequestModel requestModel)
         {
             if(!ModelState.IsValid)
@@ -96,7 +86,7 @@ namespace HotelManagementSystem.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [HttpDelete("deleteroomtype/{id}")]
         public async Task<ActionResult<BasedResponseModel>> DeleteRoomType (Guid id)
         {

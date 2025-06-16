@@ -1,7 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Dtos.Room;
-using HotelManagementSystem.Data.Models.Room;
-using HotelManagementSystem.Service.Repositories.Interface;
+﻿using HotelManagementSystem.Data.Models.Room;
 using HotelManagementSystem.Service.Services.Interface;
 using System;
 using System.Collections.Generic;

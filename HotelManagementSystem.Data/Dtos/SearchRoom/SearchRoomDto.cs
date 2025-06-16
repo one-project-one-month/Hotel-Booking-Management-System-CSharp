@@ -1,9 +1,4 @@
 ﻿using HotelManagementSystem.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HotelManagementSystem.Data.Dtos.SearchRoom
 {
@@ -12,26 +7,25 @@ namespace HotelManagementSystem.Data.Dtos.SearchRoom
     }
     public class SearchRoomRequestDto
     {
-        public string? RoomType { get; set; }
+        public Guid? RoomTypeId { get; set; }
+     
+        public DateTime? CheckInDate { get; set; }
 
-        public decimal? Price { get; set; }
+        public DateTime? CheckOutDate { get; set; }
+
         public int? GuestLimit { get; set; }
-
-        public DateOnly? CheckInDate { get; set; }
-
-        public DateOnly? CheckOutDate { get; set; }
     }
 
     public class SearchRoomResponseDto : BasedResponseModel
     {
-        public List<RoomDto> Rooms { get; set; } = new List<RoomDto>();
+        public List<RoomSearchDto> Rooms { get; set; } = new List<RoomSearchDto>();
     }
 
 
-    public class RoomDto: BasedResponseModel
+    public class RoomSearchDto: BasedResponseModel
     {
-        public Guid RoomId { get; set; }
-        public string? RoomType { get; set; }
+        public Guid RoomTypeId { get; set; }
+        public string? RoomTypeName { get; set; }
         public decimal? Price { get; set; }
         public int? GuestLimit { get; set; }
         public string? RoomNumber { get; set; }

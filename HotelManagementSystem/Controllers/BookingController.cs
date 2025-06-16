@@ -1,28 +1,20 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Models;
-using HotelManagementSystem.Data.Models.Booking;
-using HotelManagementSystem.Helpers;
-using HotelManagementSystem.Service.Services.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using Sprache;
 
 namespace HotelManagementSystem.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
-    public class BookingController : Controller
+    public class BookingController : BaseController
     {
         private readonly IBookingService _bookingService;
 
-        public BookingController(IBookingService bookingService)
+        public BookingController(IHttpContextAccessor httpContextAccessor, IBookingService bookingService) : base(httpContextAccessor)
         {
             _bookingService = bookingService;
         }
 
         [Authorize]
         [HttpPost]
-        [Route("createbookingbyuser")]
         public async Task<ActionResult<BasedResponseModel>> CreateBookingByUser(CreateBookingRequestModel model)
         {
             if (!ModelState.IsValid)
@@ -31,12 +23,11 @@ namespace HotelManagementSystem.Controllers
             }
             try
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
+                if (string.IsNullOrEmpty(UserId))
                 {
-                    return BadRequest(nameof(userId) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
+                    return BadRequest(nameof(UserId) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
                 }
-                Guid UserID = Guid.Parse(userId);
+                Guid UserID = Guid.Parse(UserId);
                 model.UserId = UserID;
                 var result = await _bookingService.CreateBookingByUser(model);
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
@@ -48,10 +39,9 @@ namespace HotelManagementSystem.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        [Route("createbookingbyadmin")]
-        public async Task<ActionResult<BasedResponseModel>> CreateBookingByAdmin(CreateBookingRequestModel model)
+        [HttpGet]
+        [Route("{bookingId}")]
+        public async Task<ActionResult<BasedResponseModel>> GetBookingById(Guid bookingId,GetBookingByIdRequestModel Model)
         {
             if (!ModelState.IsValid)
             {
@@ -59,7 +49,8 @@ namespace HotelManagementSystem.Controllers
             }
             try
             {
-                var result = await _bookingService.CreateBookingByUser(model);
+                Model.BookingId = bookingId;
+                var result = await _bookingService.GetBookingById(Model);
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)
@@ -69,35 +60,8 @@ namespace HotelManagementSystem.Controllers
             }
         }
 
+        //[Authorize]
         [HttpGet]
-        [Route("getbookingbyid/{bookingId}")]
-        public async Task<ActionResult<BasedResponseModel>> GetBookingById(GetBookingByIdRequestModel bookingId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            #region check required
-            if (string.IsNullOrEmpty(bookingId.BookingId))
-            {
-                return BadRequest(nameof(bookingId.BookingId) + ResponseMessageConstants.RESPONSE_MESSAGE_REQUIRED);
-            }
-            #endregion
-            try
-            {
-                var result = await _bookingService.GetBookingById(bookingId);
-                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
-            }
-            catch (Exception ex)
-            {
-                var message = ex.Message;
-                return BadRequest(message);
-            }
-        }
-
-        [Authorize]
-        [HttpGet]
-        [Route("getallbookingbyuserid/{userId}")]
         public async Task<ActionResult<BasedResponseModel>> GetAllBookingByUserId()
         {
             if(!ModelState.IsValid)
@@ -106,8 +70,7 @@ namespace HotelManagementSystem.Controllers
             }
             try
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var result = await _bookingService.GetAllBookingByUserId(userId);
+                var result = await _bookingService.GetAllBookingByUserId(UserId);
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)
@@ -117,10 +80,9 @@ namespace HotelManagementSystem.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
-        [HttpGet]
-        [Route("getallbookinglist")]
-        public async Task<ActionResult<BasedResponseModel>> GetAllBookingList()
+        [HttpPost]
+        [Route("cancel/{bookingid}")]
+        public async Task<ActionResult<CancelResponseModel>> CancelBooking(Guid bookingid, CancelRequestModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -128,13 +90,14 @@ namespace HotelManagementSystem.Controllers
             }
             try
             {
-                var result = await _bookingService.GetAllBookingList();
+                model.BookingId = bookingid;
+                var result = await _bookingService.CancelBookingByUser(model);
                 return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 var message = ex.Message;
-                return BadRequest(message);
+                return BadRequest(500);
             }
         }
     }

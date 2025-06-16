@@ -2,7 +2,6 @@
 using MimeKit;
 using MailKit.Security;
 using MailKit.Net.Smtp;
-using HotelManagementSystem.Data;
 using HotelManagementSystem.Data.Models.User;
 
 namespace HotelManagementSystem.Service.Helpers.Auth.SMTP

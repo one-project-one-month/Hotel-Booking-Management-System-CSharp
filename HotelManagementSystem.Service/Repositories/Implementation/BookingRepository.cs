@@ -1,15 +1,4 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Data.Dtos.Booking;
-using HotelManagementSystem.Data.Entities;
-using HotelManagementSystem.Data.Models.Booking;
-using HotelManagementSystem.Service.Repositories.Interface;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HotelManagementSystem.Data.Dtos.Booking;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
@@ -21,42 +10,75 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             _context = context;
         }
-        public async Task<CustomEntityResult<CreateBookingResponseDto>> CreateBookingByUser(CreateBookingRequestDto model)
+
+        public async Task<CustomEntityResult<CreateBookingResponseDto>> CreateBookingByUser(CreateBookingRequestDto dto)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var createBookingRequest = new TblBooking
                 {
-                    UserId = model.UserId,
-                    GuestId = model.GuestId,
-                    CheckInTime = model.CheckInDate,
-                    CheckOutTime = model.CheckOutDate,
-                    DepositAmount = model.Deposit_Amount,
-                    BookingStatus = model.Booking_Status,
-                    TotalAmount = model.Total_Amount,
-                    PaymentType = model.PaymentType
+                    UserId = dto.UserId,
+                    GuestId = dto.GuestId,
+                    CheckInTime = dto.CheckInDate,
+                    CheckOutTime = dto.CheckOutDate,
+                    DepositAmount = dto.Deposit_Amount,
+                    BookingStatus = dto.Booking_Status,
+                    TotalAmount = dto.Total_Amount,
+                    PaymentType = dto.PaymentType,
+                    GuestCount = dto.Guest_Count,
+                    CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime(),
                 };
                 var createBooking = await _context.TblBookings.AddAsync(createBookingRequest);
                 await _context.SaveChangesAsync();
+
+                if (dto.Rooms != null && dto.Rooms.Any())
+                {
+                    var roomBookings = dto.Rooms.Select(roomId => new TblRoomBooking
+                    {
+                        RoomId = roomId,
+                        BookingId = createBooking.Entity.BookingId
+                    });
+
+                    await _context.TblRoomBookings.AddRangeAsync(roomBookings);
+                    await _context.SaveChangesAsync();
+                }
+                await transaction.CommitAsync();
                 var creteBookingResponse = new CreateBookingResponseDto();
                 return CustomEntityResult<CreateBookingResponseDto>.GenerateSuccessEntityResult(creteBookingResponse);
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 return CustomEntityResult<CreateBookingResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
             }
         }
-        public async Task<CustomEntityResult<GetBookingByIdResponseDto>> GetBookingById(GetBookingByIdRequestDto bookingId)
+
+        public async Task<CustomEntityResult<GetBookingByIdResponseDto>> GetBookingById(GetBookingByIdRequestDto dto)
         {
             try
             {
-                var booking = await _context.TblBookings.FindAsync(bookingId);
+                var booking = await _context.TblBookings.FindAsync(dto.BookingId);
                 if (booking is null)
                 {
                     return CustomEntityResult<GetBookingByIdResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Booking not found");
                 }
                 var getBookingResponse = new GetBookingByIdResponseDto
                 {
+                    BookingId = booking.BookingId,
+                    UserId = booking.UserId,
+                    GuestId = booking.GuestId,
+                    Guest_Count = booking.GuestCount,
+                    Booking_Status = booking.BookingStatus,
+                    Deposit_Amount = booking.DepositAmount,
+                    Total_Amount = booking.TotalAmount,
+                    CheckInDate = booking.CheckInTime,
+                    CheckOutDate = booking.CheckOutTime,
+                    PaymentType = booking.PaymentType,
+                    RoomNumbers = booking.TblRoomBookings
+                .Where(rb => rb.Room != null)
+                .Select(rb => rb.Room.RoomNo.ToString())
+                .ToList()
                 };
                 return CustomEntityResult<GetBookingByIdResponseDto>.GenerateSuccessEntityResult(getBookingResponse);
             }
@@ -81,6 +103,23 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                 {
                     Bookings = bookings.Select(b => new ListBookingDto
                     {
+                        BookingId = b.BookingId,
+                        UserId = b.UserId,
+                        GuestId = b.GuestId,
+                        UserName = b.Guest!.Name,
+                        Email = b.Guest!.Email,
+                        Guest_Count = b.GuestCount,
+                        Booking_Status = b.BookingStatus,
+                        Deposit_Amount = b.DepositAmount,
+                        Total_Amount = b.TotalAmount,
+                        CheckInDate = b.CheckInTime,
+                        CheckOutDate = b.CheckOutTime,
+                        PaymentType = b.PaymentType,
+                        CreatedAt = b.CreatedAt,
+                        RoomNumbers = b.TblRoomBookings
+                            .Where(rb => rb.Room != null)
+                            .Select(rb => rb.Room.RoomNo.ToString())
+                            .ToList()
                     }).ToList()
                 };
 
@@ -94,35 +133,30 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
             }
         }
 
-        public async Task<CustomEntityResult<ListBookingResponseDto>> GetAllBookingList()
+        public async Task<CustomEntityResult<CancelResponseDto>> CancelBookingByUser(CancelRequestDto dto)
         {
             try
             {
-                var bookings = await _context.TblBookings.ToListAsync();
-
-                if (bookings == null || !bookings.Any())
+                var existingBooking = await _context.TblBookings.FindAsync(dto.BookingId);
+                if(existingBooking is null)
                 {
-                    return CustomEntityResult<ListBookingResponseDto>.GenerateFailEntityResult(
-                        ResponseMessageConstants.RESPONSE_CODE_NOTFOUND,
-                        "No bookings found");
+                    return CustomEntityResult<CancelResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Booking not found");
                 }
-
-                var bookingList = new ListBookingResponseDto
+                existingBooking.BookingStatus = "Cancelled";
+                await _context.SaveChangesAsync();
+                var result = new CancelResponseDto
                 {
-                    Bookings = bookings.Select(b => new ListBookingDto
-                    {
-                    }).ToList()
+                    RespCode = "200",
+                    RespDescription = "Booking Cancelled Successfully"
                 };
-
-                return CustomEntityResult<ListBookingResponseDto>.GenerateSuccessEntityResult(bookingList);
+                return CustomEntityResult<CancelResponseDto>.GenerateSuccessEntityResult(result);
             }
             catch (Exception ex)
             {
-                return CustomEntityResult<ListBookingResponseDto>.GenerateFailEntityResult(
+                return CustomEntityResult<CancelResponseDto>.GenerateFailEntityResult(
                     ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
                     ex.Message + ex.InnerException?.Message);
             }
         }
-
     }
 }

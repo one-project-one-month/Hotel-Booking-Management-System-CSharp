@@ -1,137 +1,78 @@
-﻿using HotelManagementSystem.Data;
-using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Data.Dtos.SearchRoom;
-using HotelManagementSystem.Data.Dtos.User;
-using HotelManagementSystem.Service.Repositories.Interface;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HotelManagementSystem.Data.Dtos.SearchRoom;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System.Data;
+using Dapper;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
     public class SearchRoomRepository : ISearchRoomRepository
     {
         private readonly HotelDbContext _context;
+     
+        private readonly SqlConnectionStringBuilder _stringBuilder = new SqlConnectionStringBuilder()
+        {
+            DataSource = ".",
+            InitialCatalog = "HBMS_Dbo",
+            UserID = "sa",
+            Password = "sasa@123",
+            TrustServerCertificate = true,
+        };
 
         public SearchRoomRepository(HotelDbContext context)
         {
             _context = context;
         }
 
-        public async Task<CustomEntityResult<SearchRoomResponseDto>> SearchRoom(SearchRoomRequestDto model)
+       
 
+        public async Task<CustomEntityResult<SearchRoomResponseDto>> SearchRoom(SearchRoomRequestDto model)
         {
+
             try
             {
+                IDbConnection connection = new SqlConnection(_stringBuilder.ConnectionString);
 
-                //var availableRooms = await _context.TblRooms.FromSqlInterpolated
-                //    ($@"
-                //        SELECT 
-                //        r.Room_No AS RoomId, r.RoomType_Id AS RoomTypeId, r.Room_Status AS RoomStatus, r.Guest_Limit AS GuestLimit, 
-                //        r.Is_Featured AS IsFeatured
+                connection.Open();
+                var query = @"SELECT rt.RoomType_Id AS RoomTypeId, r.Room_No AS RoomNumber, rt.RoomType_Name AS RoomTypeName, rt.Description, rt.Price, rim.RoomImg AS ImgUrl, r.Guest_Limit AS GuestLimit
 
-                //        FROM Tbl_Rooms r
+                            FROM Tbl_Rooms r 
+                            LEFT JOIN Tbl_RoomType rt ON r.RoomType_Id = rt.RoomType_Id
+                            LEFT JOIN Tbl_RoomTypeImages rim ON rt.RoomType_Id = rim.RoomType_Id
 
-                //        JOIN Tbl_RoomType rt ON r.RoomType_Id AS RoomTypeId = rt.RoomType_Id AS RoomTypeId
-                //        WHERE r.Room_Id AS RoomId NOT IN
-                //        (
-                //            SELECT rb.Room_Id AS RoomId FROM  Tbl_Room_Booking rb
-                //            JOIN Tbl_Booking b ON rb.Booking_Id AS BookingId = b.Booking_Id AS BookingId
-                //            WHERE b.CheckIn_Time AS CheckInTime < {model.CheckOutDate} 
-                //                AND b.CheckOut_Time AS CheckOutTime > {model.CheckInDate}
-                //        )
-                //        AND ({model.RoomType} IS NULL OR rt.RoomType_Name AS RoomTypeName LIKE '%' + {model.RoomType} + '%')
-                //        AND ({model.GuestLimit} IS NULL OR GuestLimit >= {model.GuestLimit})
+                            WHERE 
+                             (
 
-
-                //    ").ToListAsync();
-                //var availableRooms = await _context.TblRooms.FromSqlInterpolated($@"
-                //        SELECT
-                //            rt.RoomType_Name AS RoomTypeName,
-                //            rt.Price AS Price,
-                //            rt.Description AS Description,
-                //            rt.Img_Url AS ImgUrl,
-
-                //            r.Room_No AS RoomNo,    
-
-                //            r.Guest_Limit AS GuestLimit,
-                //            r.Is_Featured AS IsFeatured
-                //        FROM Tbl_Rooms r
-                //        JOIN Tbl_RoomType rt ON r.RoomType_Id = rt.RoomType_Id
-                //        WHERE r.Room_Id NOT IN
-                //            (
-                //                SELECT rb.Room_Id
-                //                FROM Tbl_Room_Booking rb
-                //                JOIN Tbl_Booking b ON rb.Booking_Id = b.Booking_Id
-                //                WHERE b.CheckIn_Time < {model.CheckOutDate}
-                //                  AND b.CheckOut_Time > {model.CheckInDate}
-                //            )
-                //        AND ({model.RoomType} IS NULL OR rt.RoomType_Name LIKE '%' + {model.RoomType} + '%')
-                //        AND ({model.GuestLimit} IS NULL OR r.Guest_Limit >= {model.GuestLimit})
-
-
-                //    ").ToListAsync();
-
-
-                //Console.ReadLine();
-
-                //var availableRooms = await _context.TblRooms.FromSqlInterpolated(@$"SELECT
-                //        r.Room_Id AS RoomId,
-                //            rt.RoomType_Name AS RoomTypeName,
-                //            rt.Price AS Price,
-                //            rt.Description AS Description,
-                //            rt.Img_Url AS ImgUrl,
-
-                //            r.Room_No AS RoomNo,    
-
-                //            r.Guest_Limit AS GuestLimit,
-                //            r.Is_Featured AS IsFeatured
-                //        FROM Tbl_Rooms r
-                //        JOIN Tbl_RoomType rt ON r.RoomType_Id = rt.RoomType_Id").ToListAsync();
-
-                var availableRooms = await _context.TblRooms
-                      .Include(r => r.RoomType)
-                      .Where(r =>
-                                !_context.TblRoomBookings
-                                    .Where( rb => rb.Booking.CheckInTime < model.CheckOutDate &&
-                                            rb.Booking.CheckOutTime > model.CheckInDate)
-                                    .Select(rb => rb.RoomId)
-                                    .Contains(r.RoomId)
-                                        &&
-                                    (string.IsNullOrEmpty(model.RoomType) || r.RoomType.RoomTypeName.Contains(model.RoomType))
-                                        &&
-                                    (!model.GuestLimit.HasValue || r.GuestLimit >= model.GuestLimit.Value)
+	                            (r.Guest_Limit >= @GuestLimit)
+	                            AND (@RoomTypeId IS NULL OR rt.RoomType_Id = @RoomTypeId)
+	                            AND (
+                                    @CheckInDate IS NULL OR @CheckOutDate IS NULL
+                                     OR
+	                            NOT EXISTS
+                                (
+                                    SELECT 1 
+                                    FROM Tbl_Room_Booking rb
+                                    INNER JOIN Tbl_Booking b ON rb.Booking_Id = b.Booking_Id
+                                    WHERE rb.Room_Id = r.Room_Id
+	
+                                      AND NOT(
+                                                b.CheckOut_Time <= @CheckInDate
+                                                OR b.CheckIn_Time >= @CheckOutDate
+                                              )
+                                 )
+                                )
                             )
-                    .Select(r => new RoomDto
-                    {
-                        RoomId = r.RoomId,
-                        RoomNumber = r.RoomNo,
-                        RoomType = r.RoomType.RoomTypeName,
-                        Price = r.RoomType.Price,
-                        GuestLimit = r.GuestLimit,
-                        Description = r.RoomType.Description
-                    })
-                    .ToListAsync();
+
+                            
+                            ";
+
+                var roomList = await connection.QueryAsync<RoomSearchDto>(query, model);
 
 
-                var searchRoomList = availableRooms.Select(x => new RoomDto()
-                {
-                    RoomType = x.RoomType,
-                    Price = x.Price,
-                    GuestLimit = x.GuestLimit ?? 0,
-                    RoomNumber = x.RoomNumber,
-                    Description = x.Description,
-                    ImgUrl = x.ImgUrl,
-
-                }).ToList();
 
                 var searchRoomResponse = new SearchRoomResponseDto
                 {
-                    Rooms = searchRoomList,
-
+                    Rooms = roomList.ToList(),
                 };
                 
                 return CustomEntityResult<SearchRoomResponseDto>.GenerateSuccessEntityResult(searchRoomResponse);

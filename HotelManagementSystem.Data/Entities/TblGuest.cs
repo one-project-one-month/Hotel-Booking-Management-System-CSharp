@@ -15,6 +15,10 @@ public partial class TblGuest
 
     public DateTime? CreatedAt { get; set; }
 
+    public string Name { get; set; } = null!;
+
+    public string? Email { get; set; }
+
     public virtual ICollection<CheckInOut> CheckInOuts { get; set; } = new List<CheckInOut>();
 
     public virtual ICollection<TblBooking> TblBookings { get; set; } = new List<TblBooking>();

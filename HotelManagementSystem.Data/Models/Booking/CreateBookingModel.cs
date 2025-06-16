@@ -13,6 +13,7 @@ namespace HotelManagementSystem.Data.Models.Booking
     {
         public Guid? UserId { get; set; }
         public Guid? GuestId { get; set; }
+        public List<Guid>? Rooms { get; set; }
         public int Guest_Count { get; set; }
         public string? Booking_Status { get; set; }
         public decimal? Deposit_Amount { get; set; }

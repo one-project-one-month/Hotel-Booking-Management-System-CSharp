@@ -1,5 +1,4 @@
 using HotelManagementSystem.Data.Data;
-using HotelManagementSystem.Helpers;
 using HotelManagementSystem.Service.Extensions;
 using HotelManagementSystem.Service.Helpers.Auth.PasswordHash;
 using HotelManagementSystem.Service.Helpers.Auth.SMTP;
@@ -7,23 +6,33 @@ using HotelManagementSystem.Service.Helpers.Auth.Token;
 using HotelManagementSystem.Service.Reposities.Implementation;
 using HotelManagementSystem.Service.Repositories.Implementation;
 using HotelManagementSystem.Service.Repositories.Interface;
+using HotelManagementSystem.Service.Services;
 using HotelManagementSystem.Service.Services.Implementation;
-using HotelManagementSystem.Service.Services.Interface;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Infrastructure;
+using static System.Net.WebRequestMethods;
 
 namespace HotelManagementSystem;
 
-public class ServiceInjectionFactory
+public static class ServiceInjectionFactory
 {
-    public static void ServiceInject(WebApplicationBuilder builder)
+    public static void AddServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddCors(options => 
+        {
+            options.AddPolicy("_myAllowSpecificOrigins", policy =>
+            {
+                policy.WithOrigins("https://localhost:7100", "http://localhost:5150")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
         builder.Services.AddDbContext<HotelDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         var env = builder.Environment.EnvironmentName.ToLower();
         var envFile = $".env.{env}";
-        if (File.Exists(envFile))
+        if (System.IO.File.Exists(envFile)) // we change system.io.file in here
         {
             DotNetEnv.Env.Load(envFile);
         }
@@ -38,6 +47,8 @@ public class ServiceInjectionFactory
         //service
         builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<IRoomService, RoomService>();
+        builder.Services.AddTransient<IBookingControlService, BookingControlService>();
+        builder.Services.AddTransient<ICheckInAndCheckoutService, CheckInAndCheckoutService>();
         builder.Services.AddTransient<ISearchRoomRepository, SearchRoomRepository>();
         builder.Services.AddTransient<IBookingService, BookingService>();
         builder.Services.AddTransient<IRoomTypeService, RoomTypeService>();
@@ -54,21 +65,14 @@ public class ServiceInjectionFactory
         builder.Services.AddTransient<IGuestRepository, GuestRepository>();
         builder.Services.AddTransient<IFeatureRoomRepository, FeatureRoomRepository>();
         builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-      
+
+        builder.Services.AddScoped<BlogService>();
+        builder.Services.AddScoped<HttpContextService>();
+
         //License
         QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-
-        // Add CORS policy
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowBlazorFrontend", policy =>
-            {
-                policy.WithOrigins("https://localhost:7144")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
-
+        builder.Services.AddTransient<IBookingControlRepository, BookingControlRepository>();
+        builder.Services.AddTransient<ICheckInAndCheckoutRepository, CheckInAndCheckoutRepository>();
 
         //helpers
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

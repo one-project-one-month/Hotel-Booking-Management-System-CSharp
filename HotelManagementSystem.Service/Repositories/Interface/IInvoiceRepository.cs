@@ -1,5 +1,4 @@
-﻿using HotelManagementSystem.Data.Entities;
-using HotelManagementSystem.Data.Models.Invoices;
+﻿using HotelManagementSystem.Data.Models.Invoices;
 
 namespace HotelManagementSystem.Service.Repositories.Interface;
 
