@@ -1,12 +1,14 @@
-﻿@using HotelManagementSystem_Web.Models.Room
+﻿@using HotelManagementSystem_Web.DevCode
+@using HotelManagementSystem_Web.Models.Room
 @using HotelManagementSystem_Web.Pages.User
 @using Newtonsoft.Json
 @using static HotelManagementSystem_Web.Models.Room.SearchRoomResponseModel
 @inject HttpClient _httpClient;
 @inject SearchRoomState _state;
+@inject GetRoomTypeNamesService _roomTypeService;
 
 @code {
-    public List<RoomType> roomList = new List<RoomType>();
+    public List<RoomTypeNameModel> roomList = new List<RoomTypeNameModel>();
 
 
     protected override async Task OnInitializedAsync()
@@ -18,18 +20,7 @@
 
     public async Task GetRoomTypes()
     {
-        var response = await _httpClient.GetAsync("api/RoomType/getroomtypes");
-
-        if (response.IsSuccessStatusCode)
-        {
-            var jsonString = await response.Content.ReadAsStringAsync();
-
-            var jsonify = JsonConvert.DeserializeObject<RoomResponse>(jsonString);
-
-            roomList = jsonify!.RoomList;
-
-        }
-
+        roomList = await _roomTypeService.GetRoomTypeNames();
     }
 
 }
@@ -60,9 +51,6 @@
             _state.NotifyStateChanged();
         }
     }
-
-
-
 }
 
 

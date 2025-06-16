@@ -1,6 +1,6 @@
-﻿namespace HotelManagementSystem_Web.Models.Room
+﻿namespace HotelManagementSystem_Web.DevCode
 {
-    public class RoomType
+    public class RoomTypeNameModel
     {
         public string? RoomTypeId { get; set; }
         public string RoomTypeName { get; set; } = null!;
@@ -13,7 +13,7 @@
 
     public class RoomResponse
     {
-        public List<RoomType> RoomList { get; set; } = new();
+        public List<RoomTypeNameModel> RoomTypeList { get; set; } = new();
         public string RespCode { get; set; }
         public string RespDescription { get; set; }
     }
