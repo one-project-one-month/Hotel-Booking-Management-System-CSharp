@@ -117,7 +117,7 @@
             <th>Room No</th>
             <th>Room Status</th>
             <th>Guest Limit</th>
-            <th>RoomType‑ID</th>
+            <th class="d-none">RoomType‑ID</th>
             <th>Feature</th>
         </tr>
     </thead>
@@ -128,7 +128,7 @@
                 <td>@room.roomNo</td>
                 <td class="text-center">@(room.roomStatus ? "✔️" : "✖️")</td>
                 <td>@room.guestlimit</td>
-                <td>@room.roomTypeId</td>
+                <td class="d-none">@room.roomTypeId</td>
                 <td class="text-center">
                     <button class="btn btn-link text-warning p-0"
                             title="Toggle featured"
