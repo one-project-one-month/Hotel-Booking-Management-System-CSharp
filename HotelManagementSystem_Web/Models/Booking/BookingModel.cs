@@ -10,11 +10,11 @@ public class BookingModel
     
     public List<string> RoomNo { get; set; } = new();
     public int? GuestCount { get; set; }
-    public DateOnly? CheckIn_Time { get; set; }
+    public DateOnly? CheckInTime { get; set; }
 
-    public DateOnly? CheckOut_Time { get; set; }
+    public DateOnly? CheckOutTime { get; set; }
 
-    public decimal? Deposit_Amount { get; set; }
+    public decimal? DepositAmount { get; set; }
 
     public string? BookingStatus { get; set; }
 
