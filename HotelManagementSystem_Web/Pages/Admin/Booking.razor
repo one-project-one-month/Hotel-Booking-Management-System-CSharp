@@ -16,7 +16,7 @@
             <option value="Booked">Booked</option>
             <option value="Cancelled">Cancelled</option>
         </select>
-        <button class="btn btn-danger" @onclick="ApplyFilter">Filter</button>
+        @* <button class="btn btn-danger" @onclick="ApplyFilter">Filter</button> *@
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-danger" @onclick="ToggleActionColumn">
@@ -50,13 +50,13 @@
     @foreach (var booking in filteredBookings.Skip((currentPage - 1) * pageSize).Take(pageSize))
     {
         <tr>
-            <td class="ps-2">@booking.Name</td>
-            <td class="ps-2">@booking.Nrc</td>
-            <td class="ps-2">@booking.PhoneNo</td>
+            <td class="ps-2">@booking.GuestName</td>
+            <td class="ps-2">@booking.GuestNrc</td>
+            <td class="ps-2">@booking.GuestPhoneNo</td>
             <td class="ps-2">@booking.GuestCount</td>
-            <td class="ps-2">@booking.CheckInTime?.ToShortDateString()</td>
-            <td class="ps-2">@booking.CheckOutTime?.ToShortDateString()</td>
-            <td class="ps-2">@booking.DepositAmount</td>
+            <td class="ps-2">@booking.CheckIn_Time?.ToShortDateString()</td>
+            <td class="ps-2">@booking.CheckOut_Time?.ToShortDateString()</td>
+            <td class="ps-2">@booking.Deposit_Amount</td>
             <td class="ps-2">@booking.BookingStatus</td>
             <td class="ps-2">@booking.TotalAmount</td>
             <td class="ps-2">@booking.PaymentType</td>

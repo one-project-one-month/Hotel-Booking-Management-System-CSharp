@@ -3,7 +3,7 @@ namespace HotelManagementSystem_Web.Models.Booking;
 public class BookingModel
 {
     public string? UserName { get; set; }
-    public string? GuestNamme { get; set; } 
+    public string? GuestName { get; set; } 
     public string GuestNrc { get; set; } = null!;
 
     public string GuestPhoneNo { get; set; } = null!;

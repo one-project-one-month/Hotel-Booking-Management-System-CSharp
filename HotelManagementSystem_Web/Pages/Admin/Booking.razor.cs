@@ -19,7 +19,8 @@ public partial class Booking
     private bool showModal = false;
     private bool showActionColumn = false;
     private List<BookingReqModel> bookings = new();
-    private List<BookingReqModel> filteredBookings = new();
+    private List<BookingModel> filteredBookings = new();
+    private List<BookingModel> bookingList = new();
     private string selectedStatus = "";
     private int currentPage = 1;
     private int pageSize = 10;
@@ -35,6 +36,7 @@ public partial class Booking
     protected override async Task OnInitializedAsync()
     {
         await GetRoomTypesList();
+        await GetBookingList();
     }
 
     private async Task HandleValidSubmit()
@@ -48,6 +50,25 @@ public partial class Booking
             {
                 Console.WriteLine("Booking created successfully");
                 _model = new BookingReqModel();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task GetBookingList()
+    {
+        try
+        {
+            var res = await _httpClient.GetAsync("/admin/Bookings");
+            var jsonStr = await res.Content.ReadAsStringAsync();
+            var respModel = JsonConvert.DeserializeObject<BookingListResponseModel>(jsonStr);
+            if(respModel.RespCode =="200")
+            {
+                bookingList = respModel.Bookings;
+                filteredBookings = bookingList;
             }
         }
         catch (Exception ex)
@@ -96,17 +117,17 @@ public partial class Booking
         }
     }
 
-    private void ApplyFilter()
-    {
-        filteredBookings = bookings
-            .Where(b =>
-                string.IsNullOrEmpty(selectedStatus) ||
-                b.BookingStatus?.Equals(selectedStatus, StringComparison.OrdinalIgnoreCase) == true
-            )
-            .ToList();
+    //private void ApplyFilter()
+    //{
+    //    filteredBookings = bookings
+    //        .Where(b =>
+    //            string.IsNullOrEmpty(selectedStatus) ||
+    //            b.BookingStatus?.Equals(selectedStatus, StringComparison.OrdinalIgnoreCase) == true
+    //        )
+    //        .ToList();
 
-        currentPage = 1;
-    }
+    //    currentPage = 1;
+    //}
 
     private void ToggleActionColumn() => showActionColumn = !showActionColumn;
 
