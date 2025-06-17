@@ -29,8 +29,6 @@
 @code {
     public async Task SearchRooms()
     {
-
-
         var response = await _httpClient.PostAsJsonAsync("/api/SearchRoom/SearchRoom", _state.SharedStateRequestModel);
 
         Console.WriteLine("Outside Post ");
