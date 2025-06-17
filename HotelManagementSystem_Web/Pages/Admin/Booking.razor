@@ -135,8 +135,21 @@
                                 }
                             </select>
                         </div>
+                        @if (_model.Rooms is not null)
+                        {
+                            <div class="col-12">
+                                <div class="row">
+                                    @foreach (var addRooms in _model.Rooms)
+                                    {
+                                        <div class="btn btn-sm btn-secondary">
+                                            @addRooms
+                                        </div>
+                                    }
+                                </div>
+                            </div>
 
-
+                        }
+                       
                         <div class="col-md-6 mb-3">
                             <label class="form-label mb-1">Check In</label>
                             <input type="date" class="form-control" @bind="_model.CheckInTime"/>

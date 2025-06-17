@@ -7,8 +7,10 @@ using Microsoft.JSInterop;
 
 namespace HotelManagementSystem_Web.Pages.Admin
 {
+
     public partial class RoomType
     {
+        private bool _isSubmitting = false;
         private bool isLoading = false;
         List<RoomTypeModel> RoomTypeLst = new List<RoomTypeModel>();
         RoomTypeModel _model = new RoomTypeModel();
