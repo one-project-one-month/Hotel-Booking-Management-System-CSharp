@@ -13,16 +13,16 @@
         <!-- search + × -->
         <div class="input-group flex-grow-1 me-2">
             <input type="text"
-                   class="form-control"
-                   placeholder="Search by name, phone, email, or NRC…"
-                   @bind="SearchTerm"
-                   @bind:event="oninput" />
+            class="form-control"
+            placeholder="Search by name, phone, email, or NRC…"
+            @bind="SearchTerm"
+            @bind:event="oninput" />
 
             @if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
                 <button type="button"
-                        class="btn btn-outline-secondary"
-                        @onclick="ClearSearch">
+                class="btn btn-outline-secondary"
+                @onclick="ClearSearch">
                     &times;
                 </button>
             }
@@ -66,7 +66,7 @@
                 <td>@guest.nrc</td>
                 <td>@guest.email</td>
                 <td>@guest.phoneNo</td>
-                <td>@guest.userId</td>
+                <td>@(guest.userId?.ToString() ?? "N/A")</td>
                 <td>@guest.createdAt</td>
             </tr>
         }
