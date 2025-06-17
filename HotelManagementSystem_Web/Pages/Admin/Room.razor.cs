@@ -1,72 +1,190 @@
-﻿using HotelManagementSystem_Web.Models;using HotelManagementSystem_Web.Models.Room;using Newtonsoft.Json;using System.Net.Http.Json;using HotelManagementSystem_Web.Models.Room.RoomTypeReqModel;using Microsoft.AspNetCore.Components;using HotelManagementSystem_Web.DevCode;using System.Collections.Generic;namespace HotelManagementSystem_Web.Pages.Admin{    public partial class Room    {        [Inject]
+﻿using HotelManagementSystem_Web.Models;
+using HotelManagementSystem_Web.Models.Room;
+using System.Net.Http.Json;
+using HotelManagementSystem_Web.Models.Room.RoomTypeReqModel;
+using Microsoft.AspNetCore.Components;
+using HotelManagementSystem_Web.DevCode;
+using Microsoft.JSInterop;
+
+namespace HotelManagementSystem_Web.Pages.Admin
+{
+    public partial class Room
+    {
+        [Inject]
         public GetRoomTypeNamesService _roomTypeNameService { get; set; }
 
-        RoomReqModel _model = new RoomReqModel();
+        private readonly RoomReqModel _model = new();
+
         private List<RoomTypeNameModel> roomTypes = new();
         private List<RoomModel> roomList = new();
         private List<RoomModel> filteredRooms = new();
 
+        private readonly RoomFilter filter = new();
 
-        protected override async Task OnInitializedAsync()        {            await GetRoomList();            await GetRoomTypesList();        }
+        // Pagination
+        private int currentPage = 1;
+        private const int pageSize = 5;
+        private int totalPages => (int)Math.Ceiling((double)filteredRooms.Count / pageSize);
+        private bool CanGoNext => currentPage < totalPages;
+        private bool CanGoPrevious => currentPage > 1;
 
-        private async Task HandleValidSubmit()        {            try            {                var res = await _httpClient.PostAsJsonAsync("admin/createroom", _model);                var jsonStr = await res.Content.ReadAsStringAsync();                var respModel = JsonConvert.DeserializeObject<BaseResponseModel>(jsonStr);                if (respModel.respCode == "200")                {                    Console.WriteLine("Success");                    _navigation.NavigateTo("/admin/room");
-                }            }            catch (Exception ex)            {                Console.WriteLine(ex.Message);            }        }        private async Task GetRoomList()        {            try            {                var res = await _httpClient.GetAsync("api/Room/getrooms");                if (!res.IsSuccessStatusCode) return;
+        //OnInitialize
+        protected override async Task OnInitializedAsync()
+        {
+            await GetRoomList();
+            await GetRoomTypesList();
+        }
 
-                var json = await res.Content.ReadAsStringAsync();
-                var dto = JsonConvert.DeserializeObject<RoomListResModel>(json);
+        // Filtering 
+        private string statusString => filter.Status switch
+        {
+            true => "true",
+            false => "false",
+            _ => ""
+        };
+        private void OnRoomNoInput(ChangeEventArgs e)
+        {
+            filter.RoomNo = e.Value?.ToString();
+            ApplyFilter();
+        }
 
-                if (dto?.respCode == "200")          
-                {                    roomList = dto.RoomList;    
+        private void OnRoomTypeChanged(Guid? value)
+        {
+            filter.RoomTypeId = value;
+            ApplyFilter();
+        }
+
+        private void OnStatusStringChanged(ChangeEventArgs e)
+        {
+            var v = e.Value?.ToString();
+            filter.Status = v switch
+            {
+                "true" => true,
+                "false" => false,
+                _ => null
+            };
+            ApplyFilter();
+        }
+
+
+        private void OnStatusChanged(bool? value)
+        {
+            filter.Status = value;
+            ApplyFilter();
+        }
+
+        private void ApplyFilter()
+        {
+            IEnumerable<RoomModel> q = roomList;
+
+            bool hasRoomNo = !string.IsNullOrWhiteSpace(filter.RoomNo);
+            bool hasRoomType = filter.RoomTypeId.HasValue && filter.RoomTypeId.Value != Guid.Empty;
+            bool hasStatus = filter.Status is not null;
+
+            if (hasRoomNo)                                  
+            {
+                q = q.Where(r => r.roomNo.Contains(filter.RoomNo!,
+                                                   StringComparison.OrdinalIgnoreCase));
+            }
+            else if (hasRoomType)                           
+            {
+                q = q.Where(r => r.roomTypeId == filter.RoomTypeId);
+
+                if (hasStatus)
+                    q = filter.Status!.Value ? q.Where(r => r.roomStatus)
+                                              : q.Where(r => !r.roomStatus);
+            }
+            else if (hasStatus)                              
+            {
+                q = filter.Status!.Value ? q.Where(r => r.roomStatus)
+                                          : q.Where(r => !r.roomStatus);
+            }
+
+            filteredRooms = q.ToList();
+            currentPage = 1;     
+            StateHasChanged();
+        }
+
+        private void ResetFilters()
+        {
+            filter.RoomNo = null;
+            filter.RoomTypeId = null;
+            filter.Status = null;
+            ApplyFilter();
+        }
+
+        // Api Calls
+        private async Task GetRoomList()
+        {
+            try
+            {
+                var res = await _httpClient.GetAsync("api/Room/getrooms");
+                if (!res.IsSuccessStatusCode) return;
+
+                var dto = Newtonsoft.Json.JsonConvert.DeserializeObject<RoomListResModel>(await res.Content.ReadAsStringAsync());
+                if (dto?.respCode == "200")
+                {
+                    roomList = dto.RoomList;
                     filteredRooms = roomList.ToList();
                 }
-                else
+            }
+            catch (Exception ex) { Console.WriteLine(ex); }
+        }
+
+        private async Task GetRoomTypesList() => roomTypes = await _roomTypeNameService.GetRoomTypeNames();
+
+        private async Task HandleValidSubmit()
+        {
+            try
+            {
+                var res = await _httpClient.PostAsJsonAsync("admin/createroom", _model);
+                var api = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseResponseModel>(await res.Content.ReadAsStringAsync());
+                if (api?.respCode == "200")
                 {
-                    Console.WriteLine("Bad payload:\n" + json);
-                    roomList = new();          
-                    filteredRooms = new();
+                    _model.RoomNo = string.Empty;
+                    _model.RoomStatus = string.Empty;
+                    _model.RoomTypeId = Guid.Empty;
+                    _model.GuestLimit = 0;
+                    _model.IsFeatured = false;
+
+                    await JS.InvokeVoidAsync("hideBootstrapModal", "#addRoomModal");
+                    await GetRoomList();
                 }
-            }            catch (Exception ex) { Console.WriteLine(ex); }
-        }        private void HandleRoomType(ChangeEventArgs e)        {            var selectedValue = e.Value?.ToString();            if (Guid.TryParse(selectedValue, out Guid selectedRoomTypeId))            {                Console.WriteLine($"Selected Room Type ID: {selectedRoomTypeId}");            }            else            {                Console.WriteLine("Invalid or empty Room Type ID.");            }        }                private async Task GetRoomTypesList()        {            roomTypes = await _roomTypeNameService.GetRoomTypeNames();        }        private string? searchRoomNo;
-        private string? searchRoomType;
-        private bool? searchRoomStatus;
-        private int currentPage = 1;        private int pageSize = 5;        private int totalPages => (int)Math.Ceiling((double)filteredRooms.Count / pageSize);        private bool CanGoNext => currentPage < totalPages;        private bool CanGoPrevious => currentPage > 1;        private void HandleFilter()        {            FilterRooms();        }        private void FilterRooms()        {            var query = roomList.AsQueryable();            if (!string.IsNullOrWhiteSpace(searchRoomNo))            {                query = query.Where(r => r.roomNo.Contains(searchRoomNo, StringComparison.OrdinalIgnoreCase));
-            }            if (searchRoomStatus.HasValue)
-            {                query = query.Where(r => r.roomStatus == searchRoomStatus);
-            }            filteredRooms = query.ToList();            currentPage = 1;        }        private IEnumerable<RoomModel> PaginatedRooms()
-        {            return filteredRooms                .Skip((currentPage - 1) * pageSize)                .Take(pageSize);        }        private void NextPage()        {            if (CanGoNext) currentPage++;        }        private void PreviousPage()        {            if (CanGoPrevious) currentPage--;        }        private async Task ToggleFeatureAsync(RoomModel room)
+            }
+            catch (Exception ex) { Console.WriteLine(ex); }
+        }
+
+        //  paganition 
+        private IEnumerable<RoomModel> PaginatedRooms() =>
+            filteredRooms.Skip((currentPage - 1) * pageSize).Take(pageSize);
+
+        private void NextPage() { if (CanGoNext) currentPage++; }
+        private void PreviousPage() { if (CanGoPrevious) currentPage--; }
+
+        // Tooggle Feature
+        private async Task ToggleFeatureAsync(RoomModel room)
         {
             if (room.IsBusy) return;
             room.IsBusy = true;
-
             var original = room.isFeatured;
             room.isFeatured = !room.isFeatured;
             StateHasChanged();
-
             try
             {
-                var resp = await _httpClient.PatchJsonAsync(
-                               $"admin/updateroom/{room.roomId}",     
-                               new { isFeatured = room.isFeatured }); 
+                var res = await _httpClient.PatchJsonAsync($"admin/updateroom/{room.roomId}", new { isFeatured = room.isFeatured });
+                var api = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseResponseModel>(await res.Content.ReadAsStringAsync());
+                if (api?.respCode != "200") room.isFeatured = original;
+            }
+            catch { room.isFeatured = original; }
+            finally { room.IsBusy = false; StateHasChanged(); }
+        }
 
-                var json = await resp.Content.ReadAsStringAsync();
-                var api = JsonConvert.DeserializeObject<BaseResponseModel>(json);
-
-                if (api?.respCode != "200")
-                {
-                    Console.WriteLine("Patch failed: " + json);
-                    room.isFeatured = original;  
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Patch error: " + ex.Message);
-                room.isFeatured = original;       
-            }
-            finally
-            {
-                room.IsBusy = false;
-                StateHasChanged();
-            }
+        // class for filter mapping
+        private class RoomFilter
+        {
+            public string? RoomNo { get; set; }
+            public Guid? RoomTypeId { get; set; }
+            public bool? Status { get; set; }
         }
     }
-}
+}
