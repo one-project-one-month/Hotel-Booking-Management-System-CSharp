@@ -3,6 +3,7 @@
 @using HotelManagementSystem_Web.Layout.AdminLayout
 @layout AdminLayout
 @using System.ComponentModel.DataAnnotations
+@using HotelManagementSystem_Web.Models.Booking
 @inject HttpClient _httpClient
 
 
@@ -126,30 +127,34 @@
                         </div>
 
                         <div class="col-12 mb-3">
-                            <label class="form-label" >Add Room</label>
+                            <label class="form-label">Add Room</label>
                             <select class="form-select" @onchange="OnRoomTypeChanged">
-                                <option value="" >Please Choose One If Room Add</option>
+                                <option value="">Please Choose One If Room Add</option>
                                 @foreach (var roomType in roomTypes)
                                 {
                                     <option value="@roomType.RoomTypeId">@roomType.RoomTypeName</option>
                                 }
                             </select>
                         </div>
-                        @if (_model.Rooms is not null)
+                        @if (roomTypeNames is not null)
                         {
-                            <div class="col-12">
-                                <div class="row">
-                                    @foreach (var addRooms in _model.Rooms)
-                                    {
-                                        <div class="btn btn-sm btn-secondary">
-                                            @addRooms
-                                        </div>
-                                    }
+                            <div class="col-12 mb-3 ">
+                                <div class="form-control">
+                                    <div class="row">
+                                        @foreach (var roomName in roomTypeNames)
+                                        {
+                                            <div class="col-4">
+
+                                                <div class="form-control btn btn-sm btn-secondary">@roomName</div>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
-
                         }
-                       
+
+
+
                         <div class="col-md-6 mb-3">
                             <label class="form-label mb-1">Check In</label>
                             <input type="date" class="form-control" @bind="_model.CheckInTime"/>
@@ -191,7 +196,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger">Create</button>
+                    <button type="submit" class="btn btn-danger" @onclick="CreateBooking">Create</button>
                 </div>
             </EditForm>
         </div>

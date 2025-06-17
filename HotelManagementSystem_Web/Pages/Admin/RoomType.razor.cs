@@ -38,6 +38,7 @@ namespace HotelManagementSystem_Web.Pages.Admin
 
         public async Task HandleRoomTypeForm()
         {
+            _isSubmitting = true;
             try
             {
                 var res = await _httpClient.PostAsJsonAsync("admin/createroomtype", _model);
@@ -51,8 +52,10 @@ namespace HotelManagementSystem_Web.Pages.Admin
                         _model = new RoomTypeModel(); // Optional: reset form
 
                         // Close the modal
+                        _isSubmitting = false;
                         await JS.InvokeVoidAsync("hideBootstrapModal", "#addRoomTypeModal");
                        await RoomTypeList();
+                        
                        StateHasChanged();
                     }
                 }

@@ -49,11 +49,13 @@
 </script>
 <script>
     window.showBootstrapModal = (id) => {
+        console.log("hit")
         const modalElement = document.querySelector(id);
         if (modalElement) {
             const modal = new bootstrap.Modal(modalElement);
             modal.show();
         }
+        
     };
 
     window.hideBootstrapModal = (id) => {
