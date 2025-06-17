@@ -30,6 +30,7 @@ public partial class AdminHome : ComponentBase
         if (res.IsSuccessStatusCode)
         {
             var jsonStr = await res.Content.ReadAsStringAsync();
+            Console.WriteLine(jsonStr);
             var lst = JsonConvert.DeserializeObject<BookingListResponseModel>(jsonStr)!;
             _bookingLst = lst.Bookings;
         }
