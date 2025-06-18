@@ -1,5 +1,7 @@
-﻿using HotelManagementSystem_Web.Models.Guest;
+﻿using HotelManagementSystem_Web.Models;
+using HotelManagementSystem_Web.Models.Guest;
 using Newtonsoft.Json;
+using static System.Net.WebRequestMethods;
 
 namespace HotelManagementSystem_Web.Pages.Admin
 {
@@ -34,12 +36,48 @@ namespace HotelManagementSystem_Web.Pages.Admin
             }
         }
 
+        private List<Invoice>? _invoices;    
+        private Invoice? _modalInvoice;      
+        private Guid? _selectedGuest;       
+
 
         protected override async Task OnInitializedAsync()
         {
-           await Task.WhenAll(GuestList());
-        } 
-      
+           await GuestList();
+        }
+
+        private async Task EnsureInvoicesAsync()
+        {
+            if (_invoices is not null) return;          
+
+            var res = await _httpClient.GetAsync("api/Invoices/all");
+            if (res.IsSuccessStatusCode)
+            {
+                var json = await res.Content.ReadAsStringAsync();
+                _invoices = JsonConvert.DeserializeObject<List<Invoice>>(json)
+                            ?? new List<Invoice>();
+            }
+            else
+            {
+                _invoices = new List<Invoice>();       
+            }
+        }
+
+        private async Task ShowInvoiceAsync(Guid guestId)
+        {
+            await EnsureInvoicesAsync();                
+
+            _selectedGuest = guestId;
+            _modalInvoice = _invoices!
+                            .FirstOrDefault(i => i.GuestId == guestId);
+        }
+
+        private void CloseModal()
+        {
+            _selectedGuest = null;
+            _modalInvoice = null;
+        }
+
         private string? _searchTerm;
         private string? SearchTerm
         {

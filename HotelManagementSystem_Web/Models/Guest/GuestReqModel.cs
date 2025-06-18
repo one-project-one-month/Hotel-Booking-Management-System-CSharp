@@ -20,5 +20,6 @@ namespace HotelManagementSystem_Web.Models.Guest
         public string name { get; set; } = null!;
 
         public string? email { get; set; }
+        public string? check_In_Out { get; set; }
     }
 }

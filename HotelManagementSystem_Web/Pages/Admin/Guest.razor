@@ -37,37 +37,54 @@
 
 
 <!-- Guest Table -->
-<table class="table table-bordered table-hover align-middle">
-    <thead class="table-danger">
+<hr>
+<table class="table table-bordered table-hover table-striped-custom align-middle">
+    <thead class="table-primary">
         <tr>
-            <td class="d-none">GuestId</td>
-            <td>Name</td>
-            <td>Nrc</td>
-            <td>Email</td>
-            <td>PhoneNo</td>
-            <td class="d-none">UserId</td>
-            <td>CreatedAt</td>
+            <th class="d-none">GuestId</th>
+            <th>Name</th>
+            <th>Nrc</th>
+            <th>Email</th>
+            <th>Phone&nbsp;No</th>
+            <th>IN‑OUT</th>
+            <th class="d-none">UserId</th>
+            <th class="d-none">CreatedAt</th>
         </tr>
     </thead>
     <tbody>
-
         @if (filterguestList.Count == 0 && guestList.Count == 0)
         {
             <tr><td colspan="8" class="text-center">Loading…</td></tr>
         }
 
-        @foreach (var guest in filterguestList   // not guestList
-        .Skip((currentPage - 1) * pageSize)
-        .Take(pageSize))
+        @foreach (var guest in filterguestList.Skip((currentPage - 1) * pageSize).Take(pageSize))
         {
             <tr>
-                <td class ="d-none">@guest.guestId</td>
+                <td class="d-none">@guest.guestId</td>
                 <td>@guest.name</td>
                 <td>@guest.nrc</td>
                 <td>@guest.email</td>
                 <td>@guest.phoneNo</td>
+                <td>
+                    @if (guest.check_In_Out == "In")
+                    {
+                        @guest.check_In_Out
+                    }
+                    else if (guest.check_In_Out == "Out")
+                    {
+                        <button class="btn btn-outline-danger btn-sm mt-auto"
+                                style="font-size:.75rem"
+                                @onclick="() => ShowInvoiceAsync(guest.guestId)">
+                            @guest.check_In_Out
+                        </button>
+                    }
+                    else
+                    {
+                        <span>Check‑In nor Check‑Out Yet</span>
+                    }
+                </td>
                 <td class="d-none">@(guest.userId?.ToString() ?? "N/A")</td>
-                <td>@guest.createdAt</td>
+                <td class="d-none">@guest.createdAt</td>
             </tr>
         }
     </tbody>
@@ -76,9 +93,65 @@
 <!-- Pagination Controls -->
 <div class="d-flex justify-content-center my-3">
     <button class="btn btn-outline-danger btn-sm me-2" @onclick="PreviousPage"
-            disabled="@(!CanGoPrevious)">
+    disabled="@(!CanGoPrevious)">
         Previous
     </button>
     <span>Page @currentPage of @totalPages</span>
     <button class="btn btn-outline-danger btn-sm ms-2" @onclick="NextPage" disabled="@(!CanGoNext)">Next</button>
 </div>
+
+<!---- Invoice Card ---->
+@if (_selectedGuest is not null && _modalInvoice is not null)
+{
+    <div class="modal fade show d-block"
+         tabindex="-1"
+         style="background-color:rgba(0,0,0,.5);"
+         @onclick="CloseModal">
+
+        <div class="modal-dialog modal-dialog-centered modal-lg invoice-modal"
+        @onclick:stopPropagation>
+
+            <div class="modal-content shadow-lg">
+                <div class="modal-header ocean-gradient">
+                    <h5 class="modal-title">Invoice Detail</h5>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            @onclick="CloseModal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <dl class="row mb-0 g-3">
+                        <dt class="col-4">Invoice&nbsp;Code</dt>
+                        <dd class="col-8">@_modalInvoice.InvoiceCode</dd>
+
+                        <dt class="col-4">Check‑In&nbsp;Time</dt>
+                        <dd class="col-8">@_modalInvoice.CheckInTime</dd>
+
+                        <dt class="col-4">Check‑Out&nbsp;Time</dt>
+                        <dd class="col-8">@_modalInvoice.CheckOutTime</dd>
+
+                        <dt class="col-4">Base&nbsp;Amount</dt>
+                        <dd class="col-8">
+                            @(_modalInvoice.TotalAmount - _modalInvoice.ExtraCharges)
+                        </dd>
+
+                        <dt class="col-4">Extra&nbsp;Charges</dt>
+                        <dd class="col-8">@_modalInvoice.ExtraCharges</dd>
+
+                        <dt class="col-4">Deposit</dt>
+                        <dd class="col-8">@_modalInvoice.Deposite</dd>
+
+                        <dt class="col-4 fw-bold">Total&nbsp;Amount</dt>
+                        <dd class="col-8 fw-bold">
+                            @(_modalInvoice.TotalAmount - _modalInvoice.Deposite)
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="modal-footer ocean-gradient">
+                    <button class="btn btn-light" @onclick="CloseModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
