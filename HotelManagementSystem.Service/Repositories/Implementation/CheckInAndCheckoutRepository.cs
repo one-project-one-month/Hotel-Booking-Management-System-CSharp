@@ -68,10 +68,14 @@ public class CheckInAndCheckoutRepository: ICheckInAndCheckoutRepository
             var booking = await _hotelDbContext.TblBookings
                               .FirstOrDefaultAsync(b => b.GuestId == dto.GuestId);
 
+
             if (booking is null)
                 return CustomEntityResult<CheckOutResponseDto>
                        .GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_BADREQUEST,
                                                  "Booking record with this guest id does not exist.");
+
+            booking.BookingStatus = "Reserved";
+            await _hotelDbContext.SaveChangesAsync();
 
             var roomBookings = await _hotelDbContext.TblRoomBookings
                                   .Where(rb => rb.BookingId == booking.BookingId)
