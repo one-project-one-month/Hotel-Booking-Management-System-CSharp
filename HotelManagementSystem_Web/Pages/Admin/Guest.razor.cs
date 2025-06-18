@@ -1,13 +1,15 @@
 ﻿using HotelManagementSystem_Web.Models;
 using HotelManagementSystem_Web.Models.Guest;
+using Microsoft.JSInterop;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 using static System.Net.WebRequestMethods;
 
 namespace HotelManagementSystem_Web.Pages.Admin
 {
     public partial class Guest
     {
-        //GuestReqModel _model = new GuestReqModel();
+        CheckOutReqModel _model = new CheckOutReqModel();
 
         private List<GuestReqModel> guestList = new();
         private List<GuestReqModel> filterguestList = new();
@@ -31,6 +33,36 @@ namespace HotelManagementSystem_Web.Pages.Admin
                 }
             }
             catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        private async Task GoCheckOut(Guid guestId)
+        {
+            try
+            {
+                _model.GuestId = guestId;
+                var res = await _httpClient.PostAsJsonAsync("/api/CheckInAndCheckOut/checkout", _model);
+                Console.WriteLine(JsonConvert.SerializeObject(_model));
+                if (res.IsSuccessStatusCode)
+                {
+                    var jsonStr = await res.Content.ReadAsStringAsync();
+                    var respModel = JsonConvert.DeserializeObject<CheckOutRespModel>(jsonStr);
+                    if (respModel?.respCode == "200")
+                    {
+                        _model = new CheckOutReqModel();
+                        await GuestList();
+                        await ShowInvoiceAsync(respModel.GuestId);
+                        StateHasChanged();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(res.ToString());
+                }
+            }
+            catch(Exception ex) 
             {
                 Console.WriteLine(ex.Message);
             }

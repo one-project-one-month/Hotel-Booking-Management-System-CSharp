@@ -47,6 +47,7 @@
             <th>Email</th>
             <th>Phone&nbsp;No</th>
             <th>IN‑OUT</th>
+            <th>Chect-Out</th>
             <th class="d-none">UserId</th>
             <th class="d-none">CreatedAt</th>
         </tr>
@@ -73,14 +74,32 @@
                     else if (guest.check_In_Out == "Out")
                     {
                         <button class="btn btn-outline-danger btn-sm mt-auto"
-                                style="font-size:.75rem"
-                                @onclick="() => ShowInvoiceAsync(guest.guestId)">
+                        style="font-size:.75rem"
+                        @onclick="() => ShowInvoiceAsync(guest.guestId)">
                             @guest.check_In_Out
                         </button>
                     }
                     else
                     {
                         <span>Check‑In nor Check‑Out Yet</span>
+                    }
+                </td>
+                <td>
+                    @if(guest.check_In_Out == "Out")
+                    {
+                        <span>Good Stay</span>
+                    }
+                    else if(guest.check_In_Out == "In")
+                    {
+                        <button class="btn btn-outline-primary" 
+                        style="font-size: .75rem"
+                        @onclick="() => GoCheckOut(guest.guestId)">
+                            Check-Out
+                        </button>
+                    }
+                    else
+                    {
+                        <span>Not Chech-in Yet'</span>
                     }
                 </td>
                 <td class="d-none">@(guest.userId?.ToString() ?? "N/A")</td>
