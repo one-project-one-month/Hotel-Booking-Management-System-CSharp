@@ -8,6 +8,7 @@ namespace HotelManagementSystem.Data.Models.Invoices;
 
 public class Invoice
 {
+    public Guid GuestId { get; set; }
     public Guid InvoiceId { get; set; }
     public string InvoiceCode { get; set; } = string.Empty;
     public DateTime CheckInTime { get; set; }

@@ -107,6 +107,7 @@ public class InvoiceRepository : IInvoiceRepository
 
         var invoiceList = invoiceEntities.Select(i => new Invoice
         {
+            GuestId = i.GuestId,
             InvoiceId = i.InvoiceId,
             InvoiceCode = i.InvoiceId.ToString("N")[^4..].ToUpper(), // last 4 chars of Guid string
             CheckInTime = i.CheckInTime,
