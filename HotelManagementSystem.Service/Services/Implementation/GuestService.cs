@@ -62,6 +62,7 @@ namespace HotelManagementSystem.Service.Services.Implementation
                         PhoneNo = g.PhoneNo,
                         Email = g.Email,
                         CreatedAt = g.CreatedAt,
+                        Check_In_Out = g.Check_In_Out,
                     }).ToList()
                 };
 
