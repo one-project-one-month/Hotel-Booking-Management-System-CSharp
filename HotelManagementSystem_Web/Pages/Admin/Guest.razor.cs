@@ -122,7 +122,7 @@ namespace HotelManagementSystem_Web.Pages.Admin
             }
         }
         private int currentPage = 1;
-        private int pageSize = 5;
+        private int pageSize = 10;
 
         private int totalPages => (int)Math.Ceiling((double)(filterguestList?.Count ?? 0) / pageSize);
         private bool CanGoNext => currentPage < totalPages;
