@@ -23,7 +23,7 @@ namespace HotelManagementSystem_Web.Pages.Admin
 
         // Pagination
         private int currentPage = 1;
-        private const int pageSize = 5;
+        private const int pageSize = 10;
         private int totalPages => (int)Math.Ceiling((double)filteredRooms.Count / pageSize);
         private bool CanGoNext => currentPage < totalPages;
         private bool CanGoPrevious => currentPage > 1;
