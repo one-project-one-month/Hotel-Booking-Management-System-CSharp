@@ -5,3 +5,10 @@
     overflow-y: auto; /* vertical scrolling */
     overflow-x: hidden;
 }
+
+@media (min-width: 992px) {
+    .col-lg-5th {
+        flex: 0 0 20%; /* 100 / 5 */
+        max-width: 20%;
+    }
+}

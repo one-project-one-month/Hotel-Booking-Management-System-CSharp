@@ -40,7 +40,7 @@ namespace HotelManagementSystem_Web.Pages.AdminUserProfile
         }
 
    
-        private int PageSize = 12;      
+        private int PageSize = 10;      
         private int CurrentPage = 1;
 
         private void ClearSearch()
