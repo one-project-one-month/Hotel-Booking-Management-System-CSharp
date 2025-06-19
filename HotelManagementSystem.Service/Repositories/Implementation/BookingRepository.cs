@@ -1,4 +1,5 @@
-﻿using HotelManagementSystem.Data.Dtos.Booking;
+﻿using HotelManagementSystem.Data.Data;
+using HotelManagementSystem.Data.Dtos.Booking;
 
 namespace HotelManagementSystem.Service.Repositories.Implementation
 {
@@ -41,6 +42,15 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                     });
 
                     await _context.TblRoomBookings.AddRangeAsync(roomBookings);
+                    var roomsToUpdate = await _context.TblRooms
+                    .Where(r => dto.Rooms.Contains(r.RoomId))
+                    .ToListAsync();
+
+                    foreach (var room in roomsToUpdate)
+                    {
+                        room.RoomStatus = "Occupied";
+                    }
+
                     await _context.SaveChangesAsync();
                 }
                 await transaction.CommitAsync();
