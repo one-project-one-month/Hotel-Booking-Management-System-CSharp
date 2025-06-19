@@ -19,7 +19,7 @@ public partial class Booking
     private List<BookingReqModel> bookings = new();
     private List<BookingModel> filteredBookings = new();
     private List<BookingModel> bookingList = new();
-    private string selectedStatus = "";
+    private string selectedStatus = string.Empty;
     private int currentPage = 1;
     private int pageSize = 10;
 
@@ -123,6 +123,7 @@ public partial class Booking
                 await JS.InvokeVoidAsync("hideBootstrapModal", "#bookingModal");
                 Console.WriteLine("Booking created successfully");
                 await GetBookingList();
+                // ApplyFilter();     
                 _model = new BookingReqModel();
         roomTypeNames = new List<string>();
                 StateHasChanged();
@@ -163,17 +164,17 @@ public partial class Booking
         }
     }
 
-    //private void ApplyFilter()
-    //{
-    //    filteredBookings = bookings
-    //        .Where(b =>
-    //            string.IsNullOrEmpty(selectedStatus) ||
-    //            b.BookingStatus?.Equals(selectedStatus, StringComparison.OrdinalIgnoreCase) == true
-    //        )
-    //        .ToList();
+    private void ApplyFilter()
+    {
+        filteredBookings = bookingList
+            .Where(b =>
+                string.IsNullOrWhiteSpace(selectedStatus) ||
+                string.Equals(b.BookingStatus, selectedStatus, StringComparison.OrdinalIgnoreCase)
+            )
+            .ToList();
 
-    //    currentPage = 1;
-    //}
+        currentPage = 1;
+    }
 
     private void ToggleActionColumn() => showActionColumn = !showActionColumn;
 
@@ -189,19 +190,64 @@ public partial class Booking
             currentPage++;
     }
 
-    private void OpenEditModal(BookingReqModel booking)
+    private async Task  OpenEditModal(BookingReqModel booking)
     {
         _model = booking;
+        
+        await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
     }
 
-    private async Task DeleteBooking(Guid? bookingId)
+    
+    private async Task ApplyReserve(BookingModel booking)
     {
-        if (bookingId == null)
+        if (booking.UserId == null)
+        {
+            Console.WriteLine("Reservation not allowed. UserId is null.");
             return;
+        }
 
-        var confirmed = await JS.InvokeAsync<bool>("confirm", "Are you sure to delete this booking?");
-        if (!confirmed) return;
+        _model = new BookingReqModel
+        {
+            UserId = booking.UserId,
+            Name = booking.GuestName,
+            Nrc = booking.GuestNrc,
+            PhoneNo = booking.GuestPhoneNo,
+            GuestCount = booking.GuestCount,
+            CheckInTime = booking.CheckInTime,
+            CheckOutTime = booking.CheckOutTime,
+            DepositAmount = booking.DepositAmount,
+            TotalAmount = booking.TotalAmount,
+            BookingStatus = booking.BookingStatus,
+            PaymentType = booking.PaymentType,
+            Rooms = new List<Guid>() 
+        };
 
-        var response = await _httpClient.DeleteAsync($"/Bookings/createbookingbyadmin/{bookingId}");
+        await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
     }
+    public async Task ApplyEdit(BookingModel booking)
+    {
+        var editingBookingId = booking.BookingId;
+        Console.WriteLine("Editing booking ID: " + editingBookingId);
+
+        _model = new BookingReqModel
+        {
+            UserId = booking.UserId,
+            Name = booking.GuestName,
+            Nrc = booking.GuestNrc,
+            PhoneNo = booking.GuestPhoneNo,
+            GuestCount = booking.GuestCount,
+            CheckInTime = booking.CheckInTime,
+            CheckOutTime = booking.CheckOutTime,
+            DepositAmount = booking.DepositAmount,
+            TotalAmount = booking.TotalAmount,
+            BookingStatus = booking.BookingStatus,
+            PaymentType = booking.PaymentType,
+            Rooms = new List<Guid>() 
+        };
+        
+        await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
+    }
+
+    
+
 }
