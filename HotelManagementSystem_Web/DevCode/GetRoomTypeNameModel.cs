@@ -2,7 +2,7 @@
 {
     public class RoomTypeNameModel
     {
-        public string? RoomTypeId { get; set; }
+        public Guid? RoomTypeId { get; set; }
         public string RoomTypeName { get; set; } = null!;
         public string Description { get; set; } = null!;
         public decimal Price { get; set; }

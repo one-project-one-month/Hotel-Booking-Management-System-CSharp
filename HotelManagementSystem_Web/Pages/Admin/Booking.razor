@@ -127,31 +127,46 @@
                         </div>
 
                         <div class="col-12 mb-3">
-                            <label class="form-label">Add Room</label>
+                            <label class="form-label mb-1">Room Type</label>
                             <select class="form-select" @onchange="OnRoomTypeChanged">
-                                <option value="">Please Choose One If Room Add</option>
-                                @foreach (var roomType in roomTypes)
+                                <option value="">-- select type --</option>
+                                @foreach (var t in roomTypes)
                                 {
-                                    <option value="@roomType.RoomTypeId">@roomType.RoomTypeName</option>
+                                    <option value="@t.RoomTypeId"
+                                            selected="@(t.RoomTypeId == SelectedTypeId)">
+                                        @t.RoomTypeName
+                                    </option>
                                 }
                             </select>
                         </div>
-                        @if (roomTypeNames is not null)
-                        {
-                            <div class="col-12 mb-3 ">
-                                <div class="form-control">
-                                    <div class="row">
-                                        @foreach (var roomName in roomTypeNames)
-                                        {
-                                            <div class="col-4">
 
-                                                <div class="form-control btn btn-sm btn-secondary">@roomName</div>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        }
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label mb-1">Available Rooms</label>
+                            <ul class="list-group" style="max-height:220px; overflow:auto;">
+                                @foreach (var r in FilteredRooms)
+                                {
+                                    <li class="list-group-item list-group-item-action"
+                                        @onclick="@(() => AddRoom(r.roomId))">
+                                        @r.roomNo
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label mb-1">Selected Rooms</label>
+                            <ul class="list-group" style="max-height:220px; overflow:auto;">
+                                @foreach (var r in SelectedRoomModels)
+                                {
+                                    <li class="list-group-item list-group-item-action active"
+                                        @onclick="@(() => RemoveRoom(r.roomId))">
+                                        @r.roomNo
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
 
 
 
@@ -198,7 +213,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger" @onclick="CreateBooking">Create</button>
+                    <button type="submit" class="btn btn-danger">Create</button>
                 </div>
             </EditForm>
         </div>

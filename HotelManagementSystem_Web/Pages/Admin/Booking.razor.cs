@@ -33,8 +33,39 @@ public partial class Booking
     private bool CanGoBack => currentPage > 1;
     private bool CanGoForward => currentPage < totalPages;
 
+    static BookingReqModel NewBookingModel() => new()
+    {
+        Rooms = new List<Guid>()
+    };
+
+    private IEnumerable<RoomModel> FilteredRooms =>
+     SelectedTypeId is null
+        ? Enumerable.Empty<RoomModel>()
+        : roomListRes.Where(r =>
+              r.roomTypeId == SelectedTypeId &&
+              r.roomStatus &&
+              !_model.Rooms.Contains(r.roomId));
+
+    private IEnumerable<RoomModel> SelectedRoomModels =>
+    roomListRes.Where(r => _model.Rooms.Contains(r.roomId));
+
+    private void AddRoom(Guid roomId)
+    {
+        _model.Rooms ??= new();
+        if (!_model.Rooms.Contains(roomId))
+            _model.Rooms.Add(roomId);
+    }
+
+    private void RemoveRoom(Guid roomId)
+    {
+        _model.Rooms.Remove(roomId);
+    }
+
+
+    Guid? SelectedTypeId;
     protected override async Task OnInitializedAsync()
     {
+        await GetRoomList();
         await GetRoomTypesList();
         await GetBookingList();
     }
@@ -48,8 +79,11 @@ public partial class Booking
             var respModel = JsonConvert.DeserializeObject<BaseResponseModel>(jsonStr);
             if (respModel?.respCode == "200")
             {
-                Console.WriteLine("Booking created successfully");
                 _model = new BookingReqModel();
+                SelectedTypeId = null;
+                await GetBookingList();
+                await JS.InvokeVoidAsync("hideBootstrapModal", "#bookingModal");
+                StateHasChanged();
             }
         }
         catch (Exception ex)
@@ -99,6 +133,7 @@ public partial class Booking
             }
         }
     }
+
     private async Task ShowAddBookingModal()
     {
         _model = new BookingReqModel();
@@ -113,37 +148,7 @@ public partial class Booking
 
     private async Task OnRoomTypeChanged(ChangeEventArgs? e)
     {
-        var roomTypeIdStr = e?.Value.ToString();
-        if (Guid.TryParse(roomTypeIdStr, out Guid selectedRoomTypeId))
-        {
-            await GetRoomList();
-            AddRoomIdToBooking(selectedRoomTypeId);
-
-            var json = JsonConvert.SerializeObject(_model);
-            Console.WriteLine(json);
-        }
-        else
-        {
-            Console.WriteLine("Invalid Room Type ID");
-        }
-    }
-    
-
-    private void AddRoomIdToBooking(Guid roomTypeId)
-    {
-        
-        var roomId = roomListRes.Where(x => x.roomTypeId == roomTypeId && x.roomStatus).Select(x => x.roomId)
-            .FirstOrDefault();
- 
-        _model.Rooms.Add(roomId);
-        var roomType = roomListRes
-            .Where(room => _model.Rooms.Contains(room.roomId))
-            .Join(roomTypes,
-                room => room.roomTypeId.ToString(),
-                type => type.RoomTypeId,
-                (room, type) => type.RoomTypeName)
-            .FirstOrDefault();
-        roomTypeNames.Add(roomType);
+        SelectedTypeId = Guid.TryParse(e.Value?.ToString(), out var id) ? id : null;
     }
 
     
