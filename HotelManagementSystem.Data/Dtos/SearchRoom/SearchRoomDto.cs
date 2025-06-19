@@ -30,6 +30,22 @@ namespace HotelManagementSystem.Data.Dtos.SearchRoom
         public int? GuestLimit { get; set; }
         public string? RoomNumber { get; set; }
         public string? Description { get; set; }
-        public byte[]? ImgUrl { get; set; }
+        public string ImgUrl { get; set; }
+
+        public string ImgMimeType { get; set; } = "image/png"; // Default to PNG if not specified
     }
+
+    public class RoomQueryResult
+    {
+        public Guid RoomTypeId { get; set; }
+        public string? RoomTypeName { get; set; }
+        public decimal? Price { get; set; }
+        public int? GuestLimit { get; set; }
+        public string? RoomNumber { get; set; }
+        public string? Description { get; set; }
+
+        public byte[] ImgUrl { get; set; }
+        public string RoomImgMimeType { get; set; }
+    }
+
 }

@@ -13,6 +13,9 @@
         public int? GuestLimit{ get; set; }
         public string? RoomNumber { get; set; }
         public string? Description { get; set; }
-        public byte[]? ImgUrl { get; set; }
+        public string ImgUrl { get; set; }
+        public string ImgMimeType { get; set; } = "image/png"; // Default to PNG if not specified
     }
+
+    
 }

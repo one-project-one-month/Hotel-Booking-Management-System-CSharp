@@ -34,19 +34,21 @@ namespace HotelManagementSystem.Service.Services.Implementation
                     CheckOutDate = model.CheckOutDate,
                 });
 
+                var roomDtos = result.Result.Rooms.Select(r => new RoomModel
+                {
+                    RoomTypeId = r.RoomTypeId,
+                    RoomTypeName = r.RoomTypeName,
+                    Price = r.Price,
+                    GuestLimit = r.GuestLimit,
+                    RoomNumber = r.RoomNumber,
+                    Description = r.Description,
+                    ImgUrl = r.ImgUrl,
+                    ImgMimeType = r.ImgMimeType
+                }).ToList();
+
                 var searchRoomResponse = new SearchRoomResponseModel()
                 {
-                    Rooms = result.Result.Rooms!.Select(s => new RoomModel
-                    {
-                        RoomTypeId = s.RoomTypeId,
-                        RoomTypeName = s.RoomTypeName,
-                        Price = s.Price,
-                        GuestLimit = s.GuestLimit ?? 0,
-                        RoomNumber = s.RoomNumber,
-                        Description = s.Description,
-                        //ImgUrl = s.ImgUrl != null ? Convert.ToBase64String(s.ImgUrl) : null
-                        ImgUrl = s.ImgUrl
-                    }).ToList()
+                    Rooms = roomDtos
                 };
 
                 return CustomEntityResult<SearchRoomResponseModel>.GenerateSuccessEntityResult(searchRoomResponse);
