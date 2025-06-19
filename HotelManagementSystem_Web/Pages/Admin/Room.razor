@@ -124,9 +124,9 @@
     <tbody>
         @foreach (var room in PaginatedRooms())
         {
-            <tr>
+            <tr class="text-center justify-content-center">
                 <td>@room.roomNo</td>
-                <td class="text-center">@(room.roomStatus ? "✔️" : "✖️")</td>
+                <td class="text-center">@(room.roomStatus ? "Available" : "Occupied")</td>
                 <td>@room.guestlimit</td>
                 <td class="d-none">@room.roomTypeId</td>
                 <td class="text-center">
