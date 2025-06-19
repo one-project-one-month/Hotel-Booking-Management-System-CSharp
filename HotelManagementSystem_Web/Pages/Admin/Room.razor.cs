@@ -1,15 +1,5 @@
-﻿using HotelManagementSystem_Web.Models;
-using HotelManagementSystem_Web.Models.Room;
-using System.Net.Http.Json;
-using HotelManagementSystem_Web.Models.Room.RoomTypeReqModel;
-using Microsoft.AspNetCore.Components;
-using HotelManagementSystem_Web.DevCode;
-using Microsoft.JSInterop;
-
-namespace HotelManagementSystem_Web.Pages.Admin
-{
-    public partial class Room
-    {
+﻿using HotelManagementSystem_Web.Models;using HotelManagementSystem_Web.Models.Room;using System.Net.Http.Json;using HotelManagementSystem_Web.Models.Room.RoomTypeReqModel;using Microsoft.AspNetCore.Components;using HotelManagementSystem_Web.DevCode;using Microsoft.JSInterop;
+namespace HotelManagementSystem_Web.Pages.Admin{    public partial class Room    {
         [Inject]
         public GetRoomTypeNamesService _roomTypeNameService { get; set; }
 
@@ -29,16 +19,11 @@ namespace HotelManagementSystem_Web.Pages.Admin
         private bool CanGoPrevious => currentPage > 1;
 
         //OnInitialize
-        protected override async Task OnInitializedAsync()
-        {
-            await GetRoomList();
-            await GetRoomTypesList();
-        }
+        protected override async Task OnInitializedAsync()        {            await GetRoomList();            await GetRoomTypesList();        }
 
         // Filtering 
         private string statusString => filter.Status switch
-        {
-            true => "true",
+        {            true => "true",
             false => "false",
             _ => ""
         };
@@ -53,13 +38,10 @@ namespace HotelManagementSystem_Web.Pages.Admin
             filter.RoomTypeId = value;
             ApplyFilter();
         }
-
-        private void OnStatusStringChanged(ChangeEventArgs e)
-        {
-            var v = e.Value?.ToString();
+        private void OnStatusStringChanged(ChangeEventArgs e)
+        {            var v = e.Value?.ToString();
             filter.Status = v switch
-            {
-                "true" => true,
+            {                "true" => true,
                 "false" => false,
                 _ => null
             };
@@ -72,12 +54,10 @@ namespace HotelManagementSystem_Web.Pages.Admin
             filter.Status = value;
             ApplyFilter();
         }
-
-        private void ApplyFilter()
+        private void ApplyFilter()
         {
             IEnumerable<RoomModel> q = roomList;
-
-            bool hasRoomNo = !string.IsNullOrWhiteSpace(filter.RoomNo);
+            bool hasRoomNo = !string.IsNullOrWhiteSpace(filter.RoomNo);
             bool hasRoomType = filter.RoomTypeId.HasValue && filter.RoomTypeId.Value != Guid.Empty;
             bool hasStatus = filter.Status is not null;
 
@@ -87,41 +67,33 @@ namespace HotelManagementSystem_Web.Pages.Admin
                                                    StringComparison.OrdinalIgnoreCase));
             }
             else if (hasRoomType)                           
-            {
-                q = q.Where(r => r.roomTypeId == filter.RoomTypeId);
+            {                q = q.Where(r => r.roomTypeId == filter.RoomTypeId);
 
                 if (hasStatus)
                     q = filter.Status!.Value ? q.Where(r => r.roomStatus)
                                               : q.Where(r => !r.roomStatus);
-            }
-            else if (hasStatus)                              
-            {
-                q = filter.Status!.Value ? q.Where(r => r.roomStatus)
+            }            else if (hasStatus)                              
+            {                q = filter.Status!.Value ? q.Where(r => r.roomStatus)
                                           : q.Where(r => !r.roomStatus);
-            }
-
+            }
             filteredRooms = q.ToList();
             currentPage = 1;     
             StateHasChanged();
-        }
-
+        }
         private void ResetFilters()
         {
             filter.RoomNo = null;
             filter.RoomTypeId = null;
             filter.Status = null;
             ApplyFilter();
-        }
-
-        // Api Calls
+        }        // Api Calls
         private async Task GetRoomList()
         {
             try
             {
                 var res = await _httpClient.GetAsync("api/Room/getrooms");
                 if (!res.IsSuccessStatusCode) return;
-
-                var dto = Newtonsoft.Json.JsonConvert.DeserializeObject<RoomListResModel>(await res.Content.ReadAsStringAsync());
+                var dto = Newtonsoft.Json.JsonConvert.DeserializeObject<RoomListResModel>(await res.Content.ReadAsStringAsync());
                 if (dto?.respCode == "200")
                 {
                     roomList = dto.RoomList;
@@ -129,11 +101,8 @@ namespace HotelManagementSystem_Web.Pages.Admin
                 }
             }
             catch (Exception ex) { Console.WriteLine(ex); }
-        }
-
-        private async Task GetRoomTypesList() => roomTypes = await _roomTypeNameService.GetRoomTypeNames();
-
-        private async Task HandleValidSubmit()
+        }        private async Task GetRoomTypesList() => roomTypes = await _roomTypeNameService.GetRoomTypeNames();
+        private async Task HandleValidSubmit()
         {
             try
             {
@@ -146,22 +115,18 @@ namespace HotelManagementSystem_Web.Pages.Admin
                     _model.RoomTypeId = Guid.Empty;
                     _model.GuestLimit = 0;
                     _model.IsFeatured = false;
-
-                    await JS.InvokeVoidAsync("hideBootstrapModal", "#addRoomModal");
+                    await JS.InvokeVoidAsync("hideBootstrapModal", "#addRoomModal");
                     await GetRoomList();
                 }
             }
             catch (Exception ex) { Console.WriteLine(ex); }
         }
-
-        //  paganition 
+        //  paganition 
         private IEnumerable<RoomModel> PaginatedRooms() =>
             filteredRooms.Skip((currentPage - 1) * pageSize).Take(pageSize);
-
-        private void NextPage() { if (CanGoNext) currentPage++; }
+        private void NextPage() { if (CanGoNext) currentPage++; }
         private void PreviousPage() { if (CanGoPrevious) currentPage--; }
-
-        // Tooggle Feature
+        // Tooggle Feature
         private async Task ToggleFeatureAsync(RoomModel room)
         {
             if (room.IsBusy) return;
@@ -177,14 +142,9 @@ namespace HotelManagementSystem_Web.Pages.Admin
             }
             catch { room.isFeatured = original; }
             finally { room.IsBusy = false; StateHasChanged(); }
-        }
-
-        // class for filter mapping
+        }        // class for filter mapping
         private class RoomFilter
-        {
-            public string? RoomNo { get; set; }
+        {            public string? RoomNo { get; set; }
             public Guid? RoomTypeId { get; set; }
             public bool? Status { get; set; }
-        }
-    }
-}
+        }    }}
