@@ -93,11 +93,11 @@ public class RoomRepository : IRoomRepository
         }
     }
 
-    public async Task<CustomEntityResult<UpdateRoomResponseDto>>UpdateRoom(Guid id, UpdateRoomRequestDto requestDto)
+    public async Task<CustomEntityResult<UpdateRoomResponseDto>>UpdateRoom(UpdateRoomRequestDto requestDto)
     {
         try
         {
-            var room = await _hotelDbContext.TblRooms.FirstOrDefaultAsync(x => x.RoomId == id);
+            var room = await _hotelDbContext.TblRooms.FirstOrDefaultAsync(x => x.RoomId == requestDto.RoomId);
             if (requestDto is null) return CustomEntityResult<UpdateRoomResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_NOTFOUND, "Room Not Found");
 
             if (!string.IsNullOrEmpty(requestDto.RoomNo)) room!.RoomNo = requestDto.RoomNo;
@@ -115,6 +115,7 @@ public class RoomRepository : IRoomRepository
             await _hotelDbContext.SaveChangesAsync();
             var responseDto = new UpdateRoomResponseDto()
             {
+                RoomId = room.RoomId,
                 RoomNo = room.RoomNo,
                 RoomStatus = room.RoomStatus,
                 RoomTypeId = room.RoomTypeId,

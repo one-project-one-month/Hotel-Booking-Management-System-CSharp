@@ -55,11 +55,14 @@ window.setColumnChartRoomType = function () {
     chart.render();
 
 }
-window.setLineChartSale = function () {
+window.setLineChartSale = function (monthlySale, month) {
+    console.log("MonthlySale:", monthlySale);
+    console.log("Month:", month);
+
     var options = {
         series: [{
             name: "Sale $",
-            data: [1000, 4500, 5600, 5100, 4700, 6200, 6900, 9100, 14800]
+            data: monthlySale,
         }],
         chart: {
             height: 280,
@@ -74,10 +77,9 @@ window.setLineChartSale = function () {
         stroke: {
             curve: 'straight'
         },
-
         grid: {
             row: {
-                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                colors: ['#f3f3f3', 'transparent'],
                 opacity: 0.5
             },
         },
@@ -87,13 +89,12 @@ window.setLineChartSale = function () {
             }
         },
         xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            categories: month,
         }
     };
 
     var chart = new ApexCharts(document.querySelector("#LineChartSale"), options);
     chart.render();
-
 }
 window.setPieChartSourcesBooking = function () {
     var options = {

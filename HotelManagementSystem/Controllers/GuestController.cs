@@ -29,7 +29,7 @@ namespace HotelManagementSystem.Controllers
 
         [HttpGet]
         [Route("GetGuestList")]
-        public async Task<IActionResult> GetGuestList()
+        public async Task<ActionResult<GetAllGuestListResponseModel>> GetGuestList()
         {
             try
             {
@@ -38,11 +38,12 @@ namespace HotelManagementSystem.Controllers
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, result.Result.RespDescription);
                 }
-                return Ok(result.Result);
+                return !result.IsError ? APIHelper.GenerateSuccessResponse(result.Result) : APIHelper.GenerateFailResponse(result.Result);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                var message = ex.Message;
+                return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
             }
         }
 

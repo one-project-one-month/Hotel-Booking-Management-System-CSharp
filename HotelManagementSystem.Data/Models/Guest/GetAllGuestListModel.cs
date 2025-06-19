@@ -15,6 +15,8 @@
         public string Name { get; set; } = null!;
 
         public string? Email { get; set; }
+
+        public string? Check_In_Out { get; set; }
     }
 
     public class GetAllGuestListResponseModel : BasedResponseModel

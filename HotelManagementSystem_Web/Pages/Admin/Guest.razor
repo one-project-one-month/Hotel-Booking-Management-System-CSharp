@@ -7,47 +7,169 @@
 
 <h3 class="text-center mb-4" style="color: #e60000;">Guests Management</h3>
 
-<!-- Search Boxes -->
-<div class="d-flex  mb-3 w-75 mx-15">
-    <input type="text" class="form-control" placeholder="Search by Name , Phone Number ....." @bind="Search"/>
-    <button class="btn btn-danger">Filter</button>
+<!-- Search box -->
+<div class="d-flex justify-content-center mb-4">
+    <form class="d-flex align-items-center w-75" @onsubmit="HandleFilter">
+        <!-- search + × -->
+        <div class="input-group flex-grow-1 me-2">
+            <input type="text"
+            class="form-control"
+            placeholder="Search by name, phone, email, or NRC…"
+            @bind="SearchTerm"
+            @bind:event="oninput" />
 
-</div> 
+            @if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                <button type="button"
+                class="btn btn-outline-secondary"
+                @onclick="ClearSearch">
+                    &times;
+                </button>
+            }
+        </div>
+
+        <!-- filter button -->
+        <button type="submit" class="btn btn-danger btn-sm">
+            Filter
+        </button>
+    </form>
+</div>
+
 
 <!-- Guest Table -->
-<table class="table table-bordered table-hover align-middle">
-    <thead class="table-danger">
+<table class="table table-bordered table-hover table-striped-custom align-middle">
+    <thead class="table-primary">
         <tr>
-            <td>UserId</td>
-            <td>Name</td>
-            <td>Email</td>
-            <td>Nrc</td>
-            <td>Name</td>
-            <td>Email</td>
-            <td>PhoneNo</td>
-            <td>CreatedAt</td>
+            <th class="d-none">GuestId</th>
+            <th>Name</th>
+            <th>Nrc</th>
+            <th class="d-none">Email</th>
+            <th>Phone&nbsp;No</th>
+            <th>IN‑OUT</th>
+            <th>Chect-Out</th>
+            <th class="d-none">UserId</th>
+            <th class="d-none">CreatedAt</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var guest in guestList)
+        @if (filterguestList.Count == 0 && guestList.Count == 0)
+        {
+            <tr><td colspan="8" class="text-center">Loading…</td></tr>
+        }
+
+        @foreach (var guest in filterguestList.Skip((currentPage - 1) * pageSize).Take(pageSize))
         {
             <tr>
-                <td>@guest.UserId</td>
-                <td>@guest.Name</td>
-                <td>@guest.Email</td>
-                <td>@guest.Nrc</td>
-                <td>@guest.Name</td>
-                <td>@guest.Email</td>
-                <td>@guest.PhoneNo</td>
-                <td>@guest.CreatedAt</td>
+                <td class="d-none">@guest.guestId</td>
+                <td>@guest.name</td>
+                <td>@guest.nrc</td>
+                <td class="d-none">@guest.email</td>
+                <td>@guest.phoneNo</td>
+                <td>
+                    @if (guest.check_In_Out == "In")
+                    {
+                        @guest.check_In_Out
+                    }
+                    else if (guest.check_In_Out == "Out")
+                    {
+                        <button class="btn btn-outline-danger btn-sm mt-auto"
+                        style="font-size:.75rem"
+                        @onclick="() => ShowInvoiceAsync(guest.guestId)">
+                            @guest.check_In_Out
+                        </button>
+                    }
+                    else
+                    {
+                        <span>Check‑In nor Check‑Out Yet</span>
+                    }
+                </td>
+                <td>
+                    @if(guest.check_In_Out == "Out")
+                    {
+                        <span>Good Stay</span>
+                    }
+                    else if(guest.check_In_Out == "In")
+                    {
+                        <button class="btn btn-outline-primary" 
+                        style="font-size: .75rem"
+                        @onclick="() => GoCheckOut(guest.guestId)">
+                            Check-Out
+                        </button>
+                    }
+                    else
+                    {
+                        <span>Not Chech-in Yet'</span>
+                    }
+                </td>
+                <td class="d-none">@(guest.userId?.ToString() ?? "N/A")</td>
+                <td class="d-none">@guest.createdAt</td>
             </tr>
         }
     </tbody>
 </table>
 
-@* <!-- Previous and Next Pages --> *@
-@* <div class="d-flex justify-content-between align-items-center mt-3"> *@
-@*     <button class="btn btn-light" @onclick="PreviousPage" disabled="@(!CanGoBack)">Previous</button> *@
-@*     <span>Page @currentPage of @totalPages</span> *@
-@*     <button class="btn btn-light" @onclick="NextPage" disabled="@(!CanGoForward)">Next</button> *@
-@* </div> *@
+<!-- Pagination Controls -->
+<div class="d-flex justify-content-center my-3">
+    <button class="btn btn-outline-danger btn-sm me-2" @onclick="PreviousPage"
+    disabled="@(!CanGoPrevious)">
+        Previous
+    </button>
+    <span>Page @currentPage of @totalPages</span>
+    <button class="btn btn-outline-danger btn-sm ms-2" @onclick="NextPage" disabled="@(!CanGoNext)">Next</button>
+</div>
+
+<!---- Invoice Card ---->
+@if (_selectedGuest is not null && _modalInvoice is not null)
+{
+    <div class="modal fade show d-block"
+         tabindex="-1"
+         style="background-color:rgba(0,0,0,.5);"
+         @onclick="CloseModal">
+
+        <div class="modal-dialog modal-dialog-centered modal-lg invoice-modal"
+        @onclick:stopPropagation>
+
+            <div class="modal-content shadow-lg">
+                <div class="modal-header ocean-gradient">
+                    <h5 class="modal-title">Invoice Detail</h5>
+                    <button type="button"
+                            class="btn-close btn-close-white"
+                            @onclick="CloseModal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <dl class="row mb-0 g-3">
+                        <dt class="col-4">Invoice&nbsp;Code</dt>
+                        <dd class="col-8">@_modalInvoice.InvoiceCode</dd>
+
+                        <dt class="col-4">Check‑In&nbsp;Time</dt>
+                        <dd class="col-8">@_modalInvoice.CheckInTime</dd>
+
+                        <dt class="col-4">Check‑Out&nbsp;Time</dt>
+                        <dd class="col-8">@_modalInvoice.CheckOutTime</dd>
+
+                        <dt class="col-4">Base&nbsp;Amount</dt>
+                        <dd class="col-8">
+                            @(_modalInvoice.TotalAmount - _modalInvoice.ExtraCharges)
+                        </dd>
+
+                        <dt class="col-4">Extra&nbsp;Charges</dt>
+                        <dd class="col-8">@_modalInvoice.ExtraCharges</dd>
+
+                        <dt class="col-4">Deposit</dt>
+                        <dd class="col-8">@_modalInvoice.Deposite</dd>
+
+                        <dt class="col-4 fw-bold">Total&nbsp;Amount</dt>
+                        <dd class="col-8 fw-bold">
+                            @(_modalInvoice.TotalAmount - _modalInvoice.Deposite)
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="modal-footer ocean-gradient">
+                    <button class="btn btn-light" @onclick="CloseModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

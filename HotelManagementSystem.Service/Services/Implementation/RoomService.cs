@@ -1,8 +1,6 @@
 using Azure;
 using HotelManagementSystem.Data.Models.Room;
-using HotelManagementSystem.Data.Models.RoomType;
 using HotelManagementSystem.Service.Services.Interface;
-using System.Security.AccessControl;
 
 namespace HotelManagementSystem.Service.Services.Implementation;
 
@@ -100,19 +98,20 @@ public class RoomService : IRoomService
             return CustomEntityResult<CreateRoomResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + (ex.InnerException?.Message ?? ""));
         }
     }
-    public async Task<CustomEntityResult<UpdateRoomResponseModel>> UpdateRoom(Guid id,UpdateRoomRequestModel requestModel)
+    public async Task<CustomEntityResult<UpdateRoomResponseModel>> UpdateRoom(UpdateRoomRequestModel requestModel)
     {
         try
         {
             var updateRequestDto = new UpdateRoomRequestDto()
             {
+                RoomId = requestModel.RoomId,
                 RoomNo = requestModel.RoomNo,
                 RoomStatus = requestModel.RoomStatus,
                 RoomTypeId = requestModel.RoomTypeId,
                 GuestLimit = requestModel.GuestLimit,
                 IsFeatured = requestModel.IsFeatured,
             };
-            var result = await _roomRepository.UpdateRoom(id, updateRequestDto);
+            var result = await _roomRepository.UpdateRoom(updateRequestDto);
             if (result.IsError)
             {
                 return CustomEntityResult<UpdateRoomResponseModel>.GenerateFailEntityResult(result.Result.RespCode, result.Result.RespDescription);
@@ -120,6 +119,7 @@ public class RoomService : IRoomService
 
             var response = new UpdateRoomResponseModel()
             {
+                RoomId = result.Result.RoomId,
                 RoomNo = result.Result.RoomNo,
                 RoomStatus = result.Result.RoomStatus,
                 RoomTypeId = result.Result.RoomTypeId,

@@ -435,9 +435,10 @@ public class UserRepository : IUserRepository
                     Gender = u.Gender,
                     Address = u.Address,
                     DateOfBirth = u.DateOfBirth,
+                    Image = u.TblUserProfileImage.ProfileImg,
+                    imageMimeType = u.TblUserProfileImage.ProfileImgMimeType,
                     CreatedAt = u.CreatedAt
                 }).ToListAsync();
-
             var response = new GetAllUserInforResponseDto
             {
                 Users = userList

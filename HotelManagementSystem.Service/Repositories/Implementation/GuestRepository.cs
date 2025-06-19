@@ -40,33 +40,41 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
         {
             try
             {
-                var guestList = await _context.TblGuests.ToListAsync();
-                if (guestList == null || !guestList.Any())
+                var guests = await _context.TblGuests                     
+                    .AsNoTracking()
+                    .Select(g => new GetAllGuestListDto                   
+                    {
+                        GuestId = g.GuestId,
+                        UserId = g.UserId,
+                        Name = g.Name,
+                        Nrc = g.Nrc,
+                        PhoneNo = g.PhoneNo,
+                        Email = g.Email,
+                        CreatedAt = g.CreatedAt,
+                        Check_In_Out = g.CheckInOuts
+                                       .OrderByDescending(c => c.CheckInOutId)
+                                       .Select(c => c.Status)
+                                       .FirstOrDefault()
+                    })
+                    .ToListAsync();
+
+                if (!guests.Any())
                 {
                     return CustomEntityResult<GetAllGuestListResponseDto>.GenerateFailEntityResult(
-                        ResponseMessageConstants.RESPONSE_CODE_NOTFOUND,
-                        "No bookings found");
+                            ResponseMessageConstants.RESPONSE_CODE_NOTFOUND,
+                            "No guests found");
                 }
 
-                var guests = new GetAllGuestListResponseDto
-                {
-                    Guests = guestList.Select(b => new GetAllGuestListDto
-                    {
-                        UserId = b.UserId,
-                        GuestId = b.GuestId,
-                        Name = b.Name,
-                        Nrc = b.Nrc,
-                        PhoneNo = b.PhoneNo,
-                        Email = b.Email,
-                        CreatedAt = b.CreatedAt,
-                    }).ToList()
-                };
+                var response = new GetAllGuestListResponseDto { Guests = guests };
 
-                return CustomEntityResult<GetAllGuestListResponseDto>.GenerateSuccessEntityResult(guests);
+                return CustomEntityResult<GetAllGuestListResponseDto>
+                       .GenerateSuccessEntityResult(response);
             }
             catch (Exception ex)
             {
-                return CustomEntityResult<GetAllGuestListResponseDto>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message);
+                return CustomEntityResult<GetAllGuestListResponseDto>
+                       .GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                                                  ex.Message);
             }
         }
 

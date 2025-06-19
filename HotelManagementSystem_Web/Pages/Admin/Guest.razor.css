@@ -1,0 +1,25 @@
+﻿.invoice-modal .modal-content {
+    background-color: #88d8c0; 
+    color: #0d3b66; 
+}
+
+.invoice-modal .ocean-gradient {
+    background: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%);
+    color: #fff !important;
+}
+
+.invoice-modal .btn-close-white {
+    filter: invert(1);
+}
+
+.table-striped-custom tbody tr:nth-of-type(odd) {
+    background-color: paleturquoise;
+}
+
+.table-striped-custom tbody tr:nth-of-type(even) {
+    background-color: whitesmoke;
+}
+
+.table-striped-custom tbody tr:hover {
+    background-color: #d1ecf1;
+}

@@ -5,7 +5,7 @@
         public static bool IsValidImage(this string base64String)
         {
             var data = base64String.Substring(0, 5);
-            return data == "IVBOR" || data == "/9J/";
+            return data == "IVBOR" || data == "/9j/4";
         }
 
         public static PasswordValidationModel IsValidPassword(this string password)

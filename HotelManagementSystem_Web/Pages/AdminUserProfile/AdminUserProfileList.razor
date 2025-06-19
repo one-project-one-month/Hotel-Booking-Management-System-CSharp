@@ -1,0 +1,148 @@
+﻿@page "/userprofile/admin-profile-list"
+@using HotelManagementSystem_Web.Layout.AdminLayout
+@using HotelManagementSystem_Web.Models
+@layout AdminLayout
+@inject IJSRuntime JSRuntime
+@inject HttpClient httpClient
+@inject NavigationManager nav
+
+
+<h2 class="text-center text-danger mb-3">User Management</h2>
+
+<!-- search bar -->
+<div class="d-flex justify-content-center mb-4">
+    <div class="input-group w-50">
+        <input type="text"
+               class="form-control"
+               placeholder="Search by name or email…"
+               @bind="SearchTerm"
+               @bind:event="oninput" />
+
+        @if (!string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            <button class="btn btn-outline-secondary"
+                    type="button"
+                    @onclick="ClearSearch">
+                &times;
+            </button>
+        }
+    </div>
+</div>
+
+<!-- card grid -->
+@if (FilteredUsers.Count == 0)
+{
+    <p class="text-center text-muted">No users found.</p>
+}
+else
+{
+    <div class="user-grid-scroll">
+
+        <div class="container-fluid px-4">
+            <div class="row g-4">
+        @foreach (var user in PaginatedUsers)
+        {
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-5th">
+                        <div class="card h-100 shadow-sm">
+                            <img class="card-img-top object-fit-cover"
+                         style="height:160px"
+                         src="@GetImageSrc(user)"
+                         alt="@user.UserName" />
+
+                        <div class="card-body d-flex flex-column p-2 text-center">
+                        <h6 class="card-title mb-1" style="font-size: 0.9rem;">@user.UserName</h6>
+                        <p class="card-text text-muted small mb-2" style="font-size: 0.75rem;">
+                            @user.Email
+                        </p>
+
+                        <button class="btn btn-outline-danger btn-sm mt-auto"
+                                style="font-size:.75rem"
+                                @onclick="() => selectedUser = user">
+                            View Detail
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+   
+
+    <!-- pagination -->
+        <ul class="pagination justify-content-center mt-4">
+            <li class="page-item @(CanPrevious ? null : "disabled")">
+                <button class="page-link" @onclick="PreviousPage">«</button>
+            </li>
+
+            @for (var p = 1; p <= TotalPages; p++)
+            {
+                <li class="page-item @(p == CurrentPage ? "active" : null)">
+                    <button class="page-link" @onclick="() => GoToPage(p)">@p</button>
+                </li>
+            }
+
+            <li class="page-item @(CanNext ? null : "disabled")">
+                <button class="page-link" @onclick="NextPage">»</button>
+            </li>
+        </ul>
+        </div>
+    </div>
+}
+
+<!-- MODAL (place once, after the grid) -->
+@if (selectedUser is not null)
+{
+    <div class="modal fade show d-block" id="detailModal" tabindex="-1"
+         style="background-color:rgba(0,0,0,.5);" @onclick="CloseModal">
+        <div class="modal-dialog modal-dialog-centered modal-lg"
+        @onclick:stopPropagation>
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">User Detail</h5>
+                    <button type="button" class="btn-close btn-close-white"
+                            @onclick="CloseModal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- photo -->
+                        <div class="col-12 col-md-4 text-center">
+                            <img class="rounded shadow-sm"
+                                 src="@GetImageSrc(selectedUser)"
+                                 style="width:150px;height:200px;object-fit:cover;" />
+                        </div>
+
+                        <!-- info list -->
+                        <div class="col-12 col-md-8">
+                            <dl class="row mb-0">
+                                <dt class="col-4">Username</dt>
+                                <dd class="col-8">@selectedUser.UserName</dd>
+
+                                <dt class="col-4">Email</dt>
+                                <dd class="col-8">@selectedUser.Email</dd>
+
+                                <dt class="col-4">Role</dt>
+                                <dd class="col-8">@selectedUser.RoleName</dd>
+
+                                <dt class="col-4">Gender</dt>
+                                <dd class="col-8">@((selectedUser.Gender ?? "-"))</dd>
+
+                                <dt class="col-4">Address</dt>
+                                <dd class="col-8">@((selectedUser.Address ?? "-"))</dd>
+
+                                <dt class="col-4">Date of Birth</dt>
+                                <dd class="col-8">@((selectedUser.DateOfBirth?.ToString("dd-MM-yyyy") ?? "-"))</dd>
+
+                                <dt class="col-4">Created At</dt>
+                                <dd class="col-8">@((selectedUser.CreatedAt?.ToString("dd-MM-yyyy HH:mm") ?? "-"))</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-danger" @onclick="CloseModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -17,6 +17,7 @@ namespace HotelManagementSystem.Data.Models.Room
 
     public class UpdateRoomRequestModel : BasedRequestModel
     {
+        public Guid RoomId { get; set; }
         public string? RoomNo { get; set; }
         public string? RoomStatus { get; set; }
         public int? GuestLimit { get; set; }
@@ -27,6 +28,7 @@ namespace HotelManagementSystem.Data.Models.Room
 
     public class UpdateRoomResponseModel : BasedResponseModel
     {
+        public Guid RoomId { get; set; }
         public string? RoomNo { get; set; }
         public string? RoomStatus { get; set; }
         public int? GuestLimit { get; set; }

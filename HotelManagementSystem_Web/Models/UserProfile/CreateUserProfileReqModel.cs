@@ -1,15 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace HotelManagementSystem.Data.Models.User
+﻿namespace HotelManagementSystem_Web.Models.UserProfile
 {
-    public class CreateUserProfileModel
-    {
-    }
-    public class  CreateUserResponseModel : BasedResponseModel
-    {
-        
-    }
-    public class CreateUserProfileByAdminRequestModel
+    public class CreateUserProfileReqModel
     {
         public string? UserName { get; set; }
         public string Email { get; set; } = null!;

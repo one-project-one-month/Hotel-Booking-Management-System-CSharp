@@ -7,8 +7,10 @@ using Microsoft.JSInterop;
 
 namespace HotelManagementSystem_Web.Pages.Admin
 {
+
     public partial class RoomType
     {
+        private bool _isSubmitting = false;
         private bool isLoading = false;
         List<RoomTypeModel> RoomTypeLst = new List<RoomTypeModel>();
         RoomTypeModel _model = new RoomTypeModel();
@@ -29,13 +31,13 @@ namespace HotelManagementSystem_Web.Pages.Admin
                 if (resModel.respCode == "200")
                 {
                     RoomTypeLst = resModel.RoomTypeList;
-                    
                 }
             }
         }
 
         public async Task HandleRoomTypeForm()
         {
+            _isSubmitting = true;
             try
             {
                 var res = await _httpClient.PostAsJsonAsync("admin/createroomtype", _model);
@@ -49,8 +51,10 @@ namespace HotelManagementSystem_Web.Pages.Admin
                         _model = new RoomTypeModel(); // Optional: reset form
 
                         // Close the modal
+                        _isSubmitting = false;
                         await JS.InvokeVoidAsync("hideBootstrapModal", "#addRoomTypeModal");
                        await RoomTypeList();
+                        
                        StateHasChanged();
                     }
                 }
@@ -92,13 +96,29 @@ namespace HotelManagementSystem_Web.Pages.Admin
         {
             _appliedFilterText = string.Empty;
             _roomTypeFilterText.RoomTypeName = string.Empty;
+            CurrentPage = 1;
         }
 
+        private const int PageSize = 10;
+        private int CurrentPage = 1;
 
         private IEnumerable<RoomTypeModel> FilteredRoomTypes =>
             string.IsNullOrWhiteSpace(_roomTypeFilterText.RoomTypeName)
-                ? _roomTypesList
-                : _roomTypesList.Where(r =>
+                ? RoomTypeLst
+                : RoomTypeLst.Where(r =>
                     r.RoomTypeName.Contains(_roomTypeFilterText.RoomTypeName, StringComparison.OrdinalIgnoreCase));
+
+        private int TotalPages => (int)Math.Ceiling((double)FilteredRoomTypes.Count() / PageSize);
+        private bool CanPrevious => CurrentPage > 1;
+        private bool CanNext => CurrentPage < TotalPages;
+
+        private IEnumerable<RoomTypeModel> PaginatedRoomTypes =>
+            FilteredRoomTypes
+                .Skip((CurrentPage - 1) * PageSize)
+                .Take(PageSize);
+
+        private void GoToPage(int p) => CurrentPage = p;
+        private void NextPage() => CurrentPage = CanNext ? CurrentPage + 1 : CurrentPage;
+        private void PreviousPage() => CurrentPage = CanPrevious ? CurrentPage - 1 : CurrentPage;
     }
 }

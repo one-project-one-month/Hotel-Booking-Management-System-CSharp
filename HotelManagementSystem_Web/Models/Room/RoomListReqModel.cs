@@ -1,4 +1,5 @@
 ﻿using HotelManagementSystem_Web.Models.Room.RoomTypeReqModel;
+using Newtonsoft.Json;
 
 namespace HotelManagementSystem_Web.Models.Room;
 

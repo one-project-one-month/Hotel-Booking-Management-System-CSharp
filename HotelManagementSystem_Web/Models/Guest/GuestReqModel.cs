@@ -5,20 +5,21 @@ using System.Threading.Tasks;
 
 namespace HotelManagementSystem_Web.Models.Guest
 {
-    public class GuestReqModel
+    public class GuestReqModel 
     {
-        public Guid GuestId { get; set; }
+        public Guid guestId { get; set; }
 
-        public Guid? UserId { get; set; }
+        public Guid? userId { get; set; } = Guid.Empty;
 
-        public string Nrc { get; set; } = null!;
+        public string nrc { get; set; } = null!;
 
-        public string PhoneNo { get; set; } = null!;
+        public string phoneNo { get; set; } = null!;
 
-        public DateTime? CreatedAt { get; set; }
+        public DateTime? createdAt { get; set; }
 
-        public string Name { get; set; } = null!;
+        public string name { get; set; } = null!;
 
-        public string? Email { get; set; }
+        public string? email { get; set; }
+        public string? check_In_Out { get; set; }
     }
 }

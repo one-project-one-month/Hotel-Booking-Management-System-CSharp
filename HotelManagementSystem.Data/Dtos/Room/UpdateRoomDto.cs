@@ -18,6 +18,7 @@ namespace HotelManagementSystem.Data.Dtos.Room
 
     public class UpdateRoomRequestDto : BasedRequestModel
     {
+        public Guid RoomId { get; set; }
         public string? RoomNo { get; set; }
         public string? RoomStatus { get; set; }
         public int? GuestLimit { get; set; }
@@ -28,6 +29,7 @@ namespace HotelManagementSystem.Data.Dtos.Room
 
     public class UpdateRoomResponseDto : BasedResponseModel
     {
+        public Guid RoomId { get; set; }
         public string? RoomNo { get; set; }
         public string? RoomStatus { get; set; }
         public int? GuestLimit { get; set; }
