@@ -198,30 +198,10 @@ public partial class Booking
     }
 
     
-    private async Task ApplyReserve(BookingModel booking)
+    private async Task ApplyReserve(Guid? userId)
     {
-        if (booking.UserId == null)
-        {
-            Console.WriteLine("Reservation not allowed. UserId is null.");
-            return;
-        }
-
-        _model = new BookingReqModel
-        {
-            UserId = booking.UserId,
-            Name = booking.GuestName,
-            Nrc = booking.GuestNrc,
-            PhoneNo = booking.GuestPhoneNo,
-            GuestCount = booking.GuestCount,
-            CheckInTime = booking.CheckInTime,
-            CheckOutTime = booking.CheckOutTime,
-            DepositAmount = booking.DepositAmount,
-            TotalAmount = booking.TotalAmount,
-            BookingStatus = booking.BookingStatus,
-            PaymentType = booking.PaymentType,
-            Rooms = new List<Guid>() 
-        };
-
+        _model = new BookingReqModel();
+        _model.UserId = userId;
         await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
     }
     public async Task ApplyEdit(BookingModel booking)
