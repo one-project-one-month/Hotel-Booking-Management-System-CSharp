@@ -9,10 +9,16 @@
 @inject HttpClient _httpClient;
 @inject SearchRoomState _state;
 
+
 @code {
+
+
     protected override void OnInitialized()
     {
+
         _state.OnChange += StateHasChanged;
+
+
     }
 
     public void Dispose()
@@ -32,7 +38,7 @@
                 @foreach (var room in _state.SharedStateResponseModel.SearchedRoomList)
                 {
                     <div class="col-2 mb-4">
-                        <NavLink class="nav-link " href="/user/room-detail" style="text-decoration: none; color: black; ">
+                        <NavLink class="nav-link " href="@($"/user/room-detail/{room.RoomId}")" style="text-decoration: none; color: black; ">
                             <div class="card shadow-sm"
                                  style="width: 100%; border-radius: 20px; height: 190px; overflow: hidden;">
                                 <div class="position-relative w-100 h-100">

@@ -2,6 +2,7 @@
 {
     public class RoomTypeNameModel
     {
+        public Guid RoomId { get; set; }
         public Guid? RoomTypeId { get; set; }
         public string RoomTypeName { get; set; } = null!;
         public string Description { get; set; } = null!;
