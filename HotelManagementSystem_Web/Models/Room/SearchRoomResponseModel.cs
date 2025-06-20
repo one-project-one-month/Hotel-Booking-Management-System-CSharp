@@ -7,6 +7,7 @@ namespace HotelManagementSystem_Web.Models.Room
 
         public class Rooms
         {
+            public Guid RoomId { get; set; }
             public Guid RoomTypeId { get; set; }
             public string? RoomTypeName { get; set; }
             public decimal? Price { get; set; }

@@ -24,6 +24,7 @@ namespace HotelManagementSystem.Data.Dtos.SearchRoom
 
     public class RoomSearchDto: BasedResponseModel
     {
+        public Guid RoomId { get; set; }
         public Guid RoomTypeId { get; set; }
         public string? RoomTypeName { get; set; }
         public decimal? Price { get; set; }
@@ -37,6 +38,7 @@ namespace HotelManagementSystem.Data.Dtos.SearchRoom
 
     public class RoomQueryResult
     {
+        public Guid RoomId { get; set; }
         public Guid RoomTypeId { get; set; }
         public string? RoomTypeName { get; set; }
         public decimal? Price { get; set; }

@@ -6,7 +6,9 @@ namespace HotelManagementSystem_Web.Models.Room
     {
         public SearchRoomRequestModel SharedStateRequestModel { get; set; } = new();
 
+
         public SearchRoomResponse SharedStateResponseModel { get; set; } = new();
+
 
         public event Action? OnChange;
 

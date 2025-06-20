@@ -36,6 +36,7 @@ namespace HotelManagementSystem.Service.Services.Implementation
 
                 var roomDtos = result.Result.Rooms.Select(r => new RoomModel
                 {
+                    RoomId = r.RoomId,
                     RoomTypeId = r.RoomTypeId,
                     RoomTypeName = r.RoomTypeName,
                     Price = r.Price,

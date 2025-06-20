@@ -30,7 +30,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
                 IDbConnection connection = new SqlConnection(connectionString);
 
                 connection.Open();
-                var query = @"SELECT rt.RoomType_Id AS RoomTypeId, r.Room_No AS RoomNumber, rt.RoomType_Name AS RoomTypeName, rt.Description, rt.Price, rim.RoomImg AS ImgUrl, rim.RoomImgMimeType AS RoomImgMimeType , r.Guest_Limit AS GuestLimit
+                var query = @"SELECT rt.RoomType_Id AS RoomTypeId, r.Room_No AS RoomNumber, r.Room_Id AS RoomId, rt.RoomType_Name AS RoomTypeName, rt.Description, rt.Price, rim.RoomImg AS ImgUrl, rim.RoomImgMimeType AS RoomImgMimeType , r.Guest_Limit AS GuestLimit
 
                             FROM Tbl_Rooms r 
                             LEFT JOIN Tbl_RoomType rt ON r.RoomType_Id = rt.RoomType_Id
@@ -66,6 +66,7 @@ namespace HotelManagementSystem.Service.Repositories.Implementation
 
                 var roomDtos = roomList.Select(r => new RoomSearchDto
                 {
+                    RoomId = r.RoomId,
                     RoomTypeId = r.RoomTypeId,
                     RoomTypeName = r.RoomTypeName,
                     Price = r.Price,
