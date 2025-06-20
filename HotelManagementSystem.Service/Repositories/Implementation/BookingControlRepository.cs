@@ -35,7 +35,10 @@ public class BookingControlRepository : IBookingControlRepository
             GuestName = b.Guest!.Name,
             GuestNrc = b.Guest!.Nrc,
             GuestPhoneNo = b.Guest!.PhoneNo,
-
+            RoomIds = b.TblRoomBookings
+            .Where(ri => ri.Room != null)
+            .Select(ri => ri.Room.RoomId)
+            .ToList(),
             RoomNo = b.TblRoomBookings
                       .Where(rb => rb.Room != null)
                       .Select(rb => rb.Room.RoomNo)          

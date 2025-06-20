@@ -41,7 +41,8 @@ public class BookingControlService : IBookingControlService
                 GuestPhoneNo = b.GuestPhoneNo,
                 UserName = b.UserName,
                 GuestName = b.GuestName,
-                RoomNo = b.RoomNo
+                RoomNo = b.RoomNo,
+                RoomIds = b.RoomIds,
             }).ToList()
         };
 
