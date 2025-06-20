@@ -12,13 +12,19 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="d-flex gap-2">
-        <select class="form-select" @bind="selectedStatus">
-            <option value="">Select Booking Status</option>
+        <input class="form-control"
+               placeholder="Search name, NRC, or phone"
+               @bind="SearchTerm"
+               @bind:event="oninput" />   
+
+        <select class="form-select"
+                @bind="SelectedStatus">
+            <option value="">All Statuses</option>
+            <option value="Reserved">Reserved</option>
             <option value="Booked">Booked</option>
             <option value="Cancelled">Cancelled</option>
         </select>
-        <button class="btn btn-danger" @onclick="ApplyFilter">Filter</button>
-    </div>
+</div>
     <div class="d-flex gap-2">
         <button class="btn btn-danger" @onclick="ToggleActionColumn">
             <i class="bi bi-pencil"></i> Edit
@@ -30,27 +36,28 @@
 <!-- Booking Table -->
 <table class="table table-bordered align-middle" style="background-color: #fff0f0;">
     <thead style="background-color: #ffe6e6;">
-    <tr>
-        <th class="ps-2">Name</th>
-        <th class="ps-2">NRC</th>
-        <th class="ps-2">Phone No</th>
-        <th class="ps-2">Guest Count</th>
-        <th class="ps-2">Check In</th>
-        <th class="ps-2">Check Out</th>
-        <th class="ps-2">Deposit Amount</th>
-        <th class="ps-2">Booking Status</th>
-        <th class="ps-2">Total Amount</th>
-        <th class="ps-2">Payment Type</th>
-        @if (showActionColumn)
-        {
-            <th class="text-center">Actions</th>
-        }
-    </tr>
+        <tr>
+            <th class="ps-2">Name</th>
+            <th class="ps-2">NRC</th>
+            <th class="ps-2">Phone No</th>
+            <th class="ps-1 text-center">Guest Count</th>
+            <th class="ps-2">Room No</th>
+            <th class="ps-2">Check In</th>
+            <th class="ps-3">Check Out</th>
+            <th class="ps-2">Deposit Amount</th>
+            <th class="ps-2">Booking Status</th>
+            <th class="ps-2">Total Amount</th>
+            <th class="ps-2">Payment Type</th>
+            @if (showActionColumn)
+            {
+                <th class="text-center">Actions</th>
+            }
+        </tr>
     </thead>
     <tbody style="background-color: white;">
-    @foreach (var booking in filteredBookings.Skip((currentPage - 1) * pageSize).Take(pageSize))
-    {
-        <tr>
+        @foreach (var booking in filteredBookings.Skip((currentPage - 1) * pageSize).Take(pageSize))
+        {
+            <tr>
                 <td class="ps-2">
                     @if (booking.GuestName is not null)
                     {
@@ -62,9 +69,38 @@
                     }
                 </td>
 
-            <td class="ps-2">@booking.GuestNrc</td>
-            <td class="ps-2">@booking.GuestPhoneNo</td>
-            <td class="ps-2">@booking.GuestCount</td>
+                <td class="ps-2">@booking.GuestNrc</td>
+                <td class="ps-2">@booking.GuestPhoneNo</td>
+                <td class="ps-1 text-center">@booking.GuestCount</td>
+                <td class="ps-3">
+                    <div class="dropdown">
+                        <button class="btn btn-link p-0 dropdown-toggle"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            @($"{booking.RoomNo.Count} room(s)")
+                        </button>
+                        <ul class="dropdown-menu">
+                            @if (booking.RoomNo is not null && booking.RoomIds is not null)
+                            {
+                                var count = Math.Min(booking.RoomNo.Count, booking.RoomIds.Count);
+
+                                for (int i = 0; i < count; i++)
+                                {
+                                    <li>
+                                        <span class="dropdown-item-text"
+                                              value="@booking.RoomIds[i]">@booking.RoomNo[i]</span>
+                                    </li>
+                                }
+                            }
+                            else if (booking.RoomNo is not null)
+                            {
+                                @foreach (var roomNo in booking.RoomNo)
+                                {
+                                    <li><span class="dropdown-item-text">@roomNo</span></li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </td>
             <td class="ps-2">@booking.CheckInTime?.ToShortDateString()</td>
             <td class="ps-2">@booking.CheckOutTime?.ToShortDateString()</td>
             <td class="ps-2">@booking.DepositAmount</td>
@@ -74,9 +110,9 @@
             @if (showActionColumn)
             {
                 <td class="text-center">
-                    @if (booking.UserId != null)
+                    @if (booking.UserId != null && booking.BookingStatus == "Booked")
                     {
-                        <button class="btn btn-outline-info btn-sm py-1 me-2" @onclick="() => ApplyReserve(booking.UserId)">
+                            <button class="btn btn-outline-info btn-sm py-1 me-2" @onclick="() => ApplyReserve(booking)">
                             Reserve
                         </button>
 
@@ -176,8 +212,13 @@
                             <ul class="list-group" style="max-height:220px; overflow:auto;">
                                 @foreach (var r in SelectedRoomModels)
                                 {
-                                    <li class="list-group-item list-group-item-action active"
-                                        @onclick="@(() => RemoveRoom(r.roomId))">
+                                    var canRemove = IsRemovable(r.roomId);
+
+                                    <li class="list-group-item
+                                        @(canRemove ? "list-group-item-action active"
+                                        : "list-group-item-secondary")"
+                                        style="@(canRemove ? "" : "cursor:not-allowed;")"
+                                        @onclick="@(canRemove ? (() => RemoveRoom(r.roomId)) : null)">
                                         @r.roomNo
                                     </li>
                                 }
@@ -228,8 +269,26 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger">Create</button>
-                    <button type="submit" class="btn-danger" @onclick="() => Edit()">Edit</button>
+                    @if (_modalMode == ModalMode.Add)
+                    {
+                        <button type="submit" class="btn btn-danger">Create</button>
+                    }
+                    else if (_modalMode == ModalMode.Edit)
+                    {
+                        <button type="button"
+                                class="btn btn-primary"
+                                @onclick="Edit">
+                            Edit
+                        </button>
+                    }
+                    else if (_modalMode == ModalMode.Reserve)
+                    {
+                        <button type="button"
+                                class="btn btn-success"
+                                @onclick="Edit">
+                            Reserve
+                        </button>
+                    }
                 </div>
 
             </EditForm>

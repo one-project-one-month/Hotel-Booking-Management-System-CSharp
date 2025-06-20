@@ -7,7 +7,7 @@ public class BookingModel
     public string GuestNrc { get; set; } = null!;
 
     public string GuestPhoneNo { get; set; } = null!;
-    
+    public List<Guid> RoomIds { get; set; } = new();
     public List<string> RoomNo { get; set; } = new();
     public int? GuestCount { get; set; }
     public DateOnly? CheckInTime { get; set; }
