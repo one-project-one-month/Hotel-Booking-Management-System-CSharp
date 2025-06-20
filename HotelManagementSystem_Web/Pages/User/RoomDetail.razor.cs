@@ -4,4 +4,6 @@ namespace HotelManagementSystem_Web.Pages.User;
 
 public partial class RoomDetail : ComponentBase
 {
+    [Parameter]
+    public Guid RoomId { get; set; }
 }
