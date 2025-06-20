@@ -29,16 +29,11 @@ public class BookingsControlController : ControllerBase
     }
 
     [HttpPatch]
-    [Route("/admin/UpdateBooking/{BookingId}")]
-    public async Task<ActionResult<UpdateBookingResponseModel>> UpdateBooking(Guid BookingId, [FromBody] UpdateBookingRequestModel requestModel)
+    [Route("/admin/UpdateBooking")]
+    public async Task<ActionResult<UpdateBookingResponseModel>> UpdateBooking([FromBody] UpdateBookingRequestModel requestModel)
     {
         try
         {
-            if (BookingId != requestModel.BookingId)
-            {
-                return BadRequest("Booking ID in URL does not match body.");
-            }
-
             var result = await _bookingControlService.UpdateBooking(requestModel);
             return !result.IsError
                 ? APIHelper.GenerateSuccessResponse(result.Result)
