@@ -81,7 +81,6 @@ public partial class Booking
             {
                 _model = new BookingReqModel();
                 SelectedTypeId = null;
-                await GetBookingList();
                 await JS.InvokeVoidAsync("hideBootstrapModal", "#bookingModal");
                 StateHasChanged();
             }
@@ -108,30 +107,6 @@ public partial class Booking
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-        }
-    }
-
-    private async Task CreateBooking()
-    {
-        var res = await _httpClient.PostAsJsonAsync("admin/CreateBooking", _model);
-        if (res.IsSuccessStatusCode)
-        {
-            var jsonRes = await res.Content.ReadAsStringAsync();
-            var respModel = JsonConvert.DeserializeObject<BookingCreateResModel>(jsonRes);
-            if (respModel.respCode == "200")
-            {
-                await JS.InvokeVoidAsync("hideBootstrapModal", "#bookingModal");
-                Console.WriteLine("Booking created successfully");
-                await GetBookingList();
-                // ApplyFilter();     
-                _model = new BookingReqModel();
-        roomTypeNames = new List<string>();
-                StateHasChanged();
-            }
-            else
-            {
-                Console.WriteLine(jsonRes);
-            }
         }
     }
 
@@ -211,6 +186,7 @@ public partial class Booking
 
         _model = new BookingReqModel
         {
+            BookingId = booking.BookingId,
             UserId = booking.UserId,
             Name = booking.GuestName,
             Nrc = booking.GuestNrc,
@@ -222,12 +198,34 @@ public partial class Booking
             TotalAmount = booking.TotalAmount,
             BookingStatus = booking.BookingStatus,
             PaymentType = booking.PaymentType,
-            Rooms = new List<Guid>() 
+            Rooms = new List<Guid>()
         };
-        
-        await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
+        var res = await _httpClient.PostAsJsonAsync("/admin/UpdateBooking", _model);
+        var api = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseResponseModel>(await res.Content.ReadAsStringAsync());
+        if (api?.respCode != "200")
+        {
+            _model = new BookingReqModel();
+            await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
+            StateHasChanged();
+        }
     }
 
-    
-
+    public async Task Edit()
+    {
+        try
+        {
+            var res = await _httpClient.PostAsJsonAsync("/admin/UpdateBooking", _model);
+            var api = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseResponseModel>(await res.Content.ReadAsStringAsync());
+            if (api?.respCode != "200")
+            {
+                _model = new BookingReqModel();
+                await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 }

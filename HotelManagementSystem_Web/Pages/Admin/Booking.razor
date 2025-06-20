@@ -80,7 +80,7 @@
                             Reserve
                         </button>
 
-                        <button class="btn btn-outline-primary btn-sm" @onclick="() => ApplyEdit(booking)">
+                            <button class="btn btn-outline-primary btn-sm" @onclick="() =>  ApplyEdit(booking)">
                                 Edit
                         </button>
                     }
@@ -184,9 +184,6 @@
                             </ul>
                         </div>
 
-
-
-
                         <div class="col-md-6 mb-3">
                             <label class="form-label mb-1">Check In</label>
                             <input type="date" class="form-control" @bind="_model.CheckInTime"/>
@@ -201,6 +198,7 @@
                             <select class="form-control" @bind="_model.BookingStatus">
                                 <option value="">Choose Booking Status</option>
                                 <option value="Booked">Booked</option>
+                                <option valur="Reserved">Reserved</option>
                                 <option value="Cancelled">Cancelled</option>
                             </select>
                         </div>
@@ -231,7 +229,9 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-danger">Create</button>
+                    <button type="submit" class="btn-danger" @onclick="() => Edit()">Edit</button>
                 </div>
+
             </EditForm>
         </div>
     </div>
