@@ -17,7 +17,7 @@
             <option value="Booked">Booked</option>
             <option value="Cancelled">Cancelled</option>
         </select>
-        @* <button class="btn btn-danger" @onclick="ApplyFilter">Filter</button> *@
+        <button class="btn btn-danger" @onclick="ApplyFilter">Filter</button>
     </div>
     <div class="d-flex gap-2">
         <button class="btn btn-danger" @onclick="ToggleActionColumn">
@@ -51,7 +51,17 @@
     @foreach (var booking in filteredBookings.Skip((currentPage - 1) * pageSize).Take(pageSize))
     {
         <tr>
-            <td class="ps-2">@booking.GuestName</td>
+                <td class="ps-2">
+                    @if (booking.GuestName is not null)
+                    {
+                        @booking.GuestName;
+                    }
+                    else
+                    {
+                        @booking.UserName;
+                    }
+                </td>
+
             <td class="ps-2">@booking.GuestNrc</td>
             <td class="ps-2">@booking.GuestPhoneNo</td>
             <td class="ps-2">@booking.GuestCount</td>
@@ -64,15 +74,22 @@
             @if (showActionColumn)
             {
                 <td class="text-center">
-                    <button class="btn btn-outline-info btn-sm py-1 me-2">
-                        Reserve
-                    </button>
-                    <button class="btn btn-outline-primary btn-sm py-1 me-2">
-                        Edit
-                    </button>
-                    <button class="btn btn-outline-danger btn-sm py-1">
-                        Delete
-                    </button>
+                    @if (booking.UserId != null)
+                    {
+                        <button class="btn btn-outline-info btn-sm py-1 me-2" @onclick="() => ApplyReserve(booking.UserId)">
+                            Reserve
+                        </button>
+
+                            <button class="btn btn-outline-primary btn-sm" @onclick="() =>  ApplyEdit(booking)">
+                                Edit
+                        </button>
+                    }
+                        else
+                        {
+                            <button class="btn btn-outline-primary btn-sm" @onclick="() => ApplyEdit(booking)">
+                                Edit
+                            </button>
+                        }
                 </td>
             }
         </tr>
@@ -167,9 +184,6 @@
                             </ul>
                         </div>
 
-
-
-
                         <div class="col-md-6 mb-3">
                             <label class="form-label mb-1">Check In</label>
                             <input type="date" class="form-control" @bind="_model.CheckInTime"/>
@@ -184,6 +198,7 @@
                             <select class="form-control" @bind="_model.BookingStatus">
                                 <option value="">Choose Booking Status</option>
                                 <option value="Booked">Booked</option>
+                                <option valur="Reserved">Reserved</option>
                                 <option value="Cancelled">Cancelled</option>
                             </select>
                         </div>
@@ -214,8 +229,11 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-danger">Create</button>
+                    <button type="submit" class="btn-danger" @onclick="() => Edit()">Edit</button>
                 </div>
+
             </EditForm>
         </div>
     </div>
 </div>
+

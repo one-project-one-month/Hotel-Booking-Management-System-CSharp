@@ -7,6 +7,7 @@ namespace HotelManagementSystem_Web.Models.Booking
 {
     public class BookingReqModel
     {
+        public Guid BookingId { get; set; }
         public Guid? UserId { get; set; }
         public string Name { get; set; } = null!;
         public string Nrc { get; set; } = null!;

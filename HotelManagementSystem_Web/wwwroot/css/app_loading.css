@@ -8,14 +8,7 @@
     --airbnb-light: #F7F7F7;
 }
 
-html, body {
-margin: 0;
-padding: 0;
-background-color: var(--airbnb-light);
-overflow: hidden;
-font-family: 'Poppins', sans-serif;
-}
-
+/* Preloader Container */
 #hotel-loader {
     position: fixed;
     width: 100vw;
@@ -29,6 +22,7 @@ font-family: 'Poppins', sans-serif;
     transition: opacity 0.8s ease-out;
 }
 
+/* Lottie Animation */
 #hotel-animation {
     width: 100%;
     max-width: 400px;
@@ -36,6 +30,7 @@ font-family: 'Poppins', sans-serif;
     filter: drop-shadow(0 0 20px rgba(255, 90, 95, 0.3));
 }
 
+/* App Name Text */
 #app-name {
     color: var(--airbnb-red);
     font-size: 2.5rem;
@@ -43,8 +38,8 @@ font-family: 'Poppins', sans-serif;
     font-weight: 700;
     margin-top: 30px;
     opacity: 0;
-    transition: opacity 1.2s ease-in-out, transform 1.2s ease-out;
     transform: translateY(20px);
+    transition: opacity 1.2s ease-in-out, transform 1.2s ease-out;
     text-shadow: 0 0 15px rgba(255, 90, 95, 0.3);
     letter-spacing: 0.5px;
     text-align: center;
@@ -56,6 +51,7 @@ font-family: 'Poppins', sans-serif;
     transform: translateY(0);
 }
 
+/* Tagline */
 #app-tagline {
     color: var(--airbnb-gray);
     font-size: 1.1rem;
@@ -72,31 +68,13 @@ font-family: 'Poppins', sans-serif;
     opacity: 0.9;
 }
 
+/* Hide after load */
 .fade-out {
-opacity: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none;
 }
 
-#app {
-    opacity: 0;
-    transition: opacity 1s ease-in;
-}
-
-#app.visible {
-    opacity: 1;
-}
-
-#blazor-error-ui {
-    background-color: rgba(255, 90, 95, 0.9);
-    color: white;
-    padding: 1rem;
-    z-index: 10000;
-}
-
-#blazor-error-ui a {
-    color: white;
-    text-decoration: underline;
-}
-
+/* Loader progress bar */
 .loading-progress {
     position: relative;
     display: block;
@@ -115,6 +93,13 @@ opacity: 0 !important;
     animation: loading-progress 3s forwards ease-out;
 }
 
+@keyframes loading-progress {
+    0% { width: 0; }
+    50% { width: 70%; }
+    100% { width: 100%; }
+}
+
+/* Brand Slogan */
 .brand-mark {
     font-family: 'Cedarville Cursive', cursive;
     font-size: 1.2rem;
@@ -128,16 +113,29 @@ opacity: 0 !important;
     opacity: 0.8;
 }
 
-@keyframes loading-progress {
-    0% {
-        width: 0;
-    }
+/* App fade-in only controlled here */
+#hotel-loader ~ #app {
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
 
-    50% {
-        width: 70%;
-    }
+#hotel-loader.fade-out ~ #app {
+    opacity: 1;
+}
 
-    100% {
-        width: 100%;
-    }
+/*#hotel-loader #app.visible {
+    opacity: 1;
+}*/
+
+/* Error panel style */
+#blazor-error-ui {
+    background-color: rgba(255, 90, 95, 0.9);
+    color: white;
+    padding: 1rem;
+    z-index: 10000;
+}
+
+#blazor-error-ui a {
+    color: white;
+    text-decoration: underline;
 }

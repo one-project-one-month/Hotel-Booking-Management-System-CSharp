@@ -19,7 +19,7 @@ public partial class Booking
     private List<BookingReqModel> bookings = new();
     private List<BookingModel> filteredBookings = new();
     private List<BookingModel> bookingList = new();
-    private string selectedStatus = "";
+    private string selectedStatus = string.Empty;
     private int currentPage = 1;
     private int pageSize = 10;
 
@@ -81,7 +81,6 @@ public partial class Booking
             {
                 _model = new BookingReqModel();
                 SelectedTypeId = null;
-                await GetBookingList();
                 await JS.InvokeVoidAsync("hideBootstrapModal", "#bookingModal");
                 StateHasChanged();
             }
@@ -108,29 +107,6 @@ public partial class Booking
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-        }
-    }
-
-    private async Task CreateBooking()
-    {
-        var res = await _httpClient.PostAsJsonAsync("admin/CreateBooking", _model);
-        if (res.IsSuccessStatusCode)
-        {
-            var jsonRes = await res.Content.ReadAsStringAsync();
-            var respModel = JsonConvert.DeserializeObject<BookingCreateResModel>(jsonRes);
-            if (respModel.respCode == "200")
-            {
-                await JS.InvokeVoidAsync("hideBootstrapModal", "#bookingModal");
-                Console.WriteLine("Booking created successfully");
-                await GetBookingList();
-                _model = new BookingReqModel();
-        roomTypeNames = new List<string>();
-                StateHasChanged();
-            }
-            else
-            {
-                Console.WriteLine(jsonRes);
-            }
         }
     }
 
@@ -163,17 +139,17 @@ public partial class Booking
         }
     }
 
-    //private void ApplyFilter()
-    //{
-    //    filteredBookings = bookings
-    //        .Where(b =>
-    //            string.IsNullOrEmpty(selectedStatus) ||
-    //            b.BookingStatus?.Equals(selectedStatus, StringComparison.OrdinalIgnoreCase) == true
-    //        )
-    //        .ToList();
+    private void ApplyFilter()
+    {
+        filteredBookings = bookingList
+            .Where(b =>
+                string.IsNullOrWhiteSpace(selectedStatus) ||
+                string.Equals(b.BookingStatus, selectedStatus, StringComparison.OrdinalIgnoreCase)
+            )
+            .ToList();
 
-    //    currentPage = 1;
-    //}
+        currentPage = 1;
+    }
 
     private void ToggleActionColumn() => showActionColumn = !showActionColumn;
 
@@ -189,19 +165,67 @@ public partial class Booking
             currentPage++;
     }
 
-    private void OpenEditModal(BookingReqModel booking)
+    private async Task  OpenEditModal(BookingReqModel booking)
     {
         _model = booking;
+        
+        await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
     }
 
-    private async Task DeleteBooking(Guid? bookingId)
+    
+    private async Task ApplyReserve(Guid? userId)
     {
-        if (bookingId == null)
-            return;
+        _model = new BookingReqModel();
+        _model.UserId = userId;
+        await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
+    }
+    public async Task ApplyEdit(BookingModel booking)
+    {
+        var editingBookingId = booking.BookingId;
+        Console.WriteLine("Editing booking ID: " + editingBookingId);
 
-        var confirmed = await JS.InvokeAsync<bool>("confirm", "Are you sure to delete this booking?");
-        if (!confirmed) return;
+        _model = new BookingReqModel
+        {
+            BookingId = booking.BookingId,
+            UserId = booking.UserId,
+            Name = booking.GuestName,
+            Nrc = booking.GuestNrc,
+            PhoneNo = booking.GuestPhoneNo,
+            GuestCount = booking.GuestCount,
+            CheckInTime = booking.CheckInTime,
+            CheckOutTime = booking.CheckOutTime,
+            DepositAmount = booking.DepositAmount,
+            TotalAmount = booking.TotalAmount,
+            BookingStatus = booking.BookingStatus,
+            PaymentType = booking.PaymentType,
+            Rooms = new List<Guid>()
+        };
+        var res = await _httpClient.PostAsJsonAsync("/admin/UpdateBooking", _model);
+        var api = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseResponseModel>(await res.Content.ReadAsStringAsync());
+        if (api?.respCode != "200")
+        {
+            _model = new BookingReqModel();
+            await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
+            StateHasChanged();
+        }
+    }
 
-        var response = await _httpClient.DeleteAsync($"/Bookings/createbookingbyadmin/{bookingId}");
+    public async Task Edit()
+    {
+        try
+        {
+            var res = await _httpClient.PostAsJsonAsync("/admin/UpdateBooking", _model);
+            var api = Newtonsoft.Json.JsonConvert.DeserializeObject<BaseResponseModel>(await res.Content.ReadAsStringAsync());
+            if (api?.respCode != "200")
+            {
+                _model = new BookingReqModel();
+                await JS.InvokeVoidAsync("showBootstrapModal", "#bookingModal");
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 }
