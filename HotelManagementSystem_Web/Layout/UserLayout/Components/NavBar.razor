@@ -29,6 +29,8 @@
 @code {
     public async Task SearchRooms()
     {
+       
+
         var response = await _httpClient.PostAsJsonAsync("/api/SearchRoom/SearchRoom", _state.SharedStateRequestModel);
 
         Console.WriteLine("Outside Post ");
@@ -42,12 +44,14 @@
             foreach (var item in jsonify.SearchedRoomList)
             {
                 Console.WriteLine(item.RoomTypeName);
-              
+
             }
 
             _state.SharedStateResponseModel = jsonify!;
 
+
             _state.NotifyStateChanged();
+
         }
     }
 }
