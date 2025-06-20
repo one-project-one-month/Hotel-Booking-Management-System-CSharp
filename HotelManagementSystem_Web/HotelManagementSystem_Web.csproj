@@ -1,4 +1,4 @@
-﻿<!--<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -8,42 +8,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  
+	  <!-- Leave all of them please-->
+	  <!--<Compile Remove="wwwroot\Pages\Admin\AdminUserProfile.razor.cs" />   
+	  <Compile Remove="wwwroot\Pages\Admin\Booking.razor.cs" />
+	  <Compile Remove="wwwroot\Pages\Admin\Room.razor.cs" />
+
+	  <Content Include="Pages\Admin\AdminUserProfile.razor.cs" />
+	  <Content Include="Pages\Admin\Booking.razor.cs" />
+	  <Content Include="Pages\Admin\Room.razor.cs" />-->
+	  
 	  <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.16" />
 	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.5" />
 	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.16" />
 	  <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.5" PrivateAssets="all" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+
+	  <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-</Project>-->
-
-
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.16" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.5" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.16" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.5" PrivateAssets="all" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Models\BookingControl\" />
-	</ItemGroup>
 
 </Project>
+
