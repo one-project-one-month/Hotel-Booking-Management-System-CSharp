@@ -55,6 +55,7 @@ public static class ServiceInjectionFactory
         builder.Services.AddTransient<IGuestService, GuestService>();
         builder.Services.AddTransient<IFeatureRoomService, FeatureRoomService>();
         builder.Services.AddScoped<IInvoicePdfService, InvoicePdfService>();
+        builder.Services.AddHostedService<AutoCancelNoShowService>();
 
         //repository
         builder.Services.AddTransient<IUserRepository, UserRepository>();
