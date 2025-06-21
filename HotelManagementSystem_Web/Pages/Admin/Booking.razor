@@ -236,12 +236,23 @@
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label mb-1">Booking Status</label>
-                            <select class="form-control" @bind="_model.BookingStatus">
-                                <option value="">Choose Booking Status</option>
-                                <option value="Booked">Booked</option>
-                                <option valur="Reserved">Reserved</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
+
+                            @if (_modalMode == ModalMode.Reserve)         
+                            {
+                                <input class="form-control"
+                                       value="@_model.BookingStatus"
+                                       readonly />
+                            }
+                            else                                           
+                            {
+                                <select class="form-control"
+                                        @bind="_model.BookingStatus">
+                                    <option value="">Choose Booking Status</option>
+                                    <option value="Booked">Booked</option>
+                                    <option value="Reserved">Reserved</option>  
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                            }
                         </div>
 
                         <div class="col-md-6 mb-3">
