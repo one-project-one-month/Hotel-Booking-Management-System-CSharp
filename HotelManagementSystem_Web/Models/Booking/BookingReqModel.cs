@@ -28,4 +28,9 @@ namespace HotelManagementSystem_Web.Models.Booking
         public decimal? TotalAmount { get; set; }
         public string? PaymentType { get; set; }
     }
+
+    public class ReserveResponseModel : BaseResponseModel
+    {
+        public Guid GuestId { get; set; }
+    }
 }

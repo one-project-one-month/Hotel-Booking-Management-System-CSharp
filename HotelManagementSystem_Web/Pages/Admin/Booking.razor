@@ -152,7 +152,7 @@
                             ? "AddBooking"
                             : "EditBooking")
                     </h5>
-                    <button type="button" class="btn-close" aria-label="Close"></button>
+                    <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <ValidationSummary/>
@@ -285,7 +285,7 @@
                     {
                         <button type="button"
                                 class="btn btn-success"
-                                @onclick="Edit">
+                                @onclick="Reserve">
                             Reserve
                         </button>
                     }

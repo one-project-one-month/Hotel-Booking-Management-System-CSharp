@@ -262,6 +262,27 @@ public partial class Booking
         }
     }
 
+    public async Task Reserve()
+    {
+        try
+        {
+            var res = await _httpClient.PostAsJsonAsync("/admin/ReserveBooking", _model);
+            var api = Newtonsoft.Json.JsonConvert.DeserializeObject<ReserveResponseModel>(await res.Content.ReadAsStringAsync());
+            if (api?.respCode != "200")
+            {
+                Console.WriteLine(api.GuestId.ToString());
+                _model = new BookingReqModel();
+                await JS.InvokeVoidAsync("hideBootstrapModal", "#bookingModal");
+                _lockedRoomIds.Clear();
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
     private enum ModalMode { Add, Edit, Reserve }
     private ModalMode _modalMode = ModalMode.Add;
 
