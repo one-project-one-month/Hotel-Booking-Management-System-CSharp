@@ -1,4 +1,5 @@
 ﻿using HotelManagementSystem.Data.Models.BookingControl;
+using Sprache;
 
 namespace HotelManagementSystem.Controllers;
 
@@ -35,6 +36,24 @@ public class BookingsControlController : ControllerBase
         try
         {
             var result = await _bookingControlService.UpdateBooking(requestModel);
+            return !result.IsError
+                ? APIHelper.GenerateSuccessResponse(result.Result)
+                : APIHelper.GenerateFailResponse(result.Result);
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            return StatusCode(Convert.ToInt16(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR), ex.Message + ex.InnerException);
+        }
+    }
+
+    [HttpPost]
+    [Route("/admin/ReserveBooking")]
+    public async Task<ActionResult<ReserveBookingResponseModel>> ReserveBooking([FromBody] ReserveBookingRequestModel model)
+    {
+        try
+        {
+            var result = await _bookingControlService.ReserveBooking(model);
             return !result.IsError
                 ? APIHelper.GenerateSuccessResponse(result.Result)
                 : APIHelper.GenerateFailResponse(result.Result);

@@ -129,4 +129,41 @@ public class BookingControlService : IBookingControlService
             return CustomEntityResult<CreateBookingByAdminResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
         }
     }
+
+    public async Task<CustomEntityResult<ReserveBookingResponseModel>> ReserveBooking(ReserveBookingRequestModel model)
+    {
+        try
+        {
+            var reserveBookingRequest = new ReserveBookingRequestDto
+            {
+                BookingId = model.BookingId,
+                UserId = model.UserId,
+                Name = model.Name,
+                Rooms = model.Rooms,
+                GuestCount = model.GuestCount,
+                BookingStatus = model.BookingStatus,
+                CheckInTime = model.CheckInTime,
+                CheckOutTime = model.CheckOutTime,
+                DepositAmount = model.DepositAmount,
+                TotalAmount = model.TotalAmount,
+                PhoneNo = model.PhoneNo,
+                Nrc = model.Nrc,
+                PaymentType = model.PaymentType,
+            };
+            var reserveBooking = await _bookingControlRepository.ReserveBooking(reserveBookingRequest);
+            if (reserveBooking.IsError)
+            {
+                return CustomEntityResult<ReserveBookingResponseModel>.GenerateFailEntityResult(reserveBooking.Result.RespCode, reserveBooking.Result.RespDescription);
+            }
+            var reserveBookingResponse = new ReserveBookingResponseModel()
+            {
+                GuestId = reserveBooking.Result.GuestId,
+            };
+            return CustomEntityResult<ReserveBookingResponseModel>.GenerateSuccessEntityResult(reserveBookingResponse);
+        }
+        catch(Exception ex)
+        {
+            return CustomEntityResult<ReserveBookingResponseModel>.GenerateFailEntityResult(ResponseMessageConstants.RESPONSE_CODE_SERVERERROR, ex.Message + ex.InnerException);
+        }
+    }
 }

@@ -14,4 +14,5 @@ public interface IBookingControlRepository
     public Task<CustomEntityResult<UpdateBookingResponseDto>> UpdateBooking(UpdateBookingRequestDto requestBookingDto);
     public Task<CustomEntityResult<GetBookingsResponseDto>> DeleteBooking(DeleteBookingRequestDto Booking);
     public Task<CustomEntityResult<CreateBookingByAdminResponseDto>> CreateBookingByAdmin(CreateBookingByAdminRequestDto dto);
+    public Task<CustomEntityResult<ReserveBookingResponseDto>> ReserveBooking(ReserveBookingRequestDto dto);
 }

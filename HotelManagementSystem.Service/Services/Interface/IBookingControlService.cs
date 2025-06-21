@@ -15,4 +15,5 @@ public interface IBookingControlService
     public Task<CustomEntityResult<UpdateBookingResponseModel>> UpdateBooking(UpdateBookingRequestModel requestModel);
     public Task<CustomEntityResult<DeleteBookingResponseModel>> DeleteBooking(DeleteBookingRequestModel BookingId);
     public Task<CustomEntityResult<CreateBookingByAdminResponseModel>> CreateBookingByAdmin(CreateBookingByAdminRequestModel model);
+    public Task<CustomEntityResult<ReserveBookingResponseModel>> ReserveBooking(ReserveBookingRequestModel model);
 }

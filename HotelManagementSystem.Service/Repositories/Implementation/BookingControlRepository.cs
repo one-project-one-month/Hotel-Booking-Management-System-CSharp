@@ -97,7 +97,9 @@ public class BookingControlRepository : IBookingControlRepository
 
             if (booking == null)
             {
-                throw new BookingNotFoundException(dto.BookingId.ToString());
+                return CustomEntityResult<UpdateBookingResponseDto>.GenerateFailEntityResult(
+                        ResponseMessageConstants.RESPONSE_CODE_BADREQUEST,
+                        $"Booking does not exist");
             }
 
             if (dto.UserId.HasValue)
@@ -249,6 +251,108 @@ public class BookingControlRepository : IBookingControlRepository
             await transaction.RollbackAsync();
 
             return CustomEntityResult<CreateBookingByAdminResponseDto>.GenerateFailEntityResult(
+                ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
+                $"Failed to create booking: {ex.Message} {(ex.InnerException?.Message ?? "")}");
+        }
+    }
+
+    public async Task<CustomEntityResult<ReserveBookingResponseDto>> ReserveBooking(ReserveBookingRequestDto dto)
+    {
+        await using var transaction = await _hotelDbContext.Database.BeginTransactionAsync();
+        try
+        {
+            var guest = new TblGuest
+            {
+                UserId = dto.UserId,
+                Name = dto.Name,
+                Nrc = dto.Nrc,
+                PhoneNo = dto.PhoneNo,
+                CreatedAt = EntityConstantsHelper.GetMyanmarLocalTime()
+            };
+
+            await _hotelDbContext.TblGuests.AddAsync(guest);
+            await _hotelDbContext.SaveChangesAsync();
+
+            var userBooking = await _hotelDbContext.TblBookings
+                .Include(b => b.TblRoomBookings)
+            .Where(b => b.BookingId == dto.BookingId)
+            .FirstOrDefaultAsync();
+
+            if (userBooking == null)
+            {
+                return CustomEntityResult<ReserveBookingResponseDto>.GenerateFailEntityResult(
+                        ResponseMessageConstants.RESPONSE_CODE_BADREQUEST,
+                        $"Booking does not exist");
+            }
+
+            if (dto.GuestCount.HasValue)
+                userBooking.GuestCount = dto.GuestCount;
+
+            if (dto.CheckInTime.HasValue)
+                userBooking.CheckInTime = dto.CheckInTime;
+
+            if (dto.CheckOutTime.HasValue)
+                userBooking.CheckOutTime = dto.CheckOutTime;
+
+            if (dto.DepositAmount.HasValue)
+                userBooking.DepositAmount = dto.DepositAmount;
+
+            if (!string.IsNullOrWhiteSpace(dto.BookingStatus))
+                userBooking.BookingStatus = dto.BookingStatus;
+
+            if (dto.TotalAmount.HasValue)
+                userBooking.TotalAmount = dto.TotalAmount;
+
+            userBooking.GuestId = guest.GuestId;
+
+            var result = await _hotelDbContext.SaveChangesAsync();
+
+            if (dto.Rooms != null && dto.Rooms.Any())
+            {
+                _hotelDbContext.TblRoomBookings.RemoveRange(userBooking.TblRoomBookings);
+                foreach (var roomId in dto.Rooms)
+                {
+                    userBooking.TblRoomBookings.Add(new TblRoomBooking
+                    {
+                        BookingId = userBooking.BookingId,
+                        RoomId = roomId
+                    });
+                }
+
+                var roomsToUpdate = await _hotelDbContext.TblRooms
+                    .Where(r => dto.Rooms.Contains(r.RoomId))
+                    .ToListAsync();
+
+                foreach (var room in roomsToUpdate)
+                {
+                    room.RoomStatus = "Occupied";
+                }
+
+                await _hotelDbContext.SaveChangesAsync();
+            }
+
+            var checkInOut = new CheckInOut
+            {
+                GuestId = guest.GuestId,
+                CheckInTime = EntityConstantsHelper.GetMyanmarLocalTime(),
+                Status = "In"
+            };
+            await _hotelDbContext.CheckInOuts.AddAsync(checkInOut);
+            await _hotelDbContext.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            var response = new ReserveBookingResponseDto
+            {
+                GuestId = guest.GuestId
+            };
+
+            return CustomEntityResult<ReserveBookingResponseDto>.GenerateSuccessEntityResult(response);
+        }
+        catch(Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return CustomEntityResult<ReserveBookingResponseDto>.GenerateFailEntityResult(
                 ResponseMessageConstants.RESPONSE_CODE_SERVERERROR,
                 $"Failed to create booking: {ex.Message} {(ex.InnerException?.Message ?? "")}");
         }
