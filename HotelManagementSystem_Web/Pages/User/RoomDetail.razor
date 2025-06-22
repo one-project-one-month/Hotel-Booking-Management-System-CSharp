@@ -5,7 +5,7 @@
 @inject HttpClient _httpClient
 
 <div class="d-flex justify-content-between align-items-center">
-    {
+    @if(isLoading){
     <span>Loading...</span>
     }
     else if (isDataEmpty || RoomDetails == null)
