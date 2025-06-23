@@ -2,7 +2,7 @@
 
 namespace HotelManagementSystem_Web.Models.Room.RoomTypeReqModel
 {
-    public class RoomReqModel
+    public class RoomReqModel : BaseResponseModel
     {
         public Guid RoomId { get; set; }
         public string? RoomNo { get; set; }
